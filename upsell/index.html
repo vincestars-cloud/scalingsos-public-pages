@@ -12,28 +12,46 @@
 :root{--navy:#0a1f3a;--gold:#c9a84c;--cream:#faf8f3;--gray:#6b7280;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
+/* bars */
 .confirm{background:#dcfce7;color:#15803d;text-align:center;padding:9px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
 .confirm svg{width:15px;height:15px;flex-shrink:0;}
-
-.wait{background:var(--navy);color:#fff;text-align:center;padding:11px 16px;font-size:13px;font-weight:700;letter-spacing:.04em;}
+.wait{background:var(--navy);color:#fff;text-align:center;padding:10px 16px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 .wait span{color:var(--gold);}
 
+/* layout */
 .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:36px 18px;}
 .box{max-width:640px;width:100%;text-align:center;}
 
-h1{font-size:clamp(26px,4.6vw,42px);font-weight:900;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px;}
+/* headline */
+h1{font-size:clamp(24px,4.4vw,40px);font-weight:900;letter-spacing:-.025em;line-height:1.1;margin-bottom:10px;}
 h1 em{font-style:normal;color:var(--gold);}
 
-.bridge{font-size:clamp(15px,2.1vw,18px);font-weight:500;color:#374151;margin-bottom:28px;line-height:1.55;}
+/* truism + bridge */
+.truism{font-size:clamp(14px,2vw,17px);font-weight:600;color:var(--navy);margin-bottom:6px;}
+.bridge{font-size:clamp(13px,1.8vw,15px);color:var(--gray);margin-bottom:26px;}
 
-.bullets{list-style:none;text-align:left;display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
-.bullets li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(14px,1.9vw,16px);font-weight:600;color:var(--navy);line-height:1.4;}
-.bullets li svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#15803d;}
+/* value stack */
+.stack{background:#fff;border:1.5px solid rgba(10,31,58,.13);border-radius:14px;overflow:hidden;margin-bottom:14px;text-align:left;}
+.stack-item{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;gap:12px;border-bottom:1px solid rgba(10,31,58,.07);}
+.stack-item:last-of-type{border-bottom:none;}
+.stack-name{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.stack-desc{font-size:12px;color:var(--gray);font-weight:400;}
+.stack-val{font-size:15px;font-weight:800;color:var(--gold);white-space:nowrap;flex-shrink:0;}
+.stack-val small{font-size:11px;font-weight:500;color:var(--gray);}
+.stack-footer{background:var(--navy);padding:16px 18px;}
+.stack-compare{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.stack-compare-label{font-size:12px;color:rgba(255,255,255,.55);font-weight:500;}
+.stack-compare-val{font-size:14px;font-weight:700;color:rgba(255,255,255,.55);text-decoration:line-through;}
+.stack-today{display:flex;justify-content:space-between;align-items:center;}
+.stack-today-label{font-size:13px;color:#fff;font-weight:700;}
+.stack-today-val{font-size:22px;font-weight:900;color:var(--gold);}
+.stack-today-val small{font-size:12px;font-weight:500;color:rgba(201,168,76,.7);margin-left:3px;}
 
-.anchor{font-size:clamp(13px,1.8vw,15px);color:var(--gray);margin-bottom:26px;padding:12px 16px;border:1px solid rgba(10,31,58,.1);border-radius:10px;background:#fff;}
-.anchor strong{color:var(--navy);}
+/* math */
+.math{font-size:13px;color:var(--gray);margin-bottom:24px;font-style:italic;}
 
-.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:28px;}
+/* video */
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:24px;}
 .video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
 .vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,31,58,.3);cursor:pointer;transition:opacity .25s;}
 .vplay.hide{opacity:0;pointer-events:none;}
@@ -41,11 +59,14 @@ h1 em{font-style:normal;color:var(--gold);}
 .vplay:hover .vcircle{transform:scale(1.06);}
 .vcircle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
 
+/* yes state */
+.yes-q{font-size:clamp(14px,2vw,16px);font-weight:700;color:var(--navy);margin-bottom:18px;line-height:1.45;}
+
+/* cta */
 .err{color:#dc2626;font-size:13px;margin-bottom:12px;display:none;}
-.add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(16px,2.2vw,20px);font-weight:900;letter-spacing:.02em;padding:clamp(17px,2.4vw,22px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s;}
+.add{display:flex;align-items:center;justify-content:center;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(16px,2.2vw,20px);font-weight:900;letter-spacing:.02em;padding:clamp(17px,2.4vw,22px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s;}
 .add:hover{transform:translateY(-1px);}
 .add:disabled{opacity:.65;cursor:not-allowed;transform:none;}
-
 .skip{display:block;width:100%;text-align:center;margin-top:16px;background:none;border:none;color:var(--gray);font-size:13px;font-family:inherit;cursor:pointer;}
 .skip:hover{color:var(--navy);}
 
@@ -59,31 +80,51 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
   Your website order is confirmed — check your email.
 </div>
 
-<div class="wait">WAIT — <span>Special one-time offer. Not available after this page.</span></div>
+<div class="wait">Wait — <span>One-Time Offer · This Page Only · Never Shown Again</span></div>
 
 <div class="wrap">
   <div class="box">
 
-    <h1>Every missed call is a job<br>that went to <em>someone else.</em></h1>
+    <h1>What if you woke up Monday to<br><em>new appointments already booked?</em></h1>
 
-    <p class="bridge">The website gets them to call. AI Receptionist makes sure someone always answers.</p>
+    <p class="truism">Every job you'll ever get started with someone picking up the phone.</p>
+    <p class="bridge">Your website brings the traffic. AI Receptionist makes sure none of it walks away.</p>
 
-    <ul class="bullets">
-      <li>
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        Answers every call 24/7 — nights, weekends, holidays
-      </li>
-      <li>
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        Books appointments automatically while you sleep
-      </li>
-      <li>
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        Captures every lead — name, number, and what they need
-      </li>
-    </ul>
+    <div class="stack">
+      <div class="stack-item">
+        <div>
+          <div class="stack-name">24/7 Call Handler</div>
+          <div class="stack-desc">Answers every call — nights, weekends, and holidays</div>
+        </div>
+        <div class="stack-val">$400<small>/mo</small></div>
+      </div>
+      <div class="stack-item">
+        <div>
+          <div class="stack-name">Lead Lock System</div>
+          <div class="stack-desc">Captures every caller's name, number, and job details</div>
+        </div>
+        <div class="stack-val">$200<small>/mo</small></div>
+      </div>
+      <div class="stack-item">
+        <div>
+          <div class="stack-name">Auto-Book Engine</div>
+          <div class="stack-desc">Schedules appointments directly to your calendar</div>
+        </div>
+        <div class="stack-val">$149<small>/mo</small></div>
+      </div>
+      <div class="stack-footer">
+        <div class="stack-compare">
+          <span class="stack-compare-label">Combined monthly cost elsewhere</span>
+          <span class="stack-compare-val">$749/mo ($8,988/yr)</span>
+        </div>
+        <div class="stack-today">
+          <span class="stack-today-label">Your price today</span>
+          <span class="stack-today-val">$500<small>one time</small></span>
+        </div>
+      </div>
+    </div>
 
-    <p class="anchor">A part-time receptionist costs <strong>$1,500–$3,000/month.</strong> This is <strong>$500, one time.</strong></p>
+    <p class="math">One average job pays for this. That's all it needs to do — once.</p>
 
     <div class="video">
       <video id="upvid" playsinline preload="metadata"
@@ -92,9 +133,11 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
       <div class="vplay" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
     </div>
 
+    <p class="yes-q">If all this did was save you one job you would have missed — does $500 make sense?</p>
+
     <div class="err" id="err"></div>
     <button class="add" id="addBtn" onclick="addUpsell()">Yes — Add AI Receptionist · $500</button>
-    <button class="skip" onclick="skip()">No thanks — I'll handle calls on my own</button>
+    <button class="skip" onclick="skip()">No thanks — I'll handle missed calls myself</button>
 
   </div>
 </div>
