@@ -3902,6 +3902,46 @@ const TZ_STATE_GROUPS = {
 let currentChatId = null;
 let currentCommTab = 'sms';
 let currentEmailThread = null;
+let chatDraftByPhone = {};
+let chatDraftDirtyByPhone = {};
+
+function chatDraftKey(phone) {
+  return String(phone || '').replace(/\D/g, '').replace(/^1(\d{10})$/, '$1');
+}
+
+function rememberChatDraft(phone) {
+  const key = chatDraftKey(phone || currentChatPhone);
+  const input = document.getElementById('chatInput');
+  if (!key || !input) return '';
+  chatDraftByPhone[key] = input.value || '';
+  chatDraftDirtyByPhone[key] = document.activeElement === input && !!input.value;
+  return chatDraftByPhone[key];
+}
+
+function setChatInputSafely(phone, value, opts) {
+  opts = opts || {};
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+  const key = chatDraftKey(phone || currentChatPhone);
+  const active = document.activeElement === input;
+  if (key && active && chatDraftDirtyByPhone[key] && !opts.force) return;
+  input.value = value || '';
+  if (key) {
+    chatDraftByPhone[key] = input.value;
+    chatDraftDirtyByPhone[key] = false;
+  }
+  if (window.autoGrowChat) autoGrowChat(input);
+}
+
+document.addEventListener('input', function(e) {
+  if (e && e.target && e.target.id === 'chatInput') {
+    const key = chatDraftKey(currentChatPhone);
+    if (key) {
+      chatDraftByPhone[key] = e.target.value || '';
+      chatDraftDirtyByPhone[key] = !!e.target.value;
+    }
+  }
+});
 
 function installUxStyles() {
   if (document.getElementById('sos-ux-patch-style')) return;
@@ -4638,6 +4678,8 @@ function openCallDetail(phone, rowKey) {
 function openChat(i) {
   const s = (data.conversations || [])[i];
   if (!s) return;
+  const nextChatPhone = s.phone || '';
+  if (currentChatPhone && chatDraftKey(currentChatPhone) !== chatDraftKey(nextChatPhone)) rememberChatDraft(currentChatPhone);
   // Enrich a thin session from the Prospects index (by phone) + predict the demo/draft so EVERY reply is actionable
   if (!s.business_name || !s.website || !s.draft || !s.demo_url) {
     const _norm = p => String(p || '').replace(/\D/g, '').replace(/^1(\d{10})$/, '$1');
@@ -4662,7 +4704,7 @@ function openChat(i) {
     s.draft = '';
     s.needs_approval = false;
   }
-  currentChatPhone = s.phone || '';
+  currentChatPhone = nextChatPhone;
   currentChatId = s.id || s.phone || '';
   currentEmailThread = null;
   document.getElementById('chatInput').placeholder = 'Type a message...';
@@ -4683,11 +4725,14 @@ function openChat(i) {
       + (s.website ? ' &middot; <a href="' + esc(s.website) + '" target="_blank" style="color:#2563eb">' + esc(String(s.website).replace(/^https?:\/\//, '').replace(/\/$/, '').slice(0, 44)) + '</a>' : '')
       + (s.demo_url ? '<br>Demo: <a href="' + esc(s.demo_url) + '" target="_blank" style="color:#2563eb;word-break:break-all">' + esc(s.demo_url) + '</a>' : '')
       + (_hasDemo ? '<br><span style="font-size:.72rem;color:#64748b">Attach your own screenshot/file before sending if you want media included.</span>' : '<br><span style="font-size:.72rem;color:#b45309">No demo built yet — use "Build demo" below if needed.</span>'); }
-    document.getElementById('chatInput').value = s.draft;
-    if (window.autoGrowChat) autoGrowChat(document.getElementById('chatInput'));
+    const _dk = chatDraftKey(s.phone);
+    const _localDraft = (_dk && chatDraftByPhone[_dk]) || '';
+    setChatInputSafely(s.phone, (chatDraftDirtyByPhone[_dk] && _localDraft) ? _localDraft : s.draft);
   } else {
     if (_banner) _banner.style.display = 'none';
-    document.getElementById('chatInput').value = '';
+    const _dk = chatDraftKey(s.phone);
+    const _localDraft = (_dk && chatDraftByPhone[_dk]) || '';
+    setChatInputSafely(s.phone, (chatDraftDirtyByPhone[_dk] && _localDraft) ? _localDraft : '');
     if (_btn) _btn.textContent = 'Send';
   }
   body.scrollTop = body.scrollHeight;
@@ -4698,6 +4743,7 @@ function openChat(i) {
 }
 
 function closeChat() {
+  rememberChatDraft(currentChatPhone);
   hangupPlatformCall(true);
   document.getElementById('chatModal').classList.remove('open');
   currentChatPhone = null;
@@ -4723,7 +4769,7 @@ async function sendSMS() {
   if (_sendOnlyBtn) _sendOnlyBtn.disabled = true;
   const convo = (data.conversations || []).find(c => c.phone === currentChatPhone) || {};
   window._forceScreenshot = null;
-  input.value = '';
+  setChatInputSafely(currentChatPhone, '', {force:true});
   const body = document.getElementById('chatBody');
   const pendingId = 'pending-' + Date.now();
   body.innerHTML += '<div class="msg outbound" id="' + pendingId + '">' + esc(message) + mediaPreviewHtml(_media) + '<div class="msg-time">Sending' + (_media ? ' + attachment' : '') + '...</div></div>';
@@ -4739,6 +4785,7 @@ async function sendSMS() {
     if (!resp.ok || json.ok === false) throw new Error(json.error || 'HTTP ' + resp.status);
     const node = document.getElementById(pendingId);
     if (node) node.querySelector('.msg-time').textContent = formatTime(new Date().toISOString());
+    const _dk = chatDraftKey(currentChatPhone); if (_dk) { chatDraftByPhone[_dk] = ''; chatDraftDirtyByPhone[_dk] = false; }
     if (convo) convo.needs_approval = false;
     const _b = document.getElementById('chatPending'); if (_b) _b.style.display = 'none';
     const _sb = document.getElementById('chatSendOnlyBtn'); if (_sb) _sb.textContent = 'Send';
