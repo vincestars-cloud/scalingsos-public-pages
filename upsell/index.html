@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>One More Thing — ScalingSOS</title>
+<meta name="robots" content="noindex"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0a1f3a;--gold:#c9a84c;--cream:#faf8f3;--gray:#6b7280;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+.confirm{background:#dcfce7;color:#15803d;text-align:center;padding:9px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
+.confirm svg{width:15px;height:15px;}
+.wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 18px;}
+.box{max-width:640px;width:100%;text-align:center;}
+h1{font-size:clamp(24px,4.4vw,38px);font-weight:900;letter-spacing:-.02em;line-height:1.12;margin-bottom:clamp(18px,3vw,26px);}
+h1 span{color:var(--gold);}
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:clamp(20px,3.2vw,28px);}
+.video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
+.vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,31,58,.3);cursor:pointer;transition:opacity .25s;}
+.vplay.hide{opacity:0;pointer-events:none;}
+.vcircle{width:clamp(60px,11vw,84px);height:clamp(60px,11vw,84px);border-radius:50%;background:rgba(120,128,140,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
+.vplay:hover .vcircle{transform:scale(1.06);}
+.vcircle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
+.err{color:#dc2626;font-size:13px;margin-bottom:12px;display:none;}
+.add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(16px,2.2vw,20px);font-weight:900;letter-spacing:.02em;padding:clamp(17px,2.4vw,22px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s;}
+.add:hover{transform:translateY(-1px);}
+.add:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.skip{display:block;width:100%;text-align:center;margin-top:18px;background:none;border:none;color:var(--gray);font-size:14px;font-family:inherit;cursor:pointer;text-decoration:underline;}
+.skip:hover{color:var(--navy);}
+footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="box">
+    <h1>Want your phone answered <span>24/7</span>?</h1>
+    <div class="video">
+      <video id="upvid" playsinline preload="metadata"
+        src="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell.mp4?v=1"
+        poster="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell-poster.jpg?v=1"></video>
+      <div class="vplay" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </div>
+    <div class="err" id="err"></div>
+    <button class="add" id="addBtn" onclick="addUpsell()">Add AI Receptionist · $500</button>
+    <button class="skip" onclick="skip()">No thanks — continue to set up my website</button>
+  </div>
+</div>
+<footer>&copy; 2026 ScalingSOS</footer>
+
+<script>
+window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
+(function(){
+  var N8N=window.SSOS_FN.N8N;
+  // ── upsell video player (default 1.2x) ──
+  var RATE=1.2, v=document.getElementById('upvid'), vplay=document.getElementById('vplay');
+  v.addEventListener('loadedmetadata',function(){ v.playbackRate=RATE; });
+  function startVid(){ v.muted=false; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vplay.classList.add('hide'); }
+  vplay.addEventListener('click',startVid);
+  v.addEventListener('play',function(){ v.playbackRate=RATE; vplay.classList.add('hide'); });
+  v.addEventListener('click',function(){ if(v.paused){v.play();} else {v.pause();} });
+  var sessionId=new URLSearchParams(location.search).get('session_id')||'';
+  try{ if(sessionId) localStorage.setItem('ssos_checkout_session', sessionId); }catch(e){}
+  if(sessionId){ fetch(N8N+'/ssos-funnel-order?session_id='+encodeURIComponent(sessionId)).then(function(r){return r.json()}).then(function(d){ if(d&&d.email){ try{localStorage.setItem('ssos_email',d.email);}catch(e){} } }).catch(function(){}); }
+  function setupUrl(){ var em=''; try{em=localStorage.getItem('ssos_email')||''}catch(e){} return '/setup/?session_id='+encodeURIComponent(sessionId)+(em?'&email='+encodeURIComponent(em):''); }
+  window.skip=function(){ location.href=setupUrl(); };
+  window.addUpsell=function(){
+    var btn=document.getElementById('addBtn'), err=document.getElementById('err');
+    err.style.display='none'; btn.disabled=true; btn.textContent='Adding to your order…';
+    fetch(N8N+'/ssos-funnel-upsell-charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId,product:'receptionist_500'})})
+      .then(function(r){return r.json()}).then(function(d){
+        if(d&&d.ok){ try{localStorage.setItem('ssos_bought_receptionist','1')}catch(e){} location.href=setupUrl()+'&recep=1'; }
+        else{ err.textContent=(d&&d.error)||'Could not add it right now. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Add AI Receptionist · $500'; }
+      }).catch(function(){ err.textContent='Network error. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Add AI Receptionist · $500'; });
+  };
+})();
+</script>
+</body>
+</html>
