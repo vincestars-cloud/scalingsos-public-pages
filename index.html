@@ -2,1041 +2,392 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Watch: The Revenue System We Install For Local Business Owners | ScalingSOS</title>
-<meta name="description" content="Watch how we install a complete revenue system for local service businesses — website, follow-up, reviews, calls, ads, and more."/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>This $99 Website Crushes $10k+ Marketing Budgets | ScalingSOS</title>
+<meta name="description" content="See how a $99 website out-performs $10k+ marketing budgets for local service businesses."/>
 <meta name="robots" content="noindex,nofollow,noarchive"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0a1f3a;
-  --gold:#c9a84c;
-  --gold-hover:#b8962f;
-  --gold-bg:rgba(201,168,76,.08);
-  --gold-border:rgba(201,168,76,.30);
-  --cream:#faf8f3;
-  --white:#ffffff;
-  --gray:#6b7280;
+  --navy:#0a1f3a; --gold:#c9a84c; --gold-hover:#b8962f;
+  --gold-bg:rgba(201,168,76,.08); --gold-border:rgba(201,168,76,.30);
+  --cream:#faf8f3; --white:#fff; --gray:#6b7280;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'Inter',system-ui,sans-serif;
-  background:var(--cream);
-  color:var(--navy);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
-/* While the gate is up it covers the full screen, so lock the page
-   behind it — no stray scrollbar. Restored on unlock. */
-body.gate-locked{overflow:hidden;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* ── ABOVE-FOLD LOCK — hero + stats = exactly 100vh ── */
-.above-fold{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-.hero-wrap{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  padding:clamp(12px,1.8vh,28px) 24px clamp(8px,1.2vh,16px);
-  overflow:hidden;
-}
-.hero{
-  text-align:center;
-  max-width:min(880px, 90vw);
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:clamp(8px,1.4vh,16px);
-}
-.pill{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid var(--gold-border);
-  background:var(--gold-bg);
-  border-radius:999px;
-  padding:6px 18px;
-  font-size:12px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;
-  color:#7a6023;
-  margin-bottom:0;/* handled by gap */
-}
-.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
-
+.stage{max-width:920px;margin:0 auto;padding:clamp(22px,4vw,46px) 18px clamp(34px,6vw,64px);}
+.head{text-align:center;display:flex;flex-direction:column;align-items:center;margin-bottom:clamp(20px,3.5vw,32px);}
 h1.display{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(30px,min(4.5vw,6.5vh),60px);
-  font-weight:900;
-  line-height:1.07;
-  letter-spacing:-.03em;
-  color:var(--navy);
-  margin-bottom:0;
-  white-space:nowrap;
+  font-size:clamp(28px,5.6vw,56px);font-weight:900;line-height:1.1;letter-spacing:-.03em;color:var(--navy);text-wrap:balance;
 }
-h1.display .line1{display:block;color:var(--navy);}
-h1.display .line2{display:block;color:var(--gold);}
-h1.display .line3{display:block;color:var(--navy);}
+h1.display em{color:var(--gold-hover);font-style:normal;}
+h1.display .ul{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px;}
+h1.display .ln1,h1.display .ln2{display:block;}
+@media(min-width:600px){h1.display .ln1{white-space:nowrap;}}
 
-.sub{
-  font-size:clamp(14px,min(1.6vw,2.2vh),18px);
-  color:rgba(10,31,58,.55);
-  max-width:520px;
-  margin:0 auto;
-  line-height:1.5;
-  font-weight:400;
+/* ── PLAYER ── */
+.player{
+  position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);user-select:none;
 }
+.player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
 
-/* ── VIDEO ── */
-.video-outer{
-  width:100%;
-  max-width:min(660px, calc((100vh - 360px) * 16/9), 75vw);
-  margin:0 auto;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 16px 48px rgba(10,31,58,.18),0 0 0 1px rgba(0,0,0,.07);
-  background:var(--navy);
-  aspect-ratio:16/9;
-  position:relative;
-}
-.video-outer iframe{
-  position:absolute;top:0;left:0;width:100%;height:100%;border:none;
-}
+/* thin deceptive load bar pinned to very top — feels like a short video, no time shown */
+.loadbar{position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.14);z-index:7;pointer-events:none;}
+.loadbar .lfill{height:100%;width:0;background:var(--gold);transition:width .15s linear;}
 
-/* ── CTA ── */
-.cta{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  width:100%;max-width:min(660px, 75vw);
-  margin:0 auto;
-  background:var(--gold);
-  color:var(--navy);
-  font-family:'Inter',sans-serif;
-  font-size:clamp(12px,min(1.4vw,1.8vh),15px);
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.07em;
-  padding:clamp(14px,1.8vh,20px) 32px;
-  border-radius:14px;
-  text-decoration:none;
-  text-align:center;
-  box-shadow:0 8px 28px rgba(201,168,76,.30);
-  transition:background .18s,transform .12s,box-shadow .18s;
-}
-.cta:hover{background:var(--gold-hover);transform:translateY(-1px);box-shadow:0 12px 36px rgba(201,168,76,.38);}
+/* big center play — gentle breathing */
+.bigplay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(10,31,58,.32);cursor:pointer;transition:opacity .25s;}
+.bigplay.hide{opacity:0;pointer-events:none;}
+.bigplay .circle{width:clamp(62px,11vw,88px);height:clamp(62px,11vw,88px);border-radius:50%;background:rgba(120,128,140,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);animation:breathe 2.6s ease-in-out infinite;transition:background .15s;}
+@keyframes breathe{0%,100%{transform:scale(1);box-shadow:0 6px 24px rgba(0,0,0,.22),0 0 0 0 rgba(255,255,255,.18);}50%{transform:scale(1.07);box-shadow:0 8px 30px rgba(0,0,0,.28),0 0 0 12px rgba(255,255,255,0);}}
+.bigplay:hover .circle{animation:none;transform:scale(1.07);background:rgba(120,128,140,.58);}
+.bigplay svg{width:42%;height:42%;margin-left:8%;fill:#fff;opacity:.95;}
+.bigplay .label{position:absolute;bottom:clamp(14px,4vw,26px);left:0;right:0;text-align:center;color:#fff;font-weight:700;font-size:clamp(12px,1.6vw,15px);letter-spacing:.04em;text-shadow:0 2px 10px rgba(0,0,0,.5);}
 
-/* ── STATS BAR ── */
-.stats{
-  background:var(--navy);
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  border-top:1px solid rgba(255,255,255,.05);
-  flex-shrink:0;
-}
-.stat{
-  padding:clamp(18px,3vw,28px) clamp(12px,3vw,40px);
-  text-align:center;
-  border-right:1px solid rgba(255,255,255,.06);
-}
-.stat:last-child{border-right:none;}
-.stat-n{font-size:clamp(16px,3vw,32px);font-weight:900;color:var(--gold);line-height:1;}
-.stat-l{font-size:clamp(9px,1.8vw,11px);color:rgba(255,255,255,.45);letter-spacing:.07em;text-transform:uppercase;margin-top:6px;}
-/* Highlight stat — "No Monthly Fees" */
-.stat.highlight .stat-n{color:#4ade80;font-size:clamp(12px,2.2vw,18px);letter-spacing:.01em;}
-.stat.highlight .stat-l{color:rgba(255,255,255,.55);}
+.tap-sound{position:absolute;z-index:9;top:18px;right:14px;background:rgba(10,31,58,.78);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:999px;display:none;align-items:center;gap:7px;cursor:pointer;}
+.tap-sound.show{display:inline-flex;}
+.tap-sound svg{width:14px;height:14px;fill:#fff;}
 
-/* ── WHAT'S INCLUDED ── */
-.included{
-  background:var(--navy);
-  padding:80px 20px;
-}
-.included-inner{max-width:900px;margin:0 auto;}
-.sec-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(201,168,76,.12);border:1px solid var(--gold-border);
-  border-radius:999px;padding:5px 14px;
-  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:18px;
-}
-.sec-h2{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(28px,4vw,44px);font-weight:800;color:white;
-  letter-spacing:-.02em;line-height:1.08;margin-bottom:10px;
-}
-.sec-sub{font-size:15px;color:rgba(255,255,255,.48);margin-bottom:48px;max-width:520px;}
-/* 7 cards — responsive grid */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.cards{grid-template-columns:repeat(2,1fr);gap:10px;}}
-/* Last card centers if odd count (7 cards total) */
-.card-wide{grid-column:1/-1;}
-@media(max-width:900px){.card-wide{grid-column:auto;}}
-.card{
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:16px;
-  padding:clamp(14px,2.5vw,24px);
-  transition:border-color .18s,background .18s;
-}
-.card:hover{border-color:rgba(201,168,76,.22);background:rgba(255,255,255,.06);}
-.card-ico{
-  width:40px;height:40px;
-  background:rgba(201,168,76,.13);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:12px;
-}
-.card h3{font-size:15px;font-weight:700;color:white;margin-bottom:6px;line-height:1.3;}
-.card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;}
-.badge{
-  display:inline-block;margin-top:10px;
-  background:rgba(201,168,76,.12);border:1px solid var(--gold-border);
-  border-radius:6px;padding:3px 9px;
-  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--gold);
-}
+/* ── Wistia-style bottom controls ── */
+.controls{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;flex-direction:column;gap:8px;padding:14px 16px 12px;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0));opacity:0;transition:opacity .35s;pointer-events:none;}
+.player.show-ui .controls,.player.paused .controls{opacity:1;}
+.player.show-ui,.player.show-ui *{cursor:default;}
+.player.playing:not(.show-ui){cursor:none;}
+.controls>*{pointer-events:auto;}
+/* chapter line + dots (no progress fill) */
+.seek{position:relative;height:4px;background:rgba(255,255,255,.32);border-radius:3px;cursor:pointer;transition:height .12s;}
+.seek:hover{height:6px;}
+/* subtle dots, hidden until the viewer is a few sections in */
+.dot{position:absolute;top:50%;transform:translate(-50%,-50%) scale(.7);width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(10,31,58,.25);cursor:pointer;opacity:0;pointer-events:none;transition:transform .12s,background .12s,opacity .3s;}
+.player.show-dots .dot{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+.dot:hover,.dot.active{background:var(--gold);transform:translate(-50%,-50%) scale(1.25);}
+.ch-tip{position:absolute;bottom:18px;transform:translateX(-50%);background:rgba(10,31,58,.94);color:#fff;font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;max-width:70vw;overflow:hidden;text-overflow:ellipsis;z-index:3;}
+.ch-tip.show{opacity:1;}
+.ctrlrow{display:flex;align-items:center;gap:16px;}
+.ctrlrow button{background:none;border:none;cursor:pointer;color:#fff;display:flex;align-items:center;padding:2px;}
+.ctrlrow button svg{width:22px;height:22px;fill:#fff;}
+.ctrlrow .spacer{flex:1;}
+/* settings (3-dots) menu */
+.setwrap{position:relative;}
+.setmenu{position:absolute;right:0;bottom:34px;width:170px;background:rgba(18,28,44,.97);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px;display:none;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.4);}
+.setmenu.open{display:block;}
+.setmenu .grp{padding:6px 8px;}
+.setmenu .glabel{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:6px;}
+.spdrow{display:flex;flex-wrap:wrap;gap:5px;}
+.spd{background:rgba(255,255,255,.08);color:#fff;border:none;border-radius:6px;padding:5px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.spd:hover{background:rgba(255,255,255,.18);}
+.spd.active{background:var(--gold);color:var(--navy);}
+.volrow{display:flex;align-items:center;gap:8px;}
+.volrow input[type=range]{flex:1;accent-color:var(--gold);}
+.setdiv{height:1px;background:rgba(255,255,255,.1);margin:6px 0;}
 
-/* ── QUALIFIER FORM — matches scalingsos.com wizard exactly ── */
-.q-wrap{
-  padding:72px 20px 88px;
-  max-width:600px;margin:0 auto;
+/* ── CAPTURE FORM (replaces CTA button) ── */
+.capture{margin-top:clamp(22px,3.5vw,32px);max-width:620px;margin-left:auto;margin-right:auto;}
+.cap-h{text-align:center;font-size:clamp(19px,2.6vw,26px);font-weight:800;letter-spacing:-.02em;color:var(--navy);margin-bottom:4px;}
+.cap-sub{text-align:center;font-size:clamp(13px,1.7vw,15px);color:rgba(10,31,58,.55);margin-bottom:16px;}
+.capture .form{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.capture .full{grid-column:1/-1;}
+@media(max-width:520px){.capture .form{grid-template-columns:1fr;}}
+.capture input{
+  width:100%;padding:15px 16px;border:1.5px solid rgba(10,31,58,.14);border-radius:11px;
+  font-size:15px;font-family:inherit;color:var(--navy);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;
 }
-.q-hdr{text-align:center;margin-bottom:32px;}
-.q-hdr h2{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(24px,4vw,36px);font-weight:800;
-  color:var(--navy);letter-spacing:-.02em;line-height:1.1;
+.capture input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+.capture input.bad{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.08);}
+.capture input::placeholder{color:rgba(10,31,58,.34);}
+.capture .cta{
+  grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;
+  font-size:clamp(16px,2vw,20px);font-weight:900;text-transform:uppercase;letter-spacing:.05em;
+  padding:clamp(16px,2.4vw,21px) 34px;border:none;border-radius:13px;cursor:pointer;font-family:inherit;
+  box-shadow:0 18px 44px -12px rgba(21,128,61,.45);animation:pulse 2.6s ease-in-out infinite;transition:transform .15s,box-shadow .15s;
 }
+.capture .cta:hover{transform:scale(1.01);box-shadow:0 22px 50px -12px rgba(21,128,61,.55);animation:none;}
+.capture .cta:disabled{opacity:.65;cursor:not-allowed;transform:none;animation:none;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}
+.capture .err{grid-column:1/-1;color:#dc2626;font-size:13px;text-align:center;display:none;}
 
-/* Wizard card — matches scalingsos.com wizard */
-.q-card{
-  background:white;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 30px 80px -25px rgba(0,0,0,.5);
-}
-
-/* Dark header */
-.wiz-head{
-  background:var(--navy);
-  padding:22px 28px;
-}
-.wiz-brand{
-  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:6px;
-}
-.wiz-title{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-weight:700;font-size:18px;color:white;letter-spacing:-.01em;line-height:1.25;
-}
-
-/* Progress */
-.prog-wrap{padding:18px 28px 0;background:white;position:relative;}
-.prog-track{
-  height:4px;background:rgba(10,31,58,.08);border-radius:2px;
-  position:relative;overflow:hidden;
-}
-.prog-fill{
-  position:absolute;top:0;left:0;height:100%;
-  background:var(--gold);border-radius:2px;
-  transition:width .35s cubic-bezier(.4,0,.2,1);
-}
-.step-label{
-  text-align:center;padding:12px 28px 0;
-  font-size:13px;color:rgba(10,31,58,.4);font-weight:500;
-  background:white;
-}
-
-/* Form body */
-.wiz-body{
-  padding:28px 32px 36px;background:white;
-  min-height:300px;display:flex;flex-direction:column;align-items:center;
-  text-align:center;
-}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.step{display:none;}
-.step.active{display:flex;flex-direction:column;align-items:center;width:100%;animation:fadeSlide .25s ease both;}
-
-.step-q{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(17px,3vw,22px);font-weight:700;
-  color:var(--navy);letter-spacing:-.01em;line-height:1.2;
-  margin-bottom:8px;
-}
-.step-hint{
-  font-size:14px;color:rgba(10,31,58,.5);
-  line-height:1.5;margin:0 0 22px;max-width:380px;text-align:center;
-}
-
-/* Option buttons — exact scalingsos.com wopt style */
-.choices{
-  display:flex;flex-direction:column;gap:9px;
-  width:100%;max-width:420px;
-}
-.cho{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:13px 16px;
-  border-radius:10px;
-  border:1.5px solid rgba(10,31,58,.1);
-  background:white;color:var(--navy);
-  font-family:inherit;font-size:14px;font-weight:500;
-  cursor:pointer;text-align:left;
-  transition:all .15s;
-}
-.cho:hover{
-  border-color:var(--gold);
-  background:rgba(201,168,76,.05);
-  transform:translateY(-1px);
-  box-shadow:0 4px 12px rgba(201,168,76,.12);
-}
-.cho::after{
-  content:"→";
-  color:rgba(10,31,58,.25);font-weight:600;flex-shrink:0;margin-left:10px;
-  transition:transform .15s,color .15s;
-}
-.cho:hover::after{color:var(--gold);transform:translateX(3px);}
-
-/* Contact inputs */
-.f-form{display:flex;flex-direction:column;gap:11px;width:100%;max-width:420px;margin-bottom:16px;}
-.f-form input{
-  width:100%;padding:14px 16px;
-  border:1.5px solid rgba(10,31,58,.1);border-radius:10px;
-  font-size:15px;font-family:inherit;color:var(--navy);background:white;
-  outline:none;transition:border-color .15s,box-shadow .15s;
-}
-.f-form input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
-.f-form input::placeholder{color:rgba(10,31,58,.3);}
-.sub-btn{
-  min-width:220px;background:var(--gold);color:var(--navy);
-  font-size:15px;font-weight:700;letter-spacing:.04em;
-  padding:16px 28px;border:none;border-radius:10px;
-  cursor:pointer;font-family:inherit;
-  box-shadow:0 6px 20px rgba(201,168,76,.28);
-  transition:background .18s,transform .12s,box-shadow .18s;
-  display:inline-flex;align-items:center;gap:8px;
-}
-.sub-btn:hover{background:var(--gold-hover);transform:translateY(-1px);box-shadow:0 10px 28px rgba(201,168,76,.36);}
-.sub-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-
-/* Footer — back button + privacy */
-.wiz-footer{
-  padding:14px 28px;
-  background:rgba(10,31,58,.025);
-  border-top:1px solid rgba(10,31,58,.06);
-  display:flex;justify-content:space-between;align-items:center;
-  flex-wrap:wrap;gap:10px;
-}
-.wiz-back{
-  background:transparent;border:none;
-  color:rgba(10,31,58,.45);font-size:13px;font-weight:500;
-  cursor:pointer;font-family:inherit;padding:4px 0;
-  transition:color .14s;
-}
-.wiz-back:hover{color:var(--navy);}
-.wiz-back[hidden]{visibility:hidden;}
-.wiz-meta{font-size:12px;color:rgba(10,31,58,.3);}
-
-/* Success */
-.success{display:none;text-align:center;padding:32px 20px;}
-.success-ico{
-  width:60px;height:60px;background:#d1fae5;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
-}
-.success h3{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:10px;}
-.success p{font-size:15px;color:var(--gray);line-height:1.65;}
-.contact-box{
-  margin-top:20px;background:var(--gold-bg);
-  border:1px solid var(--gold-border);border-radius:10px;
-  padding:14px;font-size:14px;color:var(--navy);font-weight:600;line-height:1.65;
-}
-
-/* ── CALENDAR EMBED ── */
-.cal-wrap{width:100%;max-width:480px;}
-.cal-frame{
-  width:100%;height:600px;
-  border:none;border-radius:12px;
-  background:white;
-}
-@media(max-width:480px){.cal-frame{height:560px;}}
-
-/* ── FOOTER ── */
-footer{
-  background:rgba(10,31,58,.03);
-  border-top:1px solid rgba(10,31,58,.06);
-  padding:22px 20px;text-align:center;
-  font-size:12px;color:rgba(10,31,58,.3);
-}
-
-/* ── GATE SCREEN — no scroll, credibility bar pinned bottom ── */
-#gate{
-  position:fixed;inset:0;
-  background:#faf8f3;
-  z-index:200;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  transition:opacity .5s ease;
-}
-#gate.fade-out{opacity:0;pointer-events:none;}
-.gate-main{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:32px 24px;
-  overflow:hidden;
-}
-.gate-inner{
-  max-width:896px;
-  width:100%;
-  text-align:center;
-}
-/* Credibility bar — dark, pinned to bottom */
-.gate-cred{
-  flex-shrink:0;
-  background:#0a1f3a;
-  padding:14px 24px;
-  text-align:center;
-}
-.gate-cred-label{
-  font-size:14px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:#c9a84c;
-  margin-bottom:12px;
-}
-.gate-cred-logos{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:10px 28px;
-  font-size:20px;font-weight:700;
-  color:rgba(255,255,255,.92);
-}
-.gate-cred-logos .sep{color:rgba(255,255,255,.25);}
-@media(max-width:480px){
-  .gate-pill{font-size:10px;padding:5px 12px;}
-  .gate-cred{padding:10px 16px;}
-  .gate-cred-label{font-size:12px;margin-bottom:8px;}
-  .gate-cred-logos{font-size:16px;gap:8px 18px;}
-  .gate-main{padding:20px 16px;}
-}
-
-/* Pill — exact NG Financial values */
-.gate-pill{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid rgba(201,168,76,.30);
-  background:rgba(201,168,76,.05);
-  border-radius:999px;
-  padding:6px 16px;
-  font-size:12px;font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:#b8962f;
-  margin-bottom:24px;
-}
-.gate-pill .dot{width:6px;height:6px;border-radius:50%;background:#c9a84c;flex-shrink:0;}
-
-/* Headline */
-.gate-h1{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(26px,5vw,60px);
-  font-weight:700;
-  line-height:1.12;
-  letter-spacing:-.025em;
-  color:#0a1f3a;
-  text-wrap:balance;
-  margin-bottom:0;
-}
-.gate-h1 em{color:#b8962f;font-style:normal;}
-.gate-h1 .gate-ul{font-weight:800;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;white-space:nowrap;}
-/* nowrap only on tablet+ where lines actually fit */
-@media(min-width:640px){
-  .gate-h1{line-height:1.08;}
-  .gate-nowrap{white-space:nowrap;}
-}
-
-/* Subhead */
-.gate-sub{
-  font-size:clamp(15px,1.8vw,20px);
-  color:rgba(10,31,58,.75);
-  line-height:1.65;
-  max-width:672px;
-  margin:20px auto 0;
-}
-.gate-sub strong{font-weight:600;color:#0a1f3a;}
-
-/* Button wrapper */
-.gate-cta-wrap{
-  margin-top:32px;
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-}
-
-/* Button */
-.btn-green{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:18px 28px;
-  background:linear-gradient(to bottom, #22c55e, #15803d);
-  color:white;
-  font-family:'Inter',sans-serif;
-  font-size:clamp(14px,2vw,22px);font-weight:800;
-  letter-spacing:.06em;text-transform:uppercase;
-  border:none;border-radius:16px;cursor:pointer;
-  box-shadow:0 25px 50px -12px rgba(21,128,61,.40);
-  outline:2px solid rgba(21,128,61,.30);outline-offset:0;
-  animation:pulse-cta 2.5s ease-in-out infinite;
-  transition:transform .15s,box-shadow .15s;
-  text-decoration:none;
-  width:100%;max-width:480px;
-}
-@media(min-width:640px){
-  .btn-green{padding:28px 48px;width:auto;max-width:none;}
-}
-.btn-green:hover{
-  background:linear-gradient(to bottom, #16a34a, #166534);
-  transform:scale(1.03);
-  box-shadow:0 25px 50px -12px rgba(21,128,61,.50);
-  animation:none;
-}
-.btn-green:disabled{opacity:.6;cursor:not-allowed;animation:none;}
-@keyframes pulse-cta{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.02);}
-}
-
-/* Disclaimer — text-xs, 70% navy, leading-relaxed, max-w-xl */
-.gate-disclaimer{
-  font-size:12px;
-  color:rgba(10,31,58,.70);
-  line-height:1.7;
-  max-width:448px;
-  margin:0 auto;
-  padding:0 16px;
-}
-.gate-disclaimer strong{font-weight:600;}
-
-/* ── MODAL ── */
-#modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(10,31,58,.55);
-  z-index:300;
-  display:flex;align-items:center;justify-content:center;
-  padding:24px;
-  opacity:0;pointer-events:none;
-  transition:opacity .25s ease;
-}
-#modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-card{
-  background:white;
-  border-radius:20px;
-  padding:36px 32px 32px;
-  max-width:460px;width:100%;
-  box-shadow:0 40px 100px rgba(10,31,58,.28);
-  position:relative;
-  transform:translateY(16px);
-  transition:transform .25s ease;
-}
-#modal-overlay.open .modal-card{transform:translateY(0);}
-.modal-close{
-  position:absolute;top:16px;right:18px;
-  background:none;border:none;cursor:pointer;
-  color:rgba(10,31,58,.35);font-size:20px;line-height:1;
-  transition:color .14s;padding:4px;
-}
-.modal-close:hover{color:var(--navy);}
-.modal-title{
-  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-  font-size:clamp(18px,2.5vw,22px);font-weight:800;
-  color:var(--navy);letter-spacing:-.02em;line-height:1.2;
-  margin-bottom:22px;
-}
-.modal-form{display:flex;flex-direction:column;gap:11px;margin-bottom:14px;}
-.modal-form input{
-  width:100%;padding:14px 16px;
-  border:1.5px solid rgba(10,31,58,.1);border-radius:10px;
-  font-size:15px;font-family:inherit;color:var(--navy);background:white;
-  outline:none;transition:border-color .15s,box-shadow .15s;
-}
-.modal-form input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
-.modal-form input::placeholder{color:rgba(10,31,58,.3);}
-.btn-gold{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:16px 24px;
-  background:var(--gold);color:var(--navy);
-  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;
-  letter-spacing:.04em;text-transform:uppercase;
-  border:none;border-radius:10px;cursor:pointer;
-  box-shadow:0 6px 20px rgba(201,168,76,.3);
-  transition:background .18s,transform .12s;
-}
-.btn-gold:hover{background:var(--gold-hover);transform:translateY(-1px);}
-.btn-gold:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-.modal-disclaimer{
-  font-size:11.5px;color:rgba(10,31,58,.38);
-  line-height:1.6;text-align:center;
-}
-.modal-disclaimer strong{color:rgba(10,31,58,.55);}
+/* ── FAQ accordion ── */
+.faq{padding:clamp(36px,6vw,68px) 18px;}
+.faq-in{max-width:760px;margin:0 auto;}
+.faq-h{text-align:center;font-size:clamp(24px,4vw,36px);font-weight:900;letter-spacing:-.02em;margin-bottom:clamp(22px,3vw,34px);}
+.faq-item{border:1px solid rgba(10,31,58,.1);border-radius:12px;margin-bottom:10px;background:#fff;overflow:hidden;transition:box-shadow .15s,border-color .15s;}
+.faq-item.open{border-color:var(--gold-border);box-shadow:0 8px 24px -12px rgba(10,31,58,.2);}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;padding:18px 20px;font-size:clamp(15px,2vw,17px);font-weight:700;color:var(--navy);}
+.faq-q .faq-ic{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--gold-bg);color:var(--gold-hover);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;line-height:1;}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .28s ease;}
+.faq-a p{padding:0 20px 18px;font-size:15px;line-height:1.6;color:rgba(10,31,58,.7);}
+footer{background:rgba(10,31,58,.03);border-top:1px solid rgba(10,31,58,.06);padding:22px 20px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
+@media(max-width:520px){.controls{gap:10px;padding:8px 10px;}.controls button svg{width:20px;height:20px;}}
 </style>
 </head>
-<body class="gate-locked">
-
-<!-- ══════════════════════════════════════
-     GATE SCREEN — shown on page load
-     Button opens modal → form submit reveals video
-     ══════════════════════════════════════ -->
-<div id="gate">
-  <div class="gate-main">
-    <div class="gate-inner">
-      <div class="gate-pill"><span class="dot"></span>Free Video For Business Owners Doing $150K+/yr</div>
-
-      <h1 class="gate-h1">
-        This <em>$200 Strategy</em> <span class="gate-ul gate-nowrap">Crushes</span> <span class="gate-nowrap">$10k+ Marketing Budgets.</span>
-      </h1>
-
-      <p class="gate-sub">
-        No agency. No ad budget. No extra hours. Watch the free video to see <strong>the system that replaces all three</strong>.
-      </p>
-
-      <div class="gate-cta-wrap">
-        <button class="btn-green" onclick="openModal()">
-          → Watch The Free Video Now
-        </button>
-        <p class="gate-disclaimer">
-          <strong>Important:</strong> This video is specifically for service businesses doing $150K+/year. If that's not you, this isn't the right fit.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <div class="gate-cred">
-    <p class="gate-cred-label">Strategy Backed By Research From</p>
-    <div class="gate-cred-logos">
-      <span>Harvard</span><span class="sep">•</span><span>Bain</span><span class="sep">•</span><span>Google</span><span class="sep">•</span><span>Gartner</span>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     MODAL — form gate before video reveals
-     ══════════════════════════════════════ -->
-<div id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal-card">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-
-    <div class="modal-title">Enter Your Details To Watch The Free Video</div>
-
-    <div class="modal-form">
-      <input type="text"  id="g-name"  placeholder="Full Name"       autocomplete="name"/>
-      <input type="email" id="g-email" placeholder="Email Address"    autocomplete="email"/>
-      <input type="tel"   id="g-phone" placeholder="(555) 123-4567"   autocomplete="tel"/>
-    </div>
-
-    <button class="btn-gold" id="modal-btn" onclick="unlockVideo()">
-      Get Access Now
-    </button>
-
-    <p class="modal-disclaimer" style="margin-top:12px;">
-      <strong>Important:</strong> This video is for service businesses doing $150K+/year who are serious about a better revenue system. If that's not you, this isn't the right fit.
-    </p>
-  </div>
-</div>
-
-<!-- ABOVE FOLD LOCK -->
-<div class="above-fold">
-
-<!-- HERO -->
-<section class="hero-wrap">
-<div class="hero">
-  <div class="pill"><span class="dot"></span>For Business Owners</div>
-
-  <h1 class="display">
-    <span class="line1">Watch How We Install</span>
-    <span class="line2">The Revenue System</span>
-    <span class="line3">Your Business Is Missing</span>
-  </h1>
-
-  <p class="sub">
-    For businesses doing $300K+ per year.
-  </p>
-
-  <!-- Loom Video — src injected with autoplay after gate submit -->
-  <div class="video-outer">
-    <iframe id="main-video" src=""
-      frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-  </div>
-
-  <a href="#qualifier" class="btn-green" style="border-radius:12px;text-decoration:none;font-size:clamp(12px,1.4vw,14px);padding:clamp(14px,1.8vh,18px) 32px;max-width:min(660px,75vw);letter-spacing:.07em;">
-    See If Your Business Qualifies
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-  </a>
-</div>
-</section>
-
-<!-- Stats bar -->
-<div class="stats">
-  <div class="stat"><div class="stat-n">142+</div><div class="stat-l">Revenue Systems Built</div></div>
-  <div class="stat highlight"><div class="stat-n">No Monthly Fees</div><div class="stat-l">One-Time Investment</div></div>
-  <div class="stat"><div class="stat-n">1 Day</div><div class="stat-l">Delivery</div></div>
-</div>
-
-</div><!-- /above-fold -->
-
-<!-- QUALIFIER FORM -->
-<section id="qualifier" class="q-wrap">
-  <div class="q-hdr">
-    <h2>Book Your Revenue System Diagnostic</h2>
-  </div>
-
-  <div class="q-card">
-    <!-- Dark header -->
-    <div class="wiz-head">
-      <div class="wiz-brand">ScalingSOS</div>
-      <div class="wiz-title">Apply for Your Revenue System Diagnostic</div>
-    </div>
-
-    <!-- Progress -->
-    <div class="prog-wrap">
-      <div class="prog-track">
-        <div class="prog-fill" id="prog-fill" style="width:16%"></div>
-      </div>
-    </div>
-    <div class="step-label" id="step-label">Step 1 of 6</div>
-
-    <!-- Form body -->
-    <div class="wiz-body">
-
-      <!-- Step 1: Bottleneck -->
-      <div class="step active" id="step-1">
-        <p class="step-q">Which of these best describes your biggest bottleneck right now?</p>
-        <p class="step-hint">Be honest — this tells us where to focus first.</p>
-        <div class="choices">
-          <button class="cho" onclick="go(1,'Not enough qualified booked calls')">We don't have enough qualified booked calls</button>
-          <button class="cho" onclick="go(1,'Too many unqualified calls')">Too many booked calls are unqualified / wrong fit</button>
-          <button class="cho" onclick="go(1,'Show rate too low')">Our show rate is too low</button>
-          <button class="cho" onclick="go(1,'Close rate low or inconsistent')">Our close rate is low and/or inconsistent</button>
-          <button class="cho" onclick="go(1,'Sales cycle too long')">Our sales cycle is too long</button>
-          <button class="cho" onclick="go(1,'Offer / positioning unclear')">Our offer / positioning doesn't feel clear or compelling</button>
-          <button class="cho" onclick="go(1,'Weak LTV / backend revenue')">We're leaving money on the table after the first sale</button>
-          <button class="cho" onclick="go(1,'Ops can\'t keep up with sales')">Operations / delivery can't keep up with more sales</button>
-          <button class="cho" onclick="go(1,'Not sure — diagnose it')">I'm not sure — I want you to diagnose it</button>
-        </div>
-      </div>
-
-      <!-- Step 2: Revenue -->
-      <div class="step" id="step-2">
-        <p class="step-q">Average monthly revenue over the last 3 months?</p>
-        <p class="step-hint">We work with businesses at specific stages — this confirms fit.</p>
-        <div class="choices">
-          <button class="cho" onclick="go(2,'$0 – $10k / month')">$0 – $10k / month</button>
-          <button class="cho" onclick="go(2,'$10k – $50k / month')">$10k – $50k / month</button>
-          <button class="cho" onclick="go(2,'$50k – $150k / month')">$50k – $150k / month</button>
-          <button class="cho" onclick="go(2,'$150k – $500k / month')">$150k – $500k / month</button>
-          <button class="cho" onclick="go(2,'$500k+ / month')">$500k+ / month</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Industry (text input) -->
-      <div class="step" id="step-3">
-        <p class="step-q">What industry are you in?</p>
-        <p class="step-hint">Tell us in your own words — e.g. "HVAC", "Roofing", "Med Spa".</p>
-        <div class="f-form">
-          <input type="text" id="f-industry" placeholder="Your industry" autocomplete="off"/>
-          <button class="sub-btn" onclick="goInput(3, 'f-industry')">
-            Continue
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 4: Who are we talking to -->
-      <div class="step" id="step-4">
-        <p class="step-q">Who are we talking to?</p>
-        <p class="step-hint">We'll send your call confirmation here.</p>
-        <div class="f-form">
-          <input type="text" id="f-name" placeholder="Your full name" autocomplete="name"/>
-          <input type="text" id="f-biz" placeholder="Business name"/>
-          <button class="sub-btn" onclick="goInput(4, 'f-name')">
-            Continue
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 5: Contact -->
-      <div class="step" id="step-5">
-        <p class="step-q">How do we reach you?</p>
-        <p class="step-hint">We'll send a confirmation to your email and phone.</p>
-        <div class="f-form" id="f-form">
-          <input type="email" id="f-email" placeholder="you@yourcompany.com" autocomplete="email"/>
-          <input type="tel" id="f-phone" placeholder="(555) 555-5555" autocomplete="tel"/>
-          <button class="sub-btn" id="sub-btn" onclick="submitForm()">
-            Continue to Booking
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Step 6: Pick a time (Google Calendar) -->
-      <div class="step" id="step-6">
-        <p class="step-q">Pick a time for your diagnostic call.</p>
-        <p class="step-hint">30–45 minutes. You'll leave with a clear diagnosis of your biggest revenue constraint.</p>
-        <div class="cal-wrap">
-          <iframe src="" class="cal-frame" frameborder="0"></iframe>
-        </div>
-      </div>
-
-      <!-- Success -->
-      <div class="success" id="success-state">
-        <div class="success-ico">
-          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <h3>You're booked!</h3>
-        <p>Check your email for a confirmation. We'll see you on the call.</p>
-        <div class="contact-box">
-          Questions? Reach Vince directly:<br/>
-          <strong style="color:#c9a84c;">(678) 404-0309</strong> &nbsp;·&nbsp; <strong style="color:#c9a84c;">vince@inleap.ai</strong>
-        </div>
-      </div>
-
-    </div><!-- /wiz-body -->
-
-    <!-- Footer with back button only -->
-    <div class="wiz-footer">
-      <button class="wiz-back" id="wiz-back" onclick="goBack()" hidden>← Back</button>
-      <span class="wiz-meta"></span>
-    </div>
-
-  </div><!-- /q-card -->
-</section>
-
-<!-- What's included -->
-<section class="included">
-  <div class="included-inner">
-    <div class="sec-pill">What's included</div>
-    <h2 class="sec-h2">Everything you need.<br/>Nothing you don't.</h2>
-    <p class="sec-sub">We build the whole thing. You just confirm you want to keep it.</p>
-    <div class="cards">
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
-        </div>
-        <h3>Website Redesign</h3>
-        <p>Your site rebuilt to convert visitors into calls and quote requests.</p>
-        <span class="badge">Built Free</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <h3>Database Reactivation</h3>
-        <p>Revive old leads and past customers — without spending on new ads.</p>
-        <span class="badge">Automated</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <h3>Reviews &amp; Referrals System</h3>
-        <p>Automatically collects Google reviews and referrals after every completed job.</p>
-        <span class="badge">Always On</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7.91a16 16 0 0 0 6 6l.77-.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </div>
-        <h3>24/7 Follow Up &amp; Missed Calls</h3>
-        <p>Captures every lead — overnight, weekends, while you're on a job.</p>
-        <span class="badge">Never Misses</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        </div>
-        <h3>Sales Call Grader &amp; Roleplay Coach</h3>
-        <p>Grades every sales call and trains your team to close more.</p>
-        <span class="badge">Closes More</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M3 10h7v11H3z"/><path d="M13 10h8v4h-8z"/><path d="M13 17h8v4h-8z"/></svg>
-        </div>
-        <h3>Paid Ads &amp; Nurturing</h3>
-        <p>Run ads that convert, with automated follow-up sequences that keep leads warm.</p>
-        <span class="badge">More Leads</span>
-      </div>
-      <div class="card">
-        <div class="card-ico">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        </div>
-        <h3>Owner Dashboard</h3>
-        <p>Every lead, call, and message in one view. Know exactly what's coming in.</p>
-        <span class="badge">Live Data</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  &copy; 2026 ScalingSOS
-</footer>
+<body>
 
 <script>
-var A = {}, curStep = 1, totalSteps = 6;
+window.SSOS = {
+  VIDEO_URL : 'https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/main.mp4?v=bof',
+  POSTER    : 'https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/main-poster.jpg?v=bof',
+  N8N       : 'https://n8n.americanlifeteam.com/webhook',
+  TRACK_URL : 'https://n8n.americanlifeteam.com/webhook/ssos-funnel-track',
+  FEEL_EXP  : 0.60, // lower = early progress feels faster (video feels shorter)
+  CHAPTERS  : [
+    { t:45,  label:'Who is this?' },
+    { t:114, label:'What is so special about the site?' },
+    { t:183, label:'What does the site do?' },
+    { t:302, label:'Who else have you done this for?' },
+    { t:387, label:'Will it work with what I already have?' },
+    { t:407, label:'Who owns the website, me or you?' },
+    { t:425, label:'What changes can I make now or later?' },
+    { t:441, label:'What is the process to get started?' },
+    { t:462, label:'What guarantees do you have?' }
+  ],
+  // Edit these FAQs freely — add/remove items.
+  FAQ : [
+    { q:'How much does it cost?', a:'A one-time $99 for your website. No monthly fees, no contracts. You only keep it if you love it.' },
+    { q:'How long does it take?', a:'Most sites are built and ready to review in about a day after you complete the short setup form.' },
+    { q:'Do I own the website?', a:'Yes — it’s yours to keep. We build it for you and hand it over.' },
+    { q:'What if I want changes?', a:'You can request edits any time. After checkout you’ll get a simple editor to swap photos, tweak wording, and adjust your booking steps.' },
+    { q:'What’s the AI receptionist?', a:'An optional 24/7 add-on that answers your calls, qualifies leads, and books appointments — even when you’re on a job. You can add it in one click after checkout.' }
+  ]
+};
+</script>
 
-function prog(step) {
-  var pct = step > totalSteps ? 100 : Math.round((step / totalSteps) * 100);
-  pct = Math.max(16, pct);
-  document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('step-label').textContent = step > totalSteps ? 'Complete!' : 'Step ' + step + ' of ' + totalSteps;
-  // Hide back button on step 1 and on calendar step
-  document.getElementById('wiz-back').hidden = (step <= 1 || step === 6);
-}
+<section class="stage">
+  <div class="head">
+    <h1 class="display"><span class="ln1">The <em>$99 Website</em> That <span class="ul">Crushes</span></span> <span class="ln2">$10k+ Marketing Budgets.</span></h1>
+  </div>
 
-function scrollToForm() {
-  window.scrollTo({top: document.getElementById('qualifier').offsetTop - 20, behavior:'smooth'});
-}
+  <!-- PLAYER -->
+  <div class="player paused" id="player">
+    <video id="v" playsinline preload="metadata" poster="" onclick="SP.toggle()"></video>
+    <div class="loadbar"><div class="lfill" id="lfill"></div></div>
 
-function go(cur, val) {
-  A['s'+cur] = val;
-  var el = document.getElementById('step-'+cur);
-  var nx = document.getElementById('step-'+(cur+1));
-  if (el) el.classList.remove('active');
-  if (nx) { nx.classList.add('active'); curStep = cur + 1; prog(curStep); scrollToForm(); }
-}
+    <div class="tap-sound" id="tapSound" onclick="SP.unmute()">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+      Tap for sound
+    </div>
 
-function goInput(cur, fieldId) {
-  var val = (document.getElementById(fieldId).value||'').trim();
-  if (!val) { document.getElementById(fieldId).focus(); return; }
-  A['s'+cur] = val;
-  var el = document.getElementById('step-'+cur);
-  var nx = document.getElementById('step-'+(cur+1));
-  if (el) el.classList.remove('active');
-  if (nx) { nx.classList.add('active'); curStep = cur + 1; prog(curStep); scrollToForm(); }
-}
+    <div class="bigplay" id="bigplay" onclick="SP.toggle()">
+      <div class="circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <span class="label">Play Video</span>
+    </div>
 
-function goBack() {
-  if (curStep <= 1 || curStep === 6) return;
-  var el = document.getElementById('step-'+curStep);
-  if (el) el.classList.remove('active');
-  curStep--;
-  var prev = document.getElementById('step-'+curStep);
-  if (prev) prev.classList.add('active');
-  prog(curStep);
-  scrollToForm();
-}
+    <div class="controls" id="controls">
+      <div class="seek" id="seek" onclick="SP.seekClick(event)">
+        <div class="ch-tip" id="chtip"></div>
+      </div>
+      <div class="ctrlrow">
+        <button onclick="SP.toggle()" id="ppBtn" aria-label="Play/Pause"><svg id="ppIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button onclick="SP.toggleMute()" id="muteBtn" aria-label="Mute"><svg id="muteIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg></button>
+        <div class="spacer"></div>
+        <div class="setwrap">
+          <button onclick="SP.toggleSettings(event)" id="setBtn" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="setmenu" id="setmenu" onclick="event.stopPropagation()">
+            <div class="grp"><div class="glabel">Speed</div><div class="spdrow" id="spdrow"></div></div>
+            <div class="setdiv"></div>
+            <div class="grp"><div class="glabel">Volume</div><div class="volrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+              <input type="range" id="volr" min="0" max="1" step="0.05" value="1"/>
+            </div></div>
+          </div>
+        </div>
+        <button onclick="SP.fullscreen()" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+      </div>
+    </div>
+  </div>
 
-function submitForm() {
-  var email = (document.getElementById('f-email').value||'').trim();
-  var phone = (document.getElementById('f-phone').value||'').trim();
-  var name = (document.getElementById('f-name').value||'').trim();
-  var biz = (document.getElementById('f-biz').value||'').trim();
-  if (!email) { document.getElementById('f-email').focus(); return; }
-  if (!phone) { document.getElementById('f-phone').focus(); return; }
-  var btn = document.getElementById('sub-btn');
-  btn.innerHTML = 'Saving your info...';
-  btn.disabled = true;
-  var payload = {
-    type: 'vsl_diagnostic_application',
-    name: name, business_name: biz,
-    phone: phone, email: email,
-    bottleneck: A.s1||'',
-    monthly_revenue: A.s2||'',
-    industry: A.s3||'',
-    source: 'vsl_book_call'
-  };
-  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
-    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
-  }).catch(function(){});
-  if (biz && phone) {
-    fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-generate-demo', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        business_name: biz, phone: phone, email: email,
-        industry: A.s3||'Home Services', city: 'Atlanta GA', source: 'vsl'
-      })
-    }).catch(function(){});
-  }
-  // Advance to calendar step with pre-filled params
-  setTimeout(function() {
-    var base = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1BttCX2_LJ0wU6bskvLxG_JVm2kGs3GFHglGpM4P0jjnPuijf-GYFt2yOKwhMiJYDgqYBaPbNE';
-    // Split full name into first / last for Google Calendar fields
-    var nameParts = (name || '').trim().split(/\s+/);
-    var firstName = nameParts[0] || '';
-    var lastName = nameParts.slice(1).join(' ') || '';
-    // Purpose of the Meeting → business + bottleneck context
-    var purpose = (biz ? biz + ' — ' : '') + (A.s1 || '');
-    var params = new URLSearchParams({
-      gv: 'true',
-      name: name || '',          // full name (populates First name field)
-      'last': lastName,          // last name
-      email: email || '',        // email address
-      phone: phone || '',        // phone number
-      details: purpose           // Purpose of the Meeting
+  <!-- CAPTURE FORM -->
+  <div class="capture" id="capture">
+    <h2 class="cap-h">Complete This Form to Get Your Website</h2>
+    <p class="cap-sub">Where Should I Send The Website Details To?</p>
+    <div class="form">
+      <input class="full" type="text"  id="f_name"  placeholder="Full Name" autocomplete="name"/>
+      <input type="tel"   id="f_phone" placeholder="(555) 555-5555" autocomplete="tel" inputmode="tel" maxlength="14"/>
+      <input type="email" id="f_email" placeholder="Email Address" autocomplete="email" inputmode="email"/>
+      <input class="full" type="text" id="f_biz" placeholder="Business Name" autocomplete="organization"/>
+      <div class="err" id="f_err"></div>
+      <button class="cta" id="ctaBtn" onclick="submitCapture()">
+        Get My Website
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="faq-in">
+    <h2 class="faq-h">Frequently Asked Questions</h2>
+    <div id="faqList"></div>
+  </div>
+</section>
+
+<footer>&copy; 2026 ScalingSOS</footer>
+
+<script>
+(function(){
+  var FC=(window.SSOS&&window.SSOS.FAQ)||[];
+  var list=document.getElementById('faqList');
+  if(list){ FC.forEach(function(item){
+    var it=document.createElement('div'); it.className='faq-item';
+    var btn=document.createElement('button'); btn.className='faq-q'; btn.type='button';
+    btn.innerHTML='<span>'+item.q+'</span><span class="faq-ic">+</span>';
+    var ans=document.createElement('div'); ans.className='faq-a'; ans.innerHTML='<p>'+item.a+'</p>';
+    btn.onclick=function(){ var open=it.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(o){ if(o!==it){o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight=null;o.querySelector('.faq-ic').textContent='+';} });
+      if(open){ it.classList.remove('open'); ans.style.maxHeight=null; btn.querySelector('.faq-ic').textContent='+'; }
+      else { it.classList.add('open'); ans.style.maxHeight=ans.scrollHeight+'px'; btn.querySelector('.faq-ic').textContent='–'; }
+    };
+    it.appendChild(btn); it.appendChild(ans); list.appendChild(it);
+  }); }
+})();
+</script>
+
+<script>
+(function(){
+  var C=window.SSOS, N8N=C.N8N;
+  var v=document.getElementById('v'), player=document.getElementById('player');
+  var bigplay=document.getElementById('bigplay'), tapSound=document.getElementById('tapSound'), lfill=document.getElementById('lfill');
+  var seek=document.getElementById('seek'), chtip=document.getElementById('chtip');
+  var DEFAULT_RATE=1.2, SPEEDS=[0.5,0.75,1,1.2,1.5,1.75,2];
+  var DOTS_AFTER=(C.DOTS_AFTER!=null?C.DOTS_AFTER:10); // reveal chapter dots after this many seconds of play
+
+  v.src=C.VIDEO_URL; if(C.POSTER) v.setAttribute('poster',C.POSTER);
+
+  // visitor + session
+  function uid(){ try{var a=new Uint8Array(8);(crypto||window.msCrypto).getRandomValues(a);return Array.prototype.map.call(a,function(b){return('0'+b.toString(16)).slice(-2)}).join('');}catch(e){return 't'+(performance.now()|0);} }
+  var visitorId=localStorage.getItem('ssos_vid'); if(!visitorId){visitorId=uid();localStorage.setItem('ssos_vid',visitorId);}
+  var sessionId=sessionStorage.getItem('ssos_sid'); if(!sessionId){sessionId=uid();sessionStorage.setItem('ssos_sid',sessionId);}
+  function utm(){var p=new URLSearchParams(location.search),o={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){if(p.get(k))o[k]=p.get(k)});return o;}
+
+  // analytics
+  var maxPct=0, reachedCta=false, lastSent=0;
+  function post(url,body,beacon){try{var data=JSON.stringify(body);if(beacon&&navigator.sendBeacon){navigator.sendBeacon(url,new Blob([data],{type:'application/json'}));return;}fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:data,keepalive:!!beacon}).catch(function(){});}catch(e){}}
+  post(C.TRACK_URL,{kind:'visit',visitor_id:visitorId,session_id:sessionId,path:location.pathname,referrer:document.referrer,user_agent:navigator.userAgent,utm:utm()});
+  function sendProgress(beacon){var d=v.duration||0;post(C.TRACK_URL,{kind:'video',visitor_id:visitorId,session_id:sessionId,video_id:'main',duration_seconds:Math.round(d),watched_seconds:Math.round(v.currentTime||0),max_pct:Math.round(maxPct),last_pct:Math.round(d?(v.currentTime/d*100):0),completed:maxPct>=95,reached_cta:reachedCta,utm:utm()},beacon);}
+
+  // deceptive bar curve
+  function feel(real){return Math.min(1,Math.pow(Math.max(0,Math.min(1,real)),C.FEEL_EXP));}
+  function feelInv(disp){return Math.pow(Math.max(0,Math.min(1,disp)),1/C.FEEL_EXP);}
+
+  // chapter dots (sit ON the seek bar)
+  function buildDots(){
+    var d=v.duration||(C.CHAPTERS[C.CHAPTERS.length-1].t+30);
+    Array.prototype.slice.call(seek.querySelectorAll('.dot')).forEach(function(el){ el.parentNode.removeChild(el); });
+    C.CHAPTERS.forEach(function(ch,i){
+      if(ch.t<=0.5 && i===0) return; // no dot at the very start
+      var el=document.createElement('div'); el.className='dot'; el.dataset.i=i;
+      el.style.left=(feel(ch.t/d)*100)+'%';
+      el.addEventListener('mouseenter',function(){ showTip(ch.label, parseFloat(el.style.left)); });
+      el.addEventListener('mouseleave',hideTip);
+      el.addEventListener('click',function(e){ e.stopPropagation(); SP.seekTo(ch.t); flashTip(ch.label, parseFloat(el.style.left)); });
+      seek.appendChild(el);
     });
-    document.querySelector('.cal-frame').src = base + '?' + params.toString();
-    document.getElementById('step-5').classList.remove('active');
-    document.getElementById('step-6').classList.add('active');
-    curStep = 6;
-    prog(6);
-    scrollToForm();
-  }, 600);
-}
+  }
+  function showTip(label,leftPct){ chtip.textContent=label; chtip.style.left=leftPct+'%'; chtip.classList.add('show'); }
+  function hideTip(){ chtip.classList.remove('show'); }
+  function flashTip(label,leftPct){ showTip(label,leftPct); clearTimeout(flashTip._t); flashTip._t=setTimeout(hideTip,1400); }
+  function markActiveDot(){
+    var t=v.currentTime||0, idx=-1;
+    C.CHAPTERS.forEach(function(ch,i){ if(t>=ch.t-0.25) idx=i; });
+    seek.querySelectorAll('.dot').forEach(function(el){ el.classList.toggle('active',+el.dataset.i===idx); });
+  }
+  // speed menu
+  function buildSpeeds(){
+    var row=document.getElementById('spdrow'); row.innerHTML='';
+    SPEEDS.forEach(function(s){
+      var b=document.createElement('button'); b.className='spd'+(s===DEFAULT_RATE?' active':''); b.textContent=s+'x';
+      b.onclick=function(){ v.playbackRate=s; row.querySelectorAll('.spd').forEach(function(x){x.classList.remove('active')}); b.classList.add('active'); };
+      row.appendChild(b);
+    });
+  }
 
-/* ── MODAL CONTROLS ── */
-function openModal() {
-  document.getElementById('modal-overlay').classList.add('open');
-  setTimeout(function(){ document.getElementById('g-name').focus(); }, 250);
-}
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-}
+  window.SP={
+    toggle:function(){ if(v.paused)v.play(); else v.pause(); closeSettings(); },
+    toggleMute:function(){ v.muted=!v.muted; updateMute(); if(!v.muted) tapSound.classList.remove('show'); },
+    unmute:function(){ v.muted=false; if(v.paused)v.play(); tapSound.classList.remove('show'); updateMute(); },
+    seekTo:function(t){ v.currentTime=Math.max(0,t); if(v.paused)v.play(); },
+    seekClick:function(e){ var r=seek.getBoundingClientRect(); var disp=(e.clientX-r.left)/r.width; if(v.duration){ v.currentTime=feelInv(disp)*v.duration; if(v.paused)v.play(); } },
+    toggleSettings:function(e){ e.stopPropagation(); document.getElementById('setmenu').classList.toggle('open'); },
+    fullscreen:function(){ var p=player;(p.requestFullscreen||p.webkitRequestFullscreen||function(){}).call(p); }
+  };
+  function closeSettings(){ var m=document.getElementById('setmenu'); if(m) m.classList.remove('open'); }
+  document.addEventListener('click',closeSettings);
+  var volr=document.getElementById('volr');
+  volr.addEventListener('input',function(){ v.volume=parseFloat(volr.value); v.muted=(v.volume===0); updateMute(); });
+  function updatePP(){var playing=!v.paused;player.classList.toggle('playing',playing);player.classList.toggle('paused',!playing);document.getElementById('ppIcon').innerHTML=playing?'<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';bigplay.classList.toggle('hide',playing||v.currentTime>0);}
+  function updateMute(){document.getElementById('muteIcon').innerHTML=v.muted?'<path d="M3 9v6h4l5 5V4L7 9H3zm13 3 3 3 1.4-1.4L17.8 12l1.6-1.6L18 9l-2 2-2-2-1.4 1.4L14.2 12l-1.6 1.6L14 16z"/>':'<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/>';}
 
-/* ── GATE UNLOCK (called from modal submit) ── */
-function unlockVideo() {
-  var name  = (document.getElementById('g-name').value  || '').trim();
-  var email = (document.getElementById('g-email').value || '').trim();
-  var phone = (document.getElementById('g-phone').value || '').trim();
-  if (!name)  { document.getElementById('g-name').focus();  return; }
-  if (!email) { document.getElementById('g-email').focus(); return; }
-  if (!phone) { document.getElementById('g-phone').focus(); return; }
+  // auto-hide the line+dots/controls a few seconds into playback (don't tempt skipping)
+  var hideT;
+  function showUI(){ player.classList.add('show-ui'); clearTimeout(hideT); if(!v.paused){ hideT=setTimeout(function(){ player.classList.remove('show-ui'); closeSettings(); }, 2800); } }
+  player.addEventListener('mousemove',showUI);
+  player.addEventListener('mouseleave',function(){ if(!v.paused){ clearTimeout(hideT); player.classList.remove('show-ui'); closeSettings(); } });
 
-  var btn = document.getElementById('modal-btn');
-  btn.textContent = 'Loading your video...';
-  btn.disabled = true;
+  v.addEventListener('loadedmetadata',function(){ v.playbackRate=DEFAULT_RATE; buildDots(); });
+  v.addEventListener('play',function(){ updatePP(); showUI(); });
+  v.addEventListener('pause',function(){updatePP();clearTimeout(hideT);player.classList.add('show-ui');sendProgress(false);});
+  v.addEventListener('ended',function(){updatePP();player.classList.add('show-ui');sendProgress(false);});
+  v.addEventListener('timeupdate',function(){var d=v.duration||0;if(!d)return;var real=v.currentTime/d;lfill.style.width=(feel(real)*100)+'%';if(v.currentTime>=DOTS_AFTER)player.classList.add('show-dots');var pct=real*100;if(pct>maxPct)maxPct=pct;markActiveDot();var now=Date.now();if(now-lastSent>5000){lastSent=now;sendProgress(false);}});
+  bigplay.addEventListener('click',function(){v.muted=false;updateMute();});
+  v.addEventListener('playing',function(){if(v.muted)tapSound.classList.add('show');});
 
-  // Fire lead to n8n
-  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      type: 'vsl_gate_lead',
-      name: name, email: email, phone: phone,
-      source: 'demo_homepage_gate'
-    })
-  }).catch(function(){});
+  // CTA reached analytics (form in view)
+  if('IntersectionObserver' in window){ new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting&&!reachedCta){reachedCta=true;sendProgress(false);}})},{threshold:.5}).observe(document.getElementById('capture')); }
+  document.addEventListener('visibilitychange',function(){if(document.hidden)sendProgress(true);});
+  window.addEventListener('pagehide',function(){sendProgress(true);});
+  updatePP();updateMute();buildSpeeds();
 
-  // Inject video src with autoplay then reveal
-  setTimeout(function() {
-    document.getElementById('main-video').src =
-      'https://www.loom.com/embed/b263ab9c01f6499787aec123d7898485?autoplay=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true';
-
-    // Close modal, then fade gate
-    closeModal();
-    setTimeout(function() {
-      var gate = document.getElementById('gate');
-      gate.classList.add('fade-out');
-      document.body.classList.remove('gate-locked');
-      setTimeout(function() { gate.style.display = 'none'; }, 500);
-    }, 150);
-  }, 400);
-}
+  // ── capture form ──
+  var fphone=document.getElementById('f_phone');
+  fphone.addEventListener('input',function(){
+    var d=fphone.value.replace(/\D/g,'').slice(0,10), out='';
+    if(d.length>0)out='('+d.slice(0,3); if(d.length>=4)out+=') '+d.slice(3,6); if(d.length>=7)out+='-'+d.slice(6,10);
+    fphone.value=out;
+  });
+  function validEmail(e){
+    if(!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e)) return false;
+    var dom=(e.split('@')[1]||'').toLowerCase();
+    var bad=['mailinator.com','tempmail.com','temp-mail.org','guerrillamail.com','10minutemail.com','yopmail.com','trashmail.com','getnada.com','throwaway.email','sharklasers.com','example.com','test.com','email.com'];
+    return bad.indexOf(dom)<0;
+  }
+  function plausiblePhone(d){
+    if(d.length!==10) return false;
+    if(/^[01]/.test(d)) return false;                 // area code can't start 0 or 1
+    if(d.charAt(3)==='0'||d.charAt(3)==='1') return false; // exchange can't start 0 or 1
+    if(d.slice(3,6)==='555') return false;            // 555 exchange = fake (e.g. 4045555555)
+    if(/^(\d)\1{9}$/.test(d)) return false;           // all the same digit
+    if(d==='1234567890'||d==='0123456789') return false;
+    return true;
+  }
+  function bad(id){document.getElementById(id).classList.add('bad');document.getElementById(id).focus();}
+  function clearBad(){['f_name','f_phone','f_email','f_biz'].forEach(function(i){document.getElementById(i).classList.remove('bad');});}
+  window.submitCapture=function(){
+    clearBad();
+    var name=document.getElementById('f_name').value.trim();
+    var phoneDigits=fphone.value.replace(/\D/g,'');
+    var email=document.getElementById('f_email').value.trim();
+    var biz=document.getElementById('f_biz').value.trim();
+    var err=document.getElementById('f_err'); err.style.display='none';
+    if(!name){return showErr('Please enter your name.','f_name');}
+    if(!plausiblePhone(phoneDigits)){return showErr('Please enter a real, valid phone number.','f_phone');}
+    if(!validEmail(email)){return showErr('Please enter a valid email address.','f_email');}
+    if(!biz){return showErr('Please enter your business name.','f_biz');}
+    var btn=document.getElementById('ctaBtn'); btn.disabled=true; btn.textContent='Starting secure checkout…';
+    try{localStorage.setItem('ssos_email',email);localStorage.setItem('ssos_name',name);localStorage.setItem('ssos_biz',biz);}catch(e){}
+    reachedCta=true; sendProgress(false);
+    fetch(N8N+'/ssos-funnel-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({product:'website_99',name:name,phone:'+1'+phoneDigits,email:email,business_name:biz,visitor_id:visitorId,session_id:sessionId,utm:utm()})})
+      .then(function(r){return r.json()}).then(function(d){
+        if(d&&d.url){location.href=d.url;}
+        else{var m=(d&&d.error)||'Could not start checkout. Please try again.';showErr(m, /phone/i.test(m)?'f_phone':(/email/i.test(m)?'f_email':null));btn.disabled=false;btn.innerHTML='Get My Website';}
+      }).catch(function(){showErr('Network error. Please try again.');btn.disabled=false;btn.innerHTML='Get My Website';});
+  };
+  function showErr(m,id){var err=document.getElementById('f_err');err.textContent=m;err.style.display='block';if(id)bad(id);return false;}
+})();
 </script>
 </body>
 </html>
