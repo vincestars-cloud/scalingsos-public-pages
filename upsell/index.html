@@ -58,13 +58,17 @@ h1 em{font-style:normal;color:var(--gold);}
 .math{font-size:13px;color:var(--gray);margin-bottom:24px;font-style:italic;}
 
 /* video */
-.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:24px;}
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:24px;cursor:pointer;}
 .video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
 .vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,31,58,.3);cursor:pointer;transition:opacity .25s;}
 .vplay.hide{opacity:0;pointer-events:none;}
 .vcircle{width:clamp(60px,11vw,84px);height:clamp(60px,11vw,84px);border-radius:50%;background:rgba(120,128,140,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
 .vplay:hover .vcircle{transform:scale(1.06);}
 .vcircle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
+.vsound{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;font-size:13px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;z-index:10;transition:opacity .2s;user-select:none;}
+.vsound:hover{background:rgba(0,0,0,.82);}
+.vsound.hide{display:none;}
+.vsound svg{width:15px;height:15px;flex-shrink:0;}
 
 /* yes state */
 .yes-q{font-size:clamp(14px,2vw,16px);font-weight:700;color:var(--navy);margin-bottom:18px;line-height:1.45;}
@@ -98,10 +102,14 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
     <p class="bridge">Your website brings the traffic. Your 24/7 Receptionist makes sure none of it walks away.</p>
 
     <div class="video">
-      <video id="upvid" playsinline preload="metadata"
+      <video id="upvid" playsinline preload="auto" autoplay muted loop
         src="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell.mp4?v=1"
         poster="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell-poster.jpg?v=1"></video>
-      <div class="vplay" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+      <div class="vsound" id="vsound">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+        Enable sound
+      </div>
+      <div class="vplay hide" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
     </div>
 
     <div class="stack">
@@ -163,12 +171,10 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
 window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
 (function(){
   var N8N=window.SSOS_FN.N8N;
-  var RATE=1.2, v=document.getElementById('upvid'), vplay=document.getElementById('vplay');
-  v.addEventListener('loadedmetadata',function(){ v.playbackRate=RATE; });
-  function startVid(){ v.muted=false; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vplay.classList.add('hide'); }
-  vplay.addEventListener('click',startVid);
-  v.addEventListener('play',function(){ v.playbackRate=RATE; vplay.classList.add('hide'); });
-  v.addEventListener('click',function(){ if(v.paused){v.play();} else {v.pause();} });
+  var RATE=1.2, v=document.getElementById('upvid'), vplay=document.getElementById('vplay'), vsound=document.getElementById('vsound');
+  function enableSound(){ v.muted=false; v.loop=false; v.currentTime=0; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vsound.classList.add('hide'); vplay.classList.add('hide'); }
+  vsound.addEventListener('click',function(e){ e.stopPropagation(); enableSound(); });
+  v.addEventListener('click',enableSound);
   var sessionId=new URLSearchParams(location.search).get('session_id')||'';
   try{ if(sessionId) localStorage.setItem('ssos_checkout_session', sessionId); }catch(e){}
   if(sessionId){ fetch(N8N+'/ssos-funnel-order?session_id='+encodeURIComponent(sessionId)).then(function(r){return r.json()}).then(function(d){ if(d&&d.email){ try{localStorage.setItem('ssos_email',d.email);}catch(e){} } }).catch(function(){}); }
