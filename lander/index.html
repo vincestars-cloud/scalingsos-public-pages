@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Watch: The Revenue System We Install For Local Business Owners | ScalingSOS</title>
+<meta name="description" content="Watch how we install a complete revenue system for local service businesses — website, follow-up, reviews, calls, ads, and more."/>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1f3a;
+  --gold:#c9a84c;
+  --gold-hover:#b8962f;
+  --gold-bg:rgba(201,168,76,.08);
+  --gold-border:rgba(201,168,76,.30);
+  --cream:#faf8f3;
+  --white:#ffffff;
+  --gray:#6b7280;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--cream);
+  color:var(--navy);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+/* While the gate is up it covers the full screen, so lock the page
+   behind it — no stray scrollbar. Restored on unlock. */
+body.gate-locked{overflow:hidden;}
+
+/* ── ABOVE-FOLD LOCK — hero + stats = exactly 100vh ── */
+.above-fold{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.hero-wrap{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:clamp(12px,1.8vh,28px) 24px clamp(8px,1.2vh,16px);
+  overflow:hidden;
+}
+.hero{
+  text-align:center;
+  max-width:min(880px, 90vw);
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:clamp(8px,1.4vh,16px);
+}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--gold-border);
+  background:var(--gold-bg);
+  border-radius:999px;
+  padding:6px 18px;
+  font-size:12px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:#7a6023;
+  margin-bottom:0;/* handled by gap */
+}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+
+h1.display{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(30px,min(4.5vw,6.5vh),60px);
+  font-weight:900;
+  line-height:1.07;
+  letter-spacing:-.03em;
+  color:var(--navy);
+  margin-bottom:0;
+  white-space:nowrap;
+}
+h1.display .line1{display:block;color:var(--navy);}
+h1.display .line2{display:block;color:var(--gold);}
+h1.display .line3{display:block;color:var(--navy);}
+
+.sub{
+  font-size:clamp(14px,min(1.6vw,2.2vh),18px);
+  color:rgba(10,31,58,.55);
+  max-width:520px;
+  margin:0 auto;
+  line-height:1.5;
+  font-weight:400;
+}
+
+/* ── VIDEO ── */
+.video-outer{
+  width:100%;
+  max-width:min(660px, calc((100vh - 360px) * 16/9), 75vw);
+  margin:0 auto;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 16px 48px rgba(10,31,58,.18),0 0 0 1px rgba(0,0,0,.07);
+  background:var(--navy);
+  aspect-ratio:16/9;
+  position:relative;
+}
+.video-outer iframe{
+  position:absolute;top:0;left:0;width:100%;height:100%;border:none;
+}
+
+/* ── CTA ── */
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;max-width:min(660px, 75vw);
+  margin:0 auto;
+  background:var(--gold);
+  color:var(--navy);
+  font-family:'Inter',sans-serif;
+  font-size:clamp(12px,min(1.4vw,1.8vh),15px);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  padding:clamp(14px,1.8vh,20px) 32px;
+  border-radius:14px;
+  text-decoration:none;
+  text-align:center;
+  box-shadow:0 8px 28px rgba(201,168,76,.30);
+  transition:background .18s,transform .12s,box-shadow .18s;
+}
+.cta:hover{background:var(--gold-hover);transform:translateY(-1px);box-shadow:0 12px 36px rgba(201,168,76,.38);}
+
+/* ── STATS BAR ── */
+.stats{
+  background:var(--navy);
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border-top:1px solid rgba(255,255,255,.05);
+  flex-shrink:0;
+}
+.stat{
+  padding:clamp(18px,3vw,28px) clamp(12px,3vw,40px);
+  text-align:center;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.stat:last-child{border-right:none;}
+.stat-n{font-size:clamp(16px,3vw,32px);font-weight:900;color:var(--gold);line-height:1;}
+.stat-l{font-size:clamp(9px,1.8vw,11px);color:rgba(255,255,255,.45);letter-spacing:.07em;text-transform:uppercase;margin-top:6px;}
+/* Highlight stat — "No Monthly Fees" */
+.stat.highlight .stat-n{color:#4ade80;font-size:clamp(12px,2.2vw,18px);letter-spacing:.01em;}
+.stat.highlight .stat-l{color:rgba(255,255,255,.55);}
+
+/* ── WHAT'S INCLUDED ── */
+.included{
+  background:var(--navy);
+  padding:80px 20px;
+}
+.included-inner{max-width:900px;margin:0 auto;}
+.sec-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,.12);border:1px solid var(--gold-border);
+  border-radius:999px;padding:5px 14px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:18px;
+}
+.sec-h2{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(28px,4vw,44px);font-weight:800;color:white;
+  letter-spacing:-.02em;line-height:1.08;margin-bottom:10px;
+}
+.sec-sub{font-size:15px;color:rgba(255,255,255,.48);margin-bottom:48px;max-width:520px;}
+/* 7 cards — responsive grid */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.cards{grid-template-columns:repeat(2,1fr);gap:10px;}}
+/* Last card centers if odd count (7 cards total) */
+.card-wide{grid-column:1/-1;}
+@media(max-width:900px){.card-wide{grid-column:auto;}}
+.card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;
+  padding:clamp(14px,2.5vw,24px);
+  transition:border-color .18s,background .18s;
+}
+.card:hover{border-color:rgba(201,168,76,.22);background:rgba(255,255,255,.06);}
+.card-ico{
+  width:40px;height:40px;
+  background:rgba(201,168,76,.13);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;
+}
+.card h3{font-size:15px;font-weight:700;color:white;margin-bottom:6px;line-height:1.3;}
+.card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;}
+.badge{
+  display:inline-block;margin-top:10px;
+  background:rgba(201,168,76,.12);border:1px solid var(--gold-border);
+  border-radius:6px;padding:3px 9px;
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold);
+}
+
+/* ── QUALIFIER FORM — matches scalingsos.com wizard exactly ── */
+.q-wrap{
+  padding:72px 20px 88px;
+  max-width:600px;margin:0 auto;
+}
+.q-hdr{text-align:center;margin-bottom:32px;}
+.q-hdr h2{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(24px,4vw,36px);font-weight:800;
+  color:var(--navy);letter-spacing:-.02em;line-height:1.1;
+}
+
+/* Wizard card — matches scalingsos.com wizard */
+.q-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 30px 80px -25px rgba(0,0,0,.5);
+}
+
+/* Dark header */
+.wiz-head{
+  background:var(--navy);
+  padding:22px 28px;
+}
+.wiz-brand{
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+}
+.wiz-title{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-weight:700;font-size:18px;color:white;letter-spacing:-.01em;line-height:1.25;
+}
+
+/* Progress */
+.prog-wrap{padding:18px 28px 0;background:white;position:relative;}
+.prog-track{
+  height:4px;background:rgba(10,31,58,.08);border-radius:2px;
+  position:relative;overflow:hidden;
+}
+.prog-fill{
+  position:absolute;top:0;left:0;height:100%;
+  background:var(--gold);border-radius:2px;
+  transition:width .35s cubic-bezier(.4,0,.2,1);
+}
+.step-label{
+  text-align:center;padding:12px 28px 0;
+  font-size:13px;color:rgba(10,31,58,.4);font-weight:500;
+  background:white;
+}
+
+/* Form body */
+.wiz-body{
+  padding:28px 32px 36px;background:white;
+  min-height:300px;display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.step{display:none;}
+.step.active{display:flex;flex-direction:column;align-items:center;width:100%;animation:fadeSlide .25s ease both;}
+
+.step-q{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(17px,3vw,22px);font-weight:700;
+  color:var(--navy);letter-spacing:-.01em;line-height:1.2;
+  margin-bottom:8px;
+}
+.step-hint{
+  font-size:14px;color:rgba(10,31,58,.5);
+  line-height:1.5;margin:0 0 22px;max-width:380px;text-align:center;
+}
+
+/* Option buttons — exact scalingsos.com wopt style */
+.choices{
+  display:flex;flex-direction:column;gap:9px;
+  width:100%;max-width:420px;
+}
+.cho{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;
+  border-radius:10px;
+  border:1.5px solid rgba(10,31,58,.1);
+  background:white;color:var(--navy);
+  font-family:inherit;font-size:14px;font-weight:500;
+  cursor:pointer;text-align:left;
+  transition:all .15s;
+}
+.cho:hover{
+  border-color:var(--gold);
+  background:rgba(201,168,76,.05);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(201,168,76,.12);
+}
+.cho::after{
+  content:"→";
+  color:rgba(10,31,58,.25);font-weight:600;flex-shrink:0;margin-left:10px;
+  transition:transform .15s,color .15s;
+}
+.cho:hover::after{color:var(--gold);transform:translateX(3px);}
+
+/* Contact inputs */
+.f-form{display:flex;flex-direction:column;gap:11px;width:100%;max-width:420px;margin-bottom:16px;}
+.f-form input{
+  width:100%;padding:14px 16px;
+  border:1.5px solid rgba(10,31,58,.1);border-radius:10px;
+  font-size:15px;font-family:inherit;color:var(--navy);background:white;
+  outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.f-form input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+.f-form input::placeholder{color:rgba(10,31,58,.3);}
+.sub-btn{
+  min-width:220px;background:var(--gold);color:var(--navy);
+  font-size:15px;font-weight:700;letter-spacing:.04em;
+  padding:16px 28px;border:none;border-radius:10px;
+  cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(201,168,76,.28);
+  transition:background .18s,transform .12s,box-shadow .18s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.sub-btn:hover{background:var(--gold-hover);transform:translateY(-1px);box-shadow:0 10px 28px rgba(201,168,76,.36);}
+.sub-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* Footer — back button + privacy */
+.wiz-footer{
+  padding:14px 28px;
+  background:rgba(10,31,58,.025);
+  border-top:1px solid rgba(10,31,58,.06);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
+}
+.wiz-back{
+  background:transparent;border:none;
+  color:rgba(10,31,58,.45);font-size:13px;font-weight:500;
+  cursor:pointer;font-family:inherit;padding:4px 0;
+  transition:color .14s;
+}
+.wiz-back:hover{color:var(--navy);}
+.wiz-back[hidden]{visibility:hidden;}
+.wiz-meta{font-size:12px;color:rgba(10,31,58,.3);}
+
+/* Success */
+.success{display:none;text-align:center;padding:32px 20px;}
+.success-ico{
+  width:60px;height:60px;background:#d1fae5;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+}
+.success h3{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+.success p{font-size:15px;color:var(--gray);line-height:1.65;}
+.contact-box{
+  margin-top:20px;background:var(--gold-bg);
+  border:1px solid var(--gold-border);border-radius:10px;
+  padding:14px;font-size:14px;color:var(--navy);font-weight:600;line-height:1.65;
+}
+
+/* ── CALENDAR EMBED ── */
+.cal-wrap{width:100%;max-width:480px;}
+.cal-frame{
+  width:100%;height:600px;
+  border:none;border-radius:12px;
+  background:white;
+}
+@media(max-width:480px){.cal-frame{height:560px;}}
+
+/* ── FOOTER ── */
+footer{
+  background:rgba(10,31,58,.03);
+  border-top:1px solid rgba(10,31,58,.06);
+  padding:22px 20px;text-align:center;
+  font-size:12px;color:rgba(10,31,58,.3);
+}
+
+/* ── GATE SCREEN — no scroll, credibility bar pinned bottom ── */
+#gate{
+  position:fixed;inset:0;
+  background:#faf8f3;
+  z-index:200;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:opacity .5s ease;
+}
+#gate.fade-out{opacity:0;pointer-events:none;}
+.gate-main{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px 24px;
+  overflow:hidden;
+}
+.gate-inner{
+  max-width:896px;
+  width:100%;
+  text-align:center;
+}
+/* Credibility bar — dark, pinned to bottom */
+.gate-cred{
+  flex-shrink:0;
+  background:#0a1f3a;
+  padding:14px 24px;
+  text-align:center;
+}
+.gate-cred-label{
+  font-size:14px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:#c9a84c;
+  margin-bottom:12px;
+}
+.gate-cred-logos{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:10px 28px;
+  font-size:20px;font-weight:700;
+  color:rgba(255,255,255,.92);
+}
+.gate-cred-logos .sep{color:rgba(255,255,255,.25);}
+@media(max-width:480px){
+  .gate-pill{font-size:10px;padding:5px 12px;}
+  .gate-cred{padding:10px 16px;}
+  .gate-cred-label{font-size:12px;margin-bottom:8px;}
+  .gate-cred-logos{font-size:16px;gap:8px 18px;}
+  .gate-main{padding:20px 16px;}
+}
+
+/* Pill — exact NG Financial values */
+.gate-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(201,168,76,.30);
+  background:rgba(201,168,76,.05);
+  border-radius:999px;
+  padding:6px 16px;
+  font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:#b8962f;
+  margin-bottom:24px;
+}
+.gate-pill .dot{width:6px;height:6px;border-radius:50%;background:#c9a84c;flex-shrink:0;}
+
+/* Headline */
+.gate-h1{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(26px,5vw,60px);
+  font-weight:700;
+  line-height:1.12;
+  letter-spacing:-.025em;
+  color:#0a1f3a;
+  text-wrap:balance;
+  margin-bottom:0;
+}
+.gate-h1 em{color:#b8962f;font-style:normal;}
+.gate-h1 .gate-ul{font-weight:800;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;white-space:nowrap;}
+/* nowrap only on tablet+ where lines actually fit */
+@media(min-width:640px){
+  .gate-h1{line-height:1.08;}
+  .gate-nowrap{white-space:nowrap;}
+}
+
+/* Subhead */
+.gate-sub{
+  font-size:clamp(15px,1.8vw,20px);
+  color:rgba(10,31,58,.75);
+  line-height:1.65;
+  max-width:672px;
+  margin:20px auto 0;
+}
+.gate-sub strong{font-weight:600;color:#0a1f3a;}
+
+/* Button wrapper */
+.gate-cta-wrap{
+  margin-top:32px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+
+/* Button */
+.btn-green{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:18px 28px;
+  background:linear-gradient(to bottom, #22c55e, #15803d);
+  color:white;
+  font-family:'Inter',sans-serif;
+  font-size:clamp(14px,2vw,22px);font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:none;border-radius:16px;cursor:pointer;
+  box-shadow:0 25px 50px -12px rgba(21,128,61,.40);
+  outline:2px solid rgba(21,128,61,.30);outline-offset:0;
+  animation:pulse-cta 2.5s ease-in-out infinite;
+  transition:transform .15s,box-shadow .15s;
+  text-decoration:none;
+  width:100%;max-width:480px;
+}
+@media(min-width:640px){
+  .btn-green{padding:28px 48px;width:auto;max-width:none;}
+}
+.btn-green:hover{
+  background:linear-gradient(to bottom, #16a34a, #166534);
+  transform:scale(1.03);
+  box-shadow:0 25px 50px -12px rgba(21,128,61,.50);
+  animation:none;
+}
+.btn-green:disabled{opacity:.6;cursor:not-allowed;animation:none;}
+@keyframes pulse-cta{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.02);}
+}
+
+/* Disclaimer — text-xs, 70% navy, leading-relaxed, max-w-xl */
+.gate-disclaimer{
+  font-size:12px;
+  color:rgba(10,31,58,.70);
+  line-height:1.7;
+  max-width:448px;
+  margin:0 auto;
+  padding:0 16px;
+}
+.gate-disclaimer strong{font-weight:600;}
+
+/* ── MODAL ── */
+#modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(10,31,58,.55);
+  z-index:300;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s ease;
+}
+#modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-card{
+  background:white;
+  border-radius:20px;
+  padding:36px 32px 32px;
+  max-width:460px;width:100%;
+  box-shadow:0 40px 100px rgba(10,31,58,.28);
+  position:relative;
+  transform:translateY(16px);
+  transition:transform .25s ease;
+}
+#modal-overlay.open .modal-card{transform:translateY(0);}
+.modal-close{
+  position:absolute;top:16px;right:18px;
+  background:none;border:none;cursor:pointer;
+  color:rgba(10,31,58,.35);font-size:20px;line-height:1;
+  transition:color .14s;padding:4px;
+}
+.modal-close:hover{color:var(--navy);}
+.modal-title{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  font-size:clamp(18px,2.5vw,22px);font-weight:800;
+  color:var(--navy);letter-spacing:-.02em;line-height:1.2;
+  margin-bottom:22px;
+}
+.modal-form{display:flex;flex-direction:column;gap:11px;margin-bottom:14px;}
+.modal-form input{
+  width:100%;padding:14px 16px;
+  border:1.5px solid rgba(10,31,58,.1);border-radius:10px;
+  font-size:15px;font-family:inherit;color:var(--navy);background:white;
+  outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.modal-form input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1);}
+.modal-form input::placeholder{color:rgba(10,31,58,.3);}
+.btn-gold{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px 24px;
+  background:var(--gold);color:var(--navy);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;
+  letter-spacing:.04em;text-transform:uppercase;
+  border:none;border-radius:10px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(201,168,76,.3);
+  transition:background .18s,transform .12s;
+}
+.btn-gold:hover{background:var(--gold-hover);transform:translateY(-1px);}
+.btn-gold:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.modal-disclaimer{
+  font-size:11.5px;color:rgba(10,31,58,.38);
+  line-height:1.6;text-align:center;
+}
+.modal-disclaimer strong{color:rgba(10,31,58,.55);}
+</style>
+</head>
+<body class="gate-locked">
+
+<!-- ══════════════════════════════════════
+     GATE SCREEN — shown on page load
+     Button opens modal → form submit reveals video
+     ══════════════════════════════════════ -->
+<div id="gate">
+  <div class="gate-main">
+    <div class="gate-inner">
+      <div class="gate-pill"><span class="dot"></span>Free Video For Business Owners Doing $150K+/yr</div>
+
+      <h1 class="gate-h1">
+        This <em>$200 Strategy</em> <span class="gate-ul gate-nowrap">Crushes</span> <span class="gate-nowrap">$10k+ Marketing Budgets.</span>
+      </h1>
+
+      <p class="gate-sub">
+        No agency. No ad budget. No extra hours. Watch the free video to see <strong>the system that replaces all three</strong>.
+      </p>
+
+      <div class="gate-cta-wrap">
+        <button class="btn-green" onclick="openModal()">
+          → Watch The Free Video Now
+        </button>
+        <p class="gate-disclaimer">
+          <strong>Important:</strong> This video is specifically for service businesses doing $150K+/year. If that's not you, this isn't the right fit.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-cred">
+    <p class="gate-cred-label">Strategy Backed By Research From</p>
+    <div class="gate-cred-logos">
+      <span>Harvard</span><span class="sep">•</span><span>Bain</span><span class="sep">•</span><span>Google</span><span class="sep">•</span><span>Gartner</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL — form gate before video reveals
+     ══════════════════════════════════════ -->
+<div id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div class="modal-title">Enter Your Details To Watch The Free Video</div>
+
+    <div class="modal-form">
+      <input type="text"  id="g-name"  placeholder="Full Name"       autocomplete="name"/>
+      <input type="email" id="g-email" placeholder="Email Address"    autocomplete="email"/>
+      <input type="tel"   id="g-phone" placeholder="(555) 123-4567"   autocomplete="tel"/>
+    </div>
+
+    <button class="btn-gold" id="modal-btn" onclick="unlockVideo()">
+      Get Access Now
+    </button>
+
+    <p class="modal-disclaimer" style="margin-top:12px;">
+      <strong>Important:</strong> This video is for service businesses doing $150K+/year who are serious about a better revenue system. If that's not you, this isn't the right fit.
+    </p>
+  </div>
+</div>
+
+<!-- ABOVE FOLD LOCK -->
+<div class="above-fold">
+
+<!-- HERO -->
+<section class="hero-wrap">
+<div class="hero">
+  <div class="pill"><span class="dot"></span>For Business Owners</div>
+
+  <h1 class="display">
+    <span class="line1">Watch How We Install</span>
+    <span class="line2">The Revenue System</span>
+    <span class="line3">Your Business Is Missing</span>
+  </h1>
+
+  <p class="sub">
+    For businesses doing $300K+ per year.
+  </p>
+
+  <!-- Loom Video — src injected with autoplay after gate submit -->
+  <div class="video-outer">
+    <iframe id="main-video" src=""
+      frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+  </div>
+
+  <a href="#qualifier" class="btn-green" style="border-radius:12px;text-decoration:none;font-size:clamp(12px,1.4vw,14px);padding:clamp(14px,1.8vh,18px) 32px;max-width:min(660px,75vw);letter-spacing:.07em;">
+    See If Your Business Qualifies
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+  </a>
+</div>
+</section>
+
+<!-- Stats bar -->
+<div class="stats">
+  <div class="stat"><div class="stat-n">142+</div><div class="stat-l">Revenue Systems Built</div></div>
+  <div class="stat highlight"><div class="stat-n">No Monthly Fees</div><div class="stat-l">One-Time Investment</div></div>
+  <div class="stat"><div class="stat-n">1 Day</div><div class="stat-l">Delivery</div></div>
+</div>
+
+</div><!-- /above-fold -->
+
+<!-- QUALIFIER FORM -->
+<section id="qualifier" class="q-wrap">
+  <div class="q-hdr">
+    <h2>Book Your Revenue System Diagnostic</h2>
+  </div>
+
+  <div class="q-card">
+    <!-- Dark header -->
+    <div class="wiz-head">
+      <div class="wiz-brand">ScalingSOS</div>
+      <div class="wiz-title">Apply for Your Revenue System Diagnostic</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="prog-wrap">
+      <div class="prog-track">
+        <div class="prog-fill" id="prog-fill" style="width:16%"></div>
+      </div>
+    </div>
+    <div class="step-label" id="step-label">Step 1 of 6</div>
+
+    <!-- Form body -->
+    <div class="wiz-body">
+
+      <!-- Step 1: Bottleneck -->
+      <div class="step active" id="step-1">
+        <p class="step-q">Which of these best describes your biggest bottleneck right now?</p>
+        <p class="step-hint">Be honest — this tells us where to focus first.</p>
+        <div class="choices">
+          <button class="cho" onclick="go(1,'Not enough qualified booked calls')">We don't have enough qualified booked calls</button>
+          <button class="cho" onclick="go(1,'Too many unqualified calls')">Too many booked calls are unqualified / wrong fit</button>
+          <button class="cho" onclick="go(1,'Show rate too low')">Our show rate is too low</button>
+          <button class="cho" onclick="go(1,'Close rate low or inconsistent')">Our close rate is low and/or inconsistent</button>
+          <button class="cho" onclick="go(1,'Sales cycle too long')">Our sales cycle is too long</button>
+          <button class="cho" onclick="go(1,'Offer / positioning unclear')">Our offer / positioning doesn't feel clear or compelling</button>
+          <button class="cho" onclick="go(1,'Weak LTV / backend revenue')">We're leaving money on the table after the first sale</button>
+          <button class="cho" onclick="go(1,'Ops can\'t keep up with sales')">Operations / delivery can't keep up with more sales</button>
+          <button class="cho" onclick="go(1,'Not sure — diagnose it')">I'm not sure — I want you to diagnose it</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Revenue -->
+      <div class="step" id="step-2">
+        <p class="step-q">Average monthly revenue over the last 3 months?</p>
+        <p class="step-hint">We work with businesses at specific stages — this confirms fit.</p>
+        <div class="choices">
+          <button class="cho" onclick="go(2,'$0 – $10k / month')">$0 – $10k / month</button>
+          <button class="cho" onclick="go(2,'$10k – $50k / month')">$10k – $50k / month</button>
+          <button class="cho" onclick="go(2,'$50k – $150k / month')">$50k – $150k / month</button>
+          <button class="cho" onclick="go(2,'$150k – $500k / month')">$150k – $500k / month</button>
+          <button class="cho" onclick="go(2,'$500k+ / month')">$500k+ / month</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Industry (text input) -->
+      <div class="step" id="step-3">
+        <p class="step-q">What industry are you in?</p>
+        <p class="step-hint">Tell us in your own words — e.g. "HVAC", "Roofing", "Med Spa".</p>
+        <div class="f-form">
+          <input type="text" id="f-industry" placeholder="Your industry" autocomplete="off"/>
+          <button class="sub-btn" onclick="goInput(3, 'f-industry')">
+            Continue
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: Who are we talking to -->
+      <div class="step" id="step-4">
+        <p class="step-q">Who are we talking to?</p>
+        <p class="step-hint">We'll send your call confirmation here.</p>
+        <div class="f-form">
+          <input type="text" id="f-name" placeholder="Your full name" autocomplete="name"/>
+          <input type="text" id="f-biz" placeholder="Business name"/>
+          <button class="sub-btn" onclick="goInput(4, 'f-name')">
+            Continue
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Contact -->
+      <div class="step" id="step-5">
+        <p class="step-q">How do we reach you?</p>
+        <p class="step-hint">We'll send a confirmation to your email and phone.</p>
+        <div class="f-form" id="f-form">
+          <input type="email" id="f-email" placeholder="you@yourcompany.com" autocomplete="email"/>
+          <input type="tel" id="f-phone" placeholder="(555) 555-5555" autocomplete="tel"/>
+          <button class="sub-btn" id="sub-btn" onclick="submitForm()">
+            Continue to Booking
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 6: Pick a time (Google Calendar) -->
+      <div class="step" id="step-6">
+        <p class="step-q">Pick a time for your diagnostic call.</p>
+        <p class="step-hint">30–45 minutes. You'll leave with a clear diagnosis of your biggest revenue constraint.</p>
+        <div class="cal-wrap">
+          <iframe src="" class="cal-frame" frameborder="0"></iframe>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div class="success" id="success-state">
+        <div class="success-ico">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>You're booked!</h3>
+        <p>Check your email for a confirmation. We'll see you on the call.</p>
+        <div class="contact-box">
+          Questions? Reach Vince directly:<br/>
+          <strong style="color:#c9a84c;">(678) 404-0309</strong> &nbsp;·&nbsp; <strong style="color:#c9a84c;">vince@inleap.ai</strong>
+        </div>
+      </div>
+
+    </div><!-- /wiz-body -->
+
+    <!-- Footer with back button only -->
+    <div class="wiz-footer">
+      <button class="wiz-back" id="wiz-back" onclick="goBack()" hidden>← Back</button>
+      <span class="wiz-meta"></span>
+    </div>
+
+  </div><!-- /q-card -->
+</section>
+
+<!-- What's included -->
+<section class="included">
+  <div class="included-inner">
+    <div class="sec-pill">What's included</div>
+    <h2 class="sec-h2">Everything you need.<br/>Nothing you don't.</h2>
+    <p class="sec-sub">We build the whole thing. You just confirm you want to keep it.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3>Website Redesign</h3>
+        <p>Your site rebuilt to convert visitors into calls and quote requests.</p>
+        <span class="badge">Built Free</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Database Reactivation</h3>
+        <p>Revive old leads and past customers — without spending on new ads.</p>
+        <span class="badge">Automated</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h3>Reviews &amp; Referrals System</h3>
+        <p>Automatically collects Google reviews and referrals after every completed job.</p>
+        <span class="badge">Always On</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7.91a16 16 0 0 0 6 6l.77-.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3>24/7 Follow Up &amp; Missed Calls</h3>
+        <p>Captures every lead — overnight, weekends, while you're on a job.</p>
+        <span class="badge">Never Misses</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>Sales Call Grader &amp; Roleplay Coach</h3>
+        <p>Grades every sales call and trains your team to close more.</p>
+        <span class="badge">Closes More</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M3 10h7v11H3z"/><path d="M13 10h8v4h-8z"/><path d="M13 17h8v4h-8z"/></svg>
+        </div>
+        <h3>Paid Ads &amp; Nurturing</h3>
+        <p>Run ads that convert, with automated follow-up sequences that keep leads warm.</p>
+        <span class="badge">More Leads</span>
+      </div>
+      <div class="card">
+        <div class="card-ico">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c9a84c" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Owner Dashboard</h3>
+        <p>Every lead, call, and message in one view. Know exactly what's coming in.</p>
+        <span class="badge">Live Data</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 ScalingSOS
+</footer>
+
+<script>
+var A = {}, curStep = 1, totalSteps = 6;
+
+function prog(step) {
+  var pct = step > totalSteps ? 100 : Math.round((step / totalSteps) * 100);
+  pct = Math.max(16, pct);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('step-label').textContent = step > totalSteps ? 'Complete!' : 'Step ' + step + ' of ' + totalSteps;
+  // Hide back button on step 1 and on calendar step
+  document.getElementById('wiz-back').hidden = (step <= 1 || step === 6);
+}
+
+function scrollToForm() {
+  window.scrollTo({top: document.getElementById('qualifier').offsetTop - 20, behavior:'smooth'});
+}
+
+function go(cur, val) {
+  A['s'+cur] = val;
+  var el = document.getElementById('step-'+cur);
+  var nx = document.getElementById('step-'+(cur+1));
+  if (el) el.classList.remove('active');
+  if (nx) { nx.classList.add('active'); curStep = cur + 1; prog(curStep); scrollToForm(); }
+}
+
+function goInput(cur, fieldId) {
+  var val = (document.getElementById(fieldId).value||'').trim();
+  if (!val) { document.getElementById(fieldId).focus(); return; }
+  A['s'+cur] = val;
+  var el = document.getElementById('step-'+cur);
+  var nx = document.getElementById('step-'+(cur+1));
+  if (el) el.classList.remove('active');
+  if (nx) { nx.classList.add('active'); curStep = cur + 1; prog(curStep); scrollToForm(); }
+}
+
+function goBack() {
+  if (curStep <= 1 || curStep === 6) return;
+  var el = document.getElementById('step-'+curStep);
+  if (el) el.classList.remove('active');
+  curStep--;
+  var prev = document.getElementById('step-'+curStep);
+  if (prev) prev.classList.add('active');
+  prog(curStep);
+  scrollToForm();
+}
+
+function submitForm() {
+  var email = (document.getElementById('f-email').value||'').trim();
+  var phone = (document.getElementById('f-phone').value||'').trim();
+  var name = (document.getElementById('f-name').value||'').trim();
+  var biz = (document.getElementById('f-biz').value||'').trim();
+  if (!email) { document.getElementById('f-email').focus(); return; }
+  if (!phone) { document.getElementById('f-phone').focus(); return; }
+  var btn = document.getElementById('sub-btn');
+  btn.innerHTML = 'Saving your info...';
+  btn.disabled = true;
+  var payload = {
+    type: 'vsl_diagnostic_application',
+    name: name, business_name: biz,
+    phone: phone, email: email,
+    bottleneck: A.s1||'',
+    monthly_revenue: A.s2||'',
+    industry: A.s3||'',
+    source: 'vsl_book_call'
+  };
+  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+  }).catch(function(){});
+  if (biz && phone) {
+    fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-generate-demo', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        business_name: biz, phone: phone, email: email,
+        industry: A.s3||'Home Services', city: 'Atlanta GA', source: 'vsl'
+      })
+    }).catch(function(){});
+  }
+  // Advance to calendar step with pre-filled params
+  setTimeout(function() {
+    var base = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1BttCX2_LJ0wU6bskvLxG_JVm2kGs3GFHglGpM4P0jjnPuijf-GYFt2yOKwhMiJYDgqYBaPbNE';
+    // Split full name into first / last for Google Calendar fields
+    var nameParts = (name || '').trim().split(/\s+/);
+    var firstName = nameParts[0] || '';
+    var lastName = nameParts.slice(1).join(' ') || '';
+    // Purpose of the Meeting → business + bottleneck context
+    var purpose = (biz ? biz + ' — ' : '') + (A.s1 || '');
+    var params = new URLSearchParams({
+      gv: 'true',
+      name: name || '',          // full name (populates First name field)
+      'last': lastName,          // last name
+      email: email || '',        // email address
+      phone: phone || '',        // phone number
+      details: purpose           // Purpose of the Meeting
+    });
+    document.querySelector('.cal-frame').src = base + '?' + params.toString();
+    document.getElementById('step-5').classList.remove('active');
+    document.getElementById('step-6').classList.add('active');
+    curStep = 6;
+    prog(6);
+    scrollToForm();
+  }, 600);
+}
+
+/* ── MODAL CONTROLS ── */
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('g-name').focus(); }, 250);
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+/* ── GATE UNLOCK (called from modal submit) ── */
+function unlockVideo() {
+  var name  = (document.getElementById('g-name').value  || '').trim();
+  var email = (document.getElementById('g-email').value || '').trim();
+  var phone = (document.getElementById('g-phone').value || '').trim();
+  if (!name)  { document.getElementById('g-name').focus();  return; }
+  if (!email) { document.getElementById('g-email').focus(); return; }
+  if (!phone) { document.getElementById('g-phone').focus(); return; }
+
+  var btn = document.getElementById('modal-btn');
+  btn.textContent = 'Loading your video...';
+  btn.disabled = true;
+
+  // Fire lead to n8n
+  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      type: 'vsl_gate_lead',
+      name: name, email: email, phone: phone,
+      source: 'demo_homepage_gate'
+    })
+  }).catch(function(){});
+
+  // Inject video src with autoplay then reveal
+  setTimeout(function() {
+    document.getElementById('main-video').src =
+      'https://www.loom.com/embed/b263ab9c01f6499787aec123d7898485?autoplay=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true';
+
+    // Close modal, then fade gate
+    closeModal();
+    setTimeout(function() {
+      var gate = document.getElementById('gate');
+      gate.classList.add('fade-out');
+      document.body.classList.remove('gate-locked');
+      setTimeout(function() { gate.style.display = 'none'; }, 500);
+    }, 150);
+  }, 400);
+}
+</script>
+</body>
+</html>
