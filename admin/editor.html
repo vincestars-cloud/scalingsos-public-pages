@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ScalingSOS — AI Page Editor</title>
+<style>
+  :root{--green:#16a34a;--green-d:#15803d;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--red:#dc2626;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:16px;margin:0;font-weight:600}
+  header .badge{font-size:11px;background:var(--green);padding:3px 8px;border-radius:999px;font-weight:600}
+  header a{color:#cbd5e1;font-size:13px;text-decoration:none;margin-left:auto}
+  header a:hover{color:#fff}
+  .wrap{display:flex;height:calc(100vh - 49px)}
+  .panel{width:460px;min-width:400px;background:var(--card);border-right:1px solid var(--line);overflow-y:auto;padding:18px}
+  .preview{flex:1;background:#fff;display:flex;flex-direction:column}
+  .preview .bar{padding:8px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .preview iframe{flex:1;border:0;width:100%;background:#fff}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:14px 0 5px;text-transform:uppercase;letter-spacing:.4px}
+  select,input[type=text],textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea{min-height:80px;resize:vertical;line-height:1.45}
+  .row{display:flex;gap:8px}
+  button{cursor:pointer;border:0;border-radius:9px;font-size:14px;font-weight:600;padding:11px 14px;transition:.12s}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--green);color:#fff;width:100%}
+  .btn-primary:hover:not(:disabled){background:var(--green-d)}
+  .btn-pub{background:var(--ink);color:#fff;flex:1}
+  .btn-pub:hover:not(:disabled){background:#1e293b}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line);flex:1}
+  .btn-ghost:hover:not(:disabled){background:var(--bg)}
+  .btn-warn{background:#fff;color:var(--red);border:1px solid #fecaca;flex:1}
+  .btn-warn:hover:not(:disabled){background:#fef2f2}
+  .hint{font-size:12px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+  .note{background:#f0fdf4;border:1px solid #bbf7d0;color:var(--green-d);padding:9px 11px;border-radius:9px;font-size:13px;margin-top:12px}
+  .edits{margin-top:12px}
+  .edit{border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:8px;font-size:12px;background:#fafafa;display:flex;gap:9px;align-items:flex-start}
+  .edit .del{color:var(--red);background:#fef2f2;padding:1px 4px;border-radius:4px;text-decoration:line-through}
+  .edit .ins{color:var(--green-d);background:#f0fdf4;padding:1px 4px;border-radius:4px}
+  .edit code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word;display:block;margin-top:3px}
+  .edit img{width:42px;height:42px;object-fit:cover;border-radius:6px;border:1px solid var(--line);flex:none}
+  .imgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+  .imgcard{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fafafa;font-size:11px}
+  .imgcard img{width:100%;height:72px;object-fit:cover;display:block;background:#eee}
+  .imgcard .lbl{padding:4px 6px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .imgcard button{width:100%;border-radius:0;border-top:1px solid var(--line);background:#fff;color:var(--green-d);font-size:11px;padding:6px}
+  .imgcard button:hover{background:#f0fdf4}
+  #log{margin-top:14px;font-size:12px;color:var(--muted);white-space:pre-wrap;line-height:1.5;border-top:1px dashed var(--line);padding-top:10px;min-height:18px}
+  .pill{font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid #cbd5e1;border-top-color:var(--green);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .sec{border-top:1px solid var(--line);margin-top:18px;padding-top:6px}
+  .sec h3{font-size:13px;margin:8px 0 0;font-weight:700}
+  .muted-sm{font-size:11px;color:var(--muted);margin-top:2px}
+  details summary{cursor:pointer;font-size:13px;font-weight:700;margin-top:6px;color:var(--ink)}
+  .chk{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin:10px 0 0}
+  .chk input{width:auto}
+</style>
+</head>
+<body>
+<header>
+  <span class="badge">ScalingSOS</span>
+  <h1>AI Page Editor</h1>
+  <a href="index.html">&larr; Back to Admin</a>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <label for="slug">Demo page (paste the full URL or the slug)</label>
+    <input id="slug" type="text" placeholder="https://demo.scalingsos.com/fancy-home-care-services/" autocomplete="off">
+    <datalist id="slugs"></datalist>
+    <div class="row" style="margin-top:8px"><button class="btn-ghost" id="loadBtn">Load page</button></div>
+    <div class="muted-sm" id="loadMeta"></div>
+
+    <div class="sec">
+      <h3>1. Edit text &amp; content</h3>
+      <textarea id="instruction" placeholder="e.g. He doesn't do AC work — he does RV hot water heaters, plumbing leaks, soft floors and roof resealing. Rewrite the services to match." disabled></textarea>
+      <button class="btn-primary" id="genBtn" disabled style="margin-top:8px">Generate edit with AI</button>
+      <p class="hint">AI proposes exact changes; repeated cards update together. Nothing goes live until you Publish.</p>
+    </div>
+
+    <div class="sec">
+      <h3>2. Replace a logo or photo</h3>
+      <p class="muted-sm">Click an image, upload a replacement. Swaps it everywhere it appears.</p>
+      <div class="imgrid" id="imgrid"></div>
+      <div class="muted-sm" id="imgNote"></div>
+    </div>
+
+    <div class="sec">
+      <details>
+        <summary>3. Add a new image</summary>
+        <label for="addWhere" style="margin-top:10px">Where should it go?</label>
+        <input id="addWhere" type="text" placeholder="e.g. below the headline / in the gallery section" disabled>
+        <div class="row" style="margin-top:8px"><button class="btn-ghost" id="addImgBtn" disabled>Choose image &amp; add</button></div>
+      </details>
+    </div>
+
+    <div id="note"></div>
+    <div class="edits" id="edits"></div>
+
+    <div class="sec" id="actions" style="display:none">
+      <h3>Pending changes</h3>
+      <div id="queuedPrompts" class="muted-sm" style="margin-top:6px"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn-pub" id="pubBtn">Publish to live site</button>
+        <button class="btn-ghost" id="discardBtn">Discard pending</button>
+      </div>
+      <p class="hint">Your prompts are saved to the Change log when you publish.</p>
+    </div>
+
+    <div class="sec" id="clientSec" style="display:none">
+      <h3>Give it to the client</h3>
+      <details>
+        <summary>Booking setup (where completed bookings go)</summary>
+        <p class="muted-sm" style="margin-top:6px">Uses the client's own resources, not yours. Paste their Google Apps Script / Formspree / Web3Forms URL. Leave blank to skip.</p>
+        <label for="bookEndpoint" style="margin-top:8px">Booking endpoint URL</label>
+        <input id="bookEndpoint" type="text" placeholder="https://script.google.com/macros/s/.../exec">
+        <label for="bookEmail" style="margin-top:8px">Client email (for the setup script)</label>
+        <input id="bookEmail" type="text" placeholder="owner@theirbusiness.com">
+        <div class="row" style="margin-top:8px"><button class="btn-ghost" id="copyScriptBtn">Copy Google Sheet + email script</button></div>
+        <p class="hint">Click copy, then in the client's Google account: Sheets &rarr; Extensions &rarr; Apps Script, paste, set EMAIL, Deploy as Web App ("anyone"), paste the URL above.</p>
+      </details>
+      <div class="row" style="margin-top:10px">
+        <button class="btn-pub" id="dlBtn">Download for client</button>
+      </div>
+      <p class="hint">Self-contained file. The ScalingSOS demo bar is always removed. No edits required first.</p>
+      <div class="row" style="margin-top:8px"><button class="btn-warn" id="revertBtn">Revert last publish</button></div>
+    </div>
+
+    <div class="sec" id="logSec" style="display:none">
+      <details>
+        <summary>Change log &amp; restore</summary>
+        <p class="muted-sm" style="margin-top:6px">Every published version. Restore any one — it goes back live and stays reversible.</p>
+        <div class="row" style="margin-top:8px"><button class="btn-ghost" id="histBtn">Refresh change log</button></div>
+        <div id="histList" style="margin-top:8px"></div>
+      </details>
+    </div>
+
+    <div id="log"></div>
+  </div>
+
+  <div class="preview">
+    <div class="bar">
+      <span class="pill" id="modePill">No page loaded</span>
+      <span id="liveLink"></span>
+      <span id="enginePill"></span>
+    </div>
+    <iframe id="frame" title="preview"></iframe>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<script>
+const WEBHOOK = 'https://n8n.americanlifeteam.com/webhook/scalingsos-ai-edit';
+const REPO = 'vincestars-cloud/scalingsos-public-pages';
+const SKIP = new Set(['admin','.github','assets','campaign-previews','images','img','css','js','lander','preview']);
+const IMG_RE = /(data:[a-zA-Z0-9.+\/-]+;base64,)[A-Za-z0-9+\/=\s]+/g;
+
+let slug = '';
+let originalHtml = '';
+let pendingEdits = [];
+let changeNotes = [];
+let promptLog = [];
+let imageList = [];
+let imgMap = [];
+let blobUrl = null;
+let fileResolver = null;
+
+const $ = id => document.getElementById(id);
+function log(msg, isErr){ $('log').innerHTML += (isErr ? '<span style="color:#dc2626">' : '<span>') + escapeHtml(msg) + '</span>\n'; $('log').scrollTop = 1e9; }
+function clearLog(){ $('log').innerHTML=''; }
+function escapeHtml(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function cleanTxt(s){ return (s||'').replace(IMG_RE,'$1[image]').replace(/__IMG_\d+__/g,'[image]'); }
+
+function parseSlug(v){
+  v=(v||'').trim();
+  if(!v) return '';
+  if(v.includes('/')){
+    try{ const u = v.includes('://') ? new URL(v) : new URL('https://'+v); const parts=u.pathname.split('/').filter(Boolean); return parts[0]||''; }
+    catch(e){ const p=v.replace(/^https?:\/\//,'').split('/').filter(Boolean); return p.length>1 ? p[1] : p[0]; }
+  }
+  return v;
+}
+
+// ---- token expansion + edit application (mirrors server publish logic) ----
+function expand(s){ return (s||'').replace(/__IMG_(\d+)__/g, (m,d)=>{ const k=+d; return imgMap[k]!==undefined?imgMap[k]:m; }); }
+function occ(hay,needle){ if(!needle) return 0; let c=0,i=0; while((i=hay.indexOf(needle,i))>=0){c++;i+=needle.length;} return c; }
+function applyEdits(html, edits){
+  let out = html, applied = 0; const failed = [];
+  for (const ed of edits){
+    if (ed && ed.img_replace){
+      if (ed._oldFull && out.indexOf(ed._oldFull) >= 0){ out = out.split(ed._oldFull).join(ed.replace||''); applied++; }
+      else failed.push(ed._label || 'image');
+      continue;
+    }
+    if (!ed || typeof ed.search !== 'string'){ failed.push('invalid'); continue; }
+    const s = expand(ed.search), rep = expand(ed.replace||'');
+    const n = occ(out, s);
+    if (n === 0){ failed.push((ed.search||'').slice(0,50)+' (no match)'); continue; }
+    if (n > 8){ failed.push((ed.search||'').slice(0,40)+' (too generic, '+n+'x)'); continue; }
+    out = out.split(s).join(rep); applied++;
+  }
+  return { html: out, applied, failed };
+}
+function forPublish(edits){
+  return edits.map(ed => ed.img_replace
+    ? { img_replace:true, search_prefix:ed.search_prefix, replace:ed.replace }
+    : { search:ed.search, replace:ed.replace });
+}
+
+function renderPreview(){
+  const r = applyEdits(originalHtml, pendingEdits);
+  if (blobUrl) URL.revokeObjectURL(blobUrl);
+  blobUrl = URL.createObjectURL(new Blob([r.html], {type:'text/html'}));
+  $('frame').src = blobUrl;
+  return r;
+}
+
+function renderEdits(){
+  const box = $('edits'); box.innerHTML = '';
+  pendingEdits.forEach((ed,i)=>{
+    const d = document.createElement('div'); d.className='edit';
+    if (ed.img_replace){
+      d.innerHTML = '<img src="'+ed.replace+'" alt=""><div style="flex:1"><b>Replace image</b><div class="muted-sm">'+escapeHtml(ed._label||'')+'</div></div>';
+    } else {
+      d.innerHTML = '<div style="flex:1"><b>Change '+(i+1)+'</b>'
+        + '<code><span class="del">'+escapeHtml(cleanTxt(ed.search).slice(0,180))+'</span></code>'
+        + '<code><span class="ins">'+escapeHtml(cleanTxt(ed.replace).slice(0,180))+'</span></code></div>';
+    }
+    const x=document.createElement('button'); x.textContent='✕'; x.title='Remove this change';
+    x.style.cssText='flex:none;background:#fff;border:1px solid var(--line);color:var(--red);padding:4px 9px;border-radius:7px;font-size:12px';
+    x.onclick=()=>{ pendingEdits.splice(i,1); renderEdits(); renderPreview(); log('Removed one pending change.'); };
+    d.appendChild(x);
+    box.appendChild(d);
+  });
+  $('actions').style.display = pendingEdits.length ? 'block' : 'none';
+  const qp=$('queuedPrompts');
+  if(qp) qp.innerHTML = promptLog.length ? ('<b>Your prompts this session:</b><br>' + promptLog.map(p=>'• '+escapeHtml(p)).join('<br>')) : '';
+}
+
+// ---- image index + replace ----
+function indexImages(html){
+  const list=[]; const seen=new Set(); let m;
+  const imgRe=/<img\b[^>]*>/gi;
+  while((m=imgRe.exec(html))){
+    const tag=m[0];
+    const src=(tag.match(/src\s*=\s*"(data:[^"]+)"/i)||[])[1] || (tag.match(/src\s*=\s*'(data:[^']+)'/i)||[])[1];
+    if(!src||seen.has(src)) continue; seen.add(src);
+    const alt=(tag.match(/alt\s*=\s*"([^"]*)"/i)||[])[1];
+    const cls=(tag.match(/class\s*=\s*"([^"]*)"/i)||[])[1];
+    list.push({uri:src, label: alt || cls || 'image'});
+  }
+  const bgRe=/url\(\s*['"]?(data:[^'")]+)['"]?\s*\)/gi;
+  while((m=bgRe.exec(html))){ const src=m[1]; if(seen.has(src)) continue; seen.add(src); list.push({uri:src, label:'background image'}); }
+  return list;
+}
+function renderImages(){
+  const g=$('imgrid'); g.innerHTML='';
+  imageList.forEach((im,i)=>{
+    const c=document.createElement('div'); c.className='imgcard';
+    c.innerHTML='<img src="'+im.uri+'" alt=""><div class="lbl" title="'+escapeHtml(im.label)+'">'+escapeHtml(im.label)+'</div><button>Replace</button>';
+    c.querySelector('button').onclick=()=>replaceImage(i);
+    g.appendChild(c);
+  });
+  $('imgNote').textContent = imageList.length ? (imageList.length+' images found') : 'No editable images found on this page.';
+}
+function pickFile(){ return new Promise(res=>{ fileResolver=res; $('fileInput').value=''; $('fileInput').click(); }); }
+$('fileInput').onchange = e => { const f=e.target.files[0]; if(fileResolver){ fileResolver(f||null); fileResolver=null; } };
+
+function downscale(file, max=1400, q=0.82){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{ const img=new Image();
+      img.onload=()=>{ let w=img.naturalWidth, h=img.naturalHeight;
+        if(w>max||h>max){ const s=Math.min(max/w,max/h); w=Math.round(w*s); h=Math.round(h*s); }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        const type = file.type==='image/png' ? 'image/png' : 'image/jpeg';
+        res(c.toDataURL(type, q)); };
+      img.onerror=()=>rej(new Error('bad image')); img.src=fr.result; };
+    fr.onerror=()=>rej(new Error('read failed')); fr.readAsDataURL(file);
+  });
+}
+function uniquePrefix(target, others){
+  const max=Math.min(target.length, 8000);
+  for(let L=120; L<max; L+=120){ const p=target.slice(0,L); if(others.every(o=>o.slice(0,L)!==p)) return p; }
+  return target.slice(0,max);
+}
+async function replaceImage(i){
+  const f=await pickFile(); if(!f) return;
+  if(!/^image\//.test(f.type)){ alert('Please choose an image file.'); return; }
+  log('Processing image ('+Math.round(f.size/1024)+' KB)...');
+  try{
+    const dataUri=await downscale(f);
+    const old=imageList[i].uri;
+    const others=imageList.filter((x,j)=>j!==i).map(x=>x.uri);
+    pendingEdits.push({ img_replace:true, _label:imageList[i].label, _oldFull:old, search_prefix:uniquePrefix(old,others), replace:dataUri });
+    changeNotes.push('replaced '+(imageList[i].label||'image'));
+    promptLog.push('Replaced image: '+(imageList[i].label||'image'));
+    renderEdits(); renderPreview();
+    log('Queued image replacement: '+(imageList[i].label||'image')+' ('+Math.round(dataUri.length/1024)+' KB).');
+  }catch(e){ log('Image error: '+e.message, true); }
+}
+
+async function addImage(){
+  const where=$('addWhere').value.trim();
+  if(!where){ alert('Describe where the image should go.'); return; }
+  const f=await pickFile(); if(!f) return;
+  $('addImgBtn').disabled=true; $('addImgBtn').innerHTML='<span class="spin"></span>Adding...';
+  try{
+    const dataUri=await downscale(f);
+    const d=await api({ action:'ai_edit', slug, instruction:'Insert the uploaded image. Placement: '+where });
+    if(!d.ok || !(d.edits||[]).length){ log('Could not place image: '+(d.error||d.note||'no result'), true); return; }
+    const edits=d.edits.map(ed=>({ search:ed.search, replace:(ed.replace||'').split('__UPLOAD__').join(dataUri) }));
+    if(!edits.some(e=>(e.replace||'').indexOf(dataUri)>=0)){ log('AI did not use the image placeholder — try rephrasing where it should go.', true); return; }
+    pendingEdits=pendingEdits.concat(edits);
+    changeNotes.push('added image ('+where+')');
+    promptLog.push('Added image: '+where);
+    $('enginePill').innerHTML='<span class="pill">edited by '+(d.engine||'ai')+'</span>';
+    renderEdits(); renderPreview();
+    log('Added image to: '+where); $('addWhere').value='';
+  }catch(e){ log('Add image failed: '+e.message, true); }
+  finally{ $('addImgBtn').disabled=false; $('addImgBtn').textContent='Choose image & add'; }
+}
+
+// ---- demo bar removal (client download only) ----
+function stripDemoBar(html){
+  // Remove ONLY the visible demo bar (#sos-launch) and its dedicated script.
+  // Do NOT remove <style> blocks (they keep the hidden #preview-bar hidden) and
+  // do NOT remove the main page script (it references #preview-bar for animations).
+  try{
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    let removed=0;
+    doc.querySelectorAll('#sos-launch').forEach(e=>{ e.remove(); removed++; });
+    doc.querySelectorAll('script').forEach(e=>{ const t=e.textContent||''; if(t.indexOf('sos-launch')>=0 && t.indexOf('preview-bar')<0){ e.remove(); removed++; } });
+    if(!removed) return html;
+    return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
+  }catch(e){ return html; }
+}
+
+// ---- booking wiring (client copy only; posts to the CLIENT's endpoint, not ours) ----
+function injectBooking(html, endpoint, biz){
+  if(!endpoint) return html;
+  const ep = endpoint.replace(/<\/script>/gi,'');
+  const snippet = '\n<scr'+'ipt>(function(){'
+    + 'var EP=' + JSON.stringify(ep) + ',BIZ=' + JSON.stringify(biz||'') + ';'
+    + 'function clean(s){return (s||"").replace(/\\s+/g," ").replace(/[:*]\\s*$/,"").trim();}'
+    + 'function lbl(el){var t="";try{if(el.labels&&el.labels.length&&el.labels[0].textContent.trim())t=el.labels[0].textContent;}catch(e){}'
+    + 'if(!t)t=el.getAttribute("aria-label")||"";'
+    + 'if(!t){var n=el.name||el.id||"";if(n)t=n.replace(/^f[-_]/i,"").replace(/[-_]+/g," ").replace(/\\b\\w/g,function(c){return c.toUpperCase();});}'
+    + 'if(!t)t=el.placeholder||"Field";return clean(t);}'
+    + 'function grp(el){var fs=el.closest&&el.closest("fieldset");var lg=fs&&fs.querySelector("legend");if(lg&&lg.textContent.trim())return clean(lg.textContent);var n=el.name||"Selections";return clean(n.charAt(0).toUpperCase()+n.slice(1));}'
+    + 'function optText(el){var v="";try{v=el.labels&&el.labels[0]?el.labels[0].textContent:el.value;}catch(e){v=el.value;}return clean(v);}'
+    + 'function gather(){var d={business:BIZ,page:location.href,submitted_at:new Date().toISOString(),fields:{}};'
+    + 'var scope=document.getElementById("booking")||document.getElementById("formWrap")||document;'
+    + 'scope.querySelectorAll("input,select,textarea").forEach(function(el){'
+    + 'var ty=el.type;if(ty==="hidden"||ty==="button"||ty==="submit"||ty==="reset")return;'
+    + 'if(ty==="checkbox"||ty==="radio"){if(el.checked){var g=grp(el);if(!Array.isArray(d.fields[g]))d.fields[g]=[];d.fields[g].push(optText(el));}}'
+    + 'else if(el.value&&el.value.trim()){d.fields[lbl(el)]=el.value.trim();}});return d;}'
+    + 'function send(){try{fetch(EP,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(gather())});}catch(e){}}'
+    + 'var _o=window.submitForm;window.submitForm=function(){send();if(typeof _o==="function")return _o.apply(this,arguments);};'
+    + 'document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".btn-submit-form");if(b&&typeof window.submitForm!=="function")send();});'
+    + '})();<\/script>';
+  if(html.indexOf('</body>')>=0) return html.replace('</body>', snippet+'\n</body>');
+  return html + snippet;
+}
+const APPS_SCRIPT = [
+'// ScalingSOS booking -> Google Sheet + email (auto-detects whatever fields the form sends).',
+'// SETUP: 1) In the client Google Sheet: Extensions > Apps Script. 2) Paste this, set EMAIL below.',
+'// 3) Deploy > New deployment > type "Web app" > Execute as: Me > Who has access: Anyone > Deploy.',
+'// 4) Copy the /exec URL and paste it into the editor Booking endpoint field. (Optional SMS: fill the Twilio block.)',
+'const EMAIL = "owner@theirbusiness.com";   // <-- the client email for booking alerts',
+'const SMS_TO = "";   // optional, e.g. "+14045551234"  (leave blank to skip SMS)',
+'const TWILIO_SID = ""; const TWILIO_TOKEN = ""; const TWILIO_FROM = "";  // optional Twilio creds for SMS',
+'function doPost(e){',
+'  var data = JSON.parse(e.postData.contents);',
+'  var f = data.fields || {};',
+'  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];',
+'  var headers = sh.getLastColumn() ? sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0] : [];',
+'  if(!headers.length){ headers = ["Time","Business"]; sh.getRange(1,1,1,headers.length).setValues([headers]); }',
+'  Object.keys(f).forEach(function(k){ if(headers.indexOf(k) < 0){ headers.push(k); sh.getRange(1,headers.length).setValue(k); } });',
+'  var row = headers.map(function(h){ if(h==="Time") return new Date(); if(h==="Business") return data.business||""; var v=f[h]; return Array.isArray(v)? v.join(", ") : (v||""); });',
+'  sh.appendRow(row);',
+'  var lines = Object.keys(f).map(function(k){ var v=f[k]; return "- "+k+": "+(Array.isArray(v)? v.join(", ") : v); });',
+'  var subject = "New booking" + (data.business? " - "+data.business : "");',
+'  var bodyTxt = "You have a new booking request:\\n\\n" + lines.join("\\n") + "\\n\\nReceived: " + new Date() + "\\nPage: " + (data.page||"");',
+'  MailApp.sendEmail(EMAIL, subject, bodyTxt);',
+'  if(SMS_TO && TWILIO_SID && TWILIO_TOKEN && TWILIO_FROM){',
+'    try{ UrlFetchApp.fetch("https://api.twilio.com/2010-04-01/Accounts/"+TWILIO_SID+"/Messages.json", {',
+'      method:"post", muteHttpExceptions:true,',
+'      headers:{ Authorization:"Basic "+Utilities.base64Encode(TWILIO_SID+":"+TWILIO_TOKEN) },',
+'      payload:{ From:TWILIO_FROM, To:SMS_TO, Body:(subject+" - "+lines.join("; ")).slice(0,300) } }); }catch(err){}',
+'  }',
+'  return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);',
+'}'
+].join('\n');
+
+// ---- webhook ----
+async function api(payload){
+  const res = await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+  const text = await res.text();
+  try { return JSON.parse(text); } catch(e){ throw new Error('Bad response: ' + text.slice(0,200)); }
+}
+
+async function loadSlugs(){
+  try{
+    const res = await fetch('https://api.github.com/repos/'+REPO+'/contents/?ref=main');
+    const data = await res.json();
+    const dirs = data.filter(x=>x.type==='dir' && !SKIP.has(x.name) && !x.name.startsWith('.')).map(x=>x.name).sort();
+    const dl=$('slugs'); dl.innerHTML=''; dirs.forEach(n=>{ const o=document.createElement('option'); o.value=n; dl.appendChild(o); });
+    $('slug').setAttribute('list','slugs');
+    $('loadMeta').textContent = dirs.length + ' demo pages available';
+  }catch(e){ $('loadMeta').textContent = 'Could not load slug list — paste the URL or type the slug.'; }
+}
+
+async function loadPage(){
+  slug = parseSlug($('slug').value);
+  if(!slug){ alert('Paste a demo URL or slug first.'); return; }
+  $('slug').value = slug;
+  clearLog(); pendingEdits=[]; changeNotes=[]; promptLog=[]; renderEdits(); $('note').innerHTML=''; $('enginePill').textContent='';
+  $('loadBtn').disabled=true; $('modePill').textContent='Loading...';
+  try{
+    const res = await fetch('/'+slug+'/?cb='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    originalHtml = await res.text();
+    imgMap = originalHtml.match(IMG_RE) || [];
+    imageList = indexImages(originalHtml); renderImages();
+    $('modePill').textContent='Live page loaded';
+    $('liveLink').innerHTML='<a href="/'+slug+'/" target="_blank" style="color:#16a34a">demo.scalingsos.com/'+slug+'/</a>';
+    $('instruction').disabled=false; $('genBtn').disabled=false; $('addWhere').disabled=false; $('addImgBtn').disabled=false;
+    $('logSec').style.display='block'; $('clientSec').style.display='block';
+    renderPreview();
+    log('Loaded '+slug+' ('+Math.round(originalHtml.length/1024)+' KB, '+imageList.length+' images).');
+    loadHistory();
+  }catch(e){ $('modePill').textContent='Load failed'; log('Could not load page: '+e.message, true); }
+  finally{ $('loadBtn').disabled=false; }
+}
+
+async function generate(){
+  const instruction = $('instruction').value.trim();
+  if(!instruction){ alert('Describe the change first.'); return; }
+  $('genBtn').disabled=true; $('genBtn').innerHTML='<span class="spin"></span>Generating...';
+  try{
+    const d = await api({ action:'ai_edit', slug, instruction });
+    if(!d.ok){ log('AI error: '+(d.error||'unknown')+(d.raw?(' | '+d.raw):''), true); return; }
+    if(!d.edits || !d.edits.length){ log('AI made no changes: '+(d.note||'no reason given'), true); return; }
+    pendingEdits = pendingEdits.concat(d.edits);
+    if(d.note) changeNotes.push(d.note);
+    promptLog.push(instruction);
+    $('note').innerHTML = '<div class="note">'+escapeHtml(d.note||'Edit ready.')+'</div>';
+    $('enginePill').innerHTML = '<span class="pill">edited by '+(d.engine||'ai')+'</span>';
+    renderEdits(); const r = renderPreview();
+    log('Proposed '+d.edits.length+' change(s). '+r.applied+' applied'+(r.failed.length?(', '+r.failed.length+' could not be placed'):'')+'.');
+    if(r.failed.length) log('Not applied: '+r.failed.join(' | '), true);
+    $('instruction').value='';
+  }catch(e){ log('Request failed: '+e.message, true); }
+  finally{ $('genBtn').disabled=false; $('genBtn').textContent='Generate edit with AI'; }
+}
+
+async function publish(){
+  if(!pendingEdits.length) return;
+  if(!confirm('Publish '+pendingEdits.length+' change(s) to the LIVE page at demo.scalingsos.com/'+slug+'/ ?')) return;
+  $('pubBtn').disabled=true; $('pubBtn').innerHTML='<span class="spin"></span>Publishing...';
+  try{
+    const d = await api({ action:'publish', slug, edits: forPublish(pendingEdits), summary: changeNotes.join('; '), prompts: promptLog.join('\n') });
+    if(!d.ok){ log('Publish failed: '+(d.error||'unknown'), true); return; }
+    log('Published. '+d.applied+' change(s) committed'+(d.failed&&d.failed.length?(', '+d.failed.length+' skipped'):'')+'. Live in ~30-60s at '+d.url);
+    pendingEdits=[]; changeNotes=[]; promptLog=[]; renderEdits(); $('note').innerHTML='';
+    loadHistory();
+    setTimeout(()=>{ log('Reloading live page to confirm...'); loadPage(); }, 45000);
+  }catch(e){ log('Publish request failed: '+e.message, true); }
+  finally{ $('pubBtn').disabled=false; $('pubBtn').textContent='Publish to live site'; }
+}
+
+async function revert(){
+  if(!slug) return;
+  if(!confirm('Revert demo.scalingsos.com/'+slug+'/ to its PREVIOUS published version?')) return;
+  $('revertBtn').disabled=true; $('revertBtn').textContent='Reverting...';
+  try{
+    const d = await api({ action:'revert', slug });
+    if(!d.ok){ log('Revert failed: '+(d.error||'unknown'), true); return; }
+    log('Reverted to previous version ('+d.reverted_to+'). Live in ~30-60s. Reloading...');
+    setTimeout(loadPage, 45000);
+  }catch(e){ log('Revert request failed: '+e.message, true); }
+  finally{ $('revertBtn').disabled=false; $('revertBtn').textContent='Revert last publish'; }
+}
+
+function download(){
+  if(!originalHtml){ alert('Load a page first.'); return; }
+  let out = applyEdits(originalHtml, pendingEdits).html;   // applies any pending edits (zero is fine)
+  out = stripDemoBar(out);                                  // ALWAYS remove the demo bar for the client copy
+  const ep = $('bookEndpoint').value.trim();
+  let bnote='';
+  if(ep){ out = injectBooking(out, ep, slug); bnote=' + booking wired to client endpoint'; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([out], {type:'text/html'}));
+  a.download = slug + '.html'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  log('Downloaded '+slug+'.html ('+Math.round(out.length/1024)+' KB), demo bar removed'+(pendingEdits.length?(', '+pendingEdits.length+' edit(s) applied'):'')+bnote+'.');
+}
+function copyScript(){
+  const email=$('bookEmail').value.trim();
+  const script = email ? APPS_SCRIPT.replace('owner@theirbusiness.com', email) : APPS_SCRIPT;
+  navigator.clipboard.writeText(script).then(()=>log('Google Sheet script copied — paste into their Apps Script editor, then deploy as a Web App and paste the URL above.'),
+    ()=>log('Copy failed — select and copy manually from the console.', true));
+}
+function discard(){ pendingEdits=[]; changeNotes=[]; promptLog=[]; renderEdits(); $('note').innerHTML=''; renderPreview(); log('Discarded pending changes.'); }
+
+// ---- change log + restore ----
+function fmtDate(iso){ try{ return new Date(iso).toLocaleString(); }catch(e){ return iso||''; } }
+async function loadHistory(){
+  if(!slug) return;
+  $('histBtn').disabled=true; $('histBtn').textContent='Loading...';
+  try{
+    const d=await api({ action:'history', slug });
+    if(!d.ok){ log('Change log error: '+(d.error||''), true); return; }
+    renderHistory(d.history||[]);
+  }catch(e){ log('Change log failed: '+e.message, true); }
+  finally{ $('histBtn').disabled=false; $('histBtn').textContent='Refresh change log'; }
+}
+function renderHistory(list){
+  const box=$('histList'); box.innerHTML='';
+  if(!list.length){ box.innerHTML='<div class="muted-sm">No history yet.</div>'; return; }
+  list.forEach(h=>{
+    const row=document.createElement('div'); row.className='edit'; row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='flex-start';
+    const full=(h.message||'');
+    const parts=full.split(/\n\nPrompts:\n/);
+    const title=(parts[0]||'').replace(/^AI editor:\s*/,'') || '(change)';
+    const prompts=parts[1]||'';
+    let inner='<div style="flex:1"><div style="font-weight:600">'+escapeHtml(title)+(h.current?' <span class="pill">live now</span>':'')+'</div>'
+      +'<div class="muted-sm">'+escapeHtml(fmtDate(h.date))+' · '+h.short+'</div>';
+    if(prompts) inner+='<div class="muted-sm" style="margin-top:4px;white-space:pre-wrap"><b>Your prompt(s):</b>\n'+escapeHtml(prompts)+'</div>';
+    inner+='</div>';
+    row.innerHTML=inner;
+    if(!h.current){
+      const b=document.createElement('button'); b.textContent='Restore';
+      b.style.cssText='flex:none;background:#fff;border:1px solid var(--line);color:var(--green-d);padding:6px 10px;border-radius:7px;font-size:12px';
+      b.onclick=()=>restoreVersion(h.sha, msg);
+      row.appendChild(b);
+    }
+    box.appendChild(row);
+  });
+}
+async function restoreVersion(sha, label){
+  if(!confirm('Restore this version to the LIVE page?\n\n"'+label+'"\n\nThis adds a new version on top — your current one stays in the log, so this is reversible too.')) return;
+  try{
+    const d=await api({ action:'restore', slug, sha });
+    if(!d.ok){ log('Restore failed: '+(d.error||''), true); return; }
+    log('Restored to '+d.restored_from+'. Live in ~30-60s. Reloading...');
+    setTimeout(()=>{ loadPage(); }, 45000);
+    loadHistory();
+  }catch(e){ log('Restore failed: '+e.message, true); }
+}
+
+$('loadBtn').onclick=loadPage;
+$('genBtn').onclick=generate;
+$('addImgBtn').onclick=addImage;
+$('pubBtn').onclick=publish;
+$('revertBtn').onclick=revert;
+$('dlBtn').onclick=download;
+$('discardBtn').onclick=discard;
+$('histBtn').onclick=loadHistory;
+$('copyScriptBtn').onclick=copyScript;
+$('slug').addEventListener('keydown',e=>{ if(e.key==='Enter') loadPage(); });
+
+loadSlugs();
+const pre = new URLSearchParams(location.search).get('slug');
+if(pre){ $('slug').value=pre; loadPage(); }
+</script>
+</body>
+</html>
