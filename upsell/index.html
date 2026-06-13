@@ -3,257 +3,127 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>One More Thing — Your 24/7 Receptionist | ScalingSOS</title>
+<title>One More Thing — ScalingSOS</title>
 <meta name="robots" content="noindex"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0a1f3a;--gold:#c9a84c;--gold-hover:#b8962f;--gold-bg:rgba(201,168,76,.08);--gold-border:rgba(201,168,76,.3);--cream:#faf8f3;--gray:#6b7280;}
-html{scroll-behavior:smooth}
+:root{--navy:#0a1f3a;--gold:#c9a84c;--cream:#faf8f3;--gray:#6b7280;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
-.stage{max-width:920px;margin:0 auto;width:100%;padding:clamp(26px,4.5vw,52px) 18px clamp(10px,2vw,18px);}
-.head{text-align:center;display:flex;flex-direction:column;align-items:center;}
-h1{font-size:clamp(28px,5vw,50px);font-weight:900;letter-spacing:-.028em;line-height:1.05;max-width:16ch;}
-h1 .g{color:var(--gold-hover);}
-.sub{margin:clamp(15px,2.4vw,22px) auto 0;max-width:600px;font-size:clamp(16px,2vw,19px);line-height:1.5;color:rgba(10,31,58,.8);}
-.sub b{color:var(--navy);font-weight:800;}
-.sub .tel{display:inline-block;font-weight:900;color:var(--navy);white-space:nowrap;border-bottom:2px solid var(--gold);text-decoration:none;}
+.confirm{background:#dcfce7;color:#15803d;text-align:center;padding:9px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
+.confirm svg{width:15px;height:15px;flex-shrink:0;}
 
-/* video player with chapters */
-.player{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 24px 64px rgba(10,31,58,.24),0 0 0 1px rgba(0,0,0,.08);margin:clamp(22px,3.2vw,32px) 0 0;}
-.player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
-.bigplay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(10,31,58,.28);cursor:pointer;transition:opacity .25s;}
-.bigplay.hide{opacity:0;pointer-events:none;}
-.bigplay .circle{width:clamp(64px,11vw,88px);height:clamp(64px,11vw,88px);border-radius:50%;background:rgba(120,128,140,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.32);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
-.bigplay:hover .circle{transform:scale(1.06);}
-.bigplay .circle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
-.bigplay .label{color:#fff;font-size:14px;font-weight:700;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.4);}
-.tap-sound{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:7px;background:rgba(10,31,58,.9);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;z-index:4;}
-.tap-sound.show{display:flex;}
-.tap-sound svg{width:15px;height:15px;fill:#fff;}
-.controls{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 12px;background:linear-gradient(to top,rgba(0,0,0,.55),transparent);opacity:0;transition:opacity .2s;z-index:3;}
-.player.show-ui .controls,.player.paused .controls{opacity:1;}
-.seek{position:relative;height:5px;border-radius:99px;background:rgba(255,255,255,.28);cursor:pointer;margin-bottom:10px;}
-.seek .fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--gold);width:0;}
-.seek .dot{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid var(--gold);transform:translate(-50%,-50%) scale(.8);box-shadow:0 1px 4px rgba(0,0,0,.4);opacity:0;transition:opacity .2s,transform .12s;cursor:pointer;}
-.player.show-dots .dot{opacity:1;}
-.seek .dot:hover,.seek .dot.active{transform:translate(-50%,-50%) scale(1.15);background:var(--gold);}
-.ch-tip{position:absolute;bottom:16px;transform:translateX(-50%);background:rgba(10,31,58,.96);color:#fff;font-size:12px;font-weight:600;padding:6px 11px;border-radius:7px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5;}
-.ch-tip.show{opacity:1;}
-.ctrlrow{display:flex;align-items:center;gap:8px;}
-.ctrlrow button{background:none;border:0;color:#fff;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
-.ctrlrow button svg{width:22px;height:22px;fill:#fff;}
-.ctrlrow .spacer{flex:1;}
-.setwrap{position:relative;}
-.setmenu{position:absolute;right:0;bottom:42px;background:rgba(10,31,58,.97);border-radius:10px;padding:10px;width:160px;display:none;}
-.setmenu.open{display:block;}
-.setmenu .glabel{color:rgba(255,255,255,.6);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
-.spdrow{display:flex;flex-wrap:wrap;gap:5px;}
-.spd{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-.spd.active{background:var(--gold);color:var(--navy);}
+.wait{background:var(--navy);color:#fff;text-align:center;padding:11px 16px;font-size:13px;font-weight:700;letter-spacing:.04em;}
+.wait span{color:var(--gold);}
 
-/* CTA */
-.ctawrap{max-width:920px;margin:0 auto;width:100%;padding:clamp(20px,3vw,28px) 18px 0;text-align:center;}
-.err{color:#dc2626;font-size:13px;margin-bottom:12px;display:none;font-weight:600;}
-.add{display:inline-flex;align-items:center;justify-content:center;flex-direction:column;width:100%;max-width:520px;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(17px,2.2vw,21px);font-weight:900;letter-spacing:.01em;padding:clamp(18px,2.4vw,23px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s,box-shadow .14s;}
-.add:hover{transform:translateY(-1px);box-shadow:0 22px 50px -12px rgba(21,128,61,.55);}
+.wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:36px 18px;}
+.box{max-width:640px;width:100%;text-align:center;}
+
+h1{font-size:clamp(26px,4.6vw,42px);font-weight:900;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px;}
+h1 em{font-style:normal;color:var(--gold);}
+
+.bridge{font-size:clamp(15px,2.1vw,18px);font-weight:500;color:#374151;margin-bottom:28px;line-height:1.55;}
+
+.bullets{list-style:none;text-align:left;display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.bullets li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(14px,1.9vw,16px);font-weight:600;color:var(--navy);line-height:1.4;}
+.bullets li svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#15803d;}
+
+.anchor{font-size:clamp(13px,1.8vw,15px);color:var(--gray);margin-bottom:26px;padding:12px 16px;border:1px solid rgba(10,31,58,.1);border-radius:10px;background:#fff;}
+.anchor strong{color:var(--navy);}
+
+.video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);margin-bottom:28px;}
+.video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
+.vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,31,58,.3);cursor:pointer;transition:opacity .25s;}
+.vplay.hide{opacity:0;pointer-events:none;}
+.vcircle{width:clamp(60px,11vw,84px);height:clamp(60px,11vw,84px);border-radius:50%;background:rgba(120,128,140,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
+.vplay:hover .vcircle{transform:scale(1.06);}
+.vcircle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
+
+.err{color:#dc2626;font-size:13px;margin-bottom:12px;display:none;}
+.add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:480px;margin:0 auto;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(16px,2.2vw,20px);font-weight:900;letter-spacing:.02em;padding:clamp(17px,2.4vw,22px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s;}
+.add:hover{transform:translateY(-1px);}
 .add:disabled{opacity:.65;cursor:not-allowed;transform:none;}
-.add .sm{display:block;font-size:12px;font-weight:600;opacity:.9;margin-top:3px;}
-.skip{display:block;width:100%;text-align:center;margin-top:15px;background:none;border:none;color:var(--gray);font-size:14px;font-family:inherit;cursor:pointer;text-decoration:underline;}
+
+.skip{display:block;width:100%;text-align:center;margin-top:16px;background:none;border:none;color:var(--gray);font-size:13px;font-family:inherit;cursor:pointer;}
 .skip:hover{color:var(--navy);}
 
-/* FAQ */
-.faq{max-width:620px;margin:0 auto;width:100%;padding:clamp(34px,5vw,52px) 18px clamp(16px,2.5vw,24px);}
-.faq-item{border:1px solid rgba(10,31,58,.1);border-radius:12px;margin-bottom:9px;background:#fff;overflow:hidden;}
-.faq-item.open{border-color:var(--gold-border);box-shadow:0 8px 24px -12px rgba(10,31,58,.2);}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;padding:16px 18px;font-size:clamp(15px,1.9vw,16px);font-weight:700;color:var(--navy);}
-.faq-q .ic{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold-bg);color:var(--gold-hover);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;line-height:1;}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .26s ease;}
-.faq-a p{padding:0 18px 16px;font-size:14.5px;line-height:1.55;color:rgba(10,31,58,.74);}
-.faq-a p b{color:var(--navy);}
-footer{margin-top:auto;padding:24px 18px;text-align:center;font-size:12px;color:rgba(10,31,58,.32);}
+footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<section class="stage">
-  <div class="head">
-    <h1>This <span class="g">$500 Receptionist</span> Replaces a $2,500/Month Front Desk.</h1>
-    <p class="sub">Never sleeps. Never quits. Never clocks out. Call it right now at <a class="tel" href="tel:+14709180516">(470) 918-0516</a> — your demo code's in the <b>purple bar</b> at the top of your site.</p>
-  </div>
-
-  <div class="player paused" id="player">
-    <video id="v" playsinline preload="metadata"
-      src="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell.mp4?v=1"
-      poster="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell-poster.jpg?v=1"
-      onclick="UP.toggle()"></video>
-    <div class="tap-sound" id="tapSound" onclick="UP.unmute()">
-      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-      Tap for sound
-    </div>
-    <div class="bigplay" id="bigplay" onclick="UP.toggle()">
-      <div class="circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <span class="label">Watch the live call</span>
-    </div>
-    <div class="controls" id="controls">
-      <div class="seek" id="seek" onclick="UP.seekClick(event)">
-        <div class="fill" id="fill"></div>
-        <div class="ch-tip" id="chtip"></div>
-      </div>
-      <div class="ctrlrow">
-        <button onclick="UP.toggle()" id="ppBtn" aria-label="Play/Pause"><svg id="ppIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <button onclick="UP.toggleMute()" id="muteBtn" aria-label="Mute"><svg id="muteIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg></button>
-        <div class="spacer"></div>
-        <div class="setwrap">
-          <button onclick="UP.toggleSettings(event)" aria-label="Speed"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.4 4a6.6 6.6 0 01-.07.9l2.1 1.65-2 3.46-2.5-1a6.6 6.6 0 01-1.55.9l-.38 2.65h-4l-.38-2.65a6.6 6.6 0 01-1.55-.9l-2.5 1-2-3.46 2.1-1.65A6.6 6.6 0 013.6 12c0-.3.03-.6.07-.9L1.57 9.45l2-3.46 2.5 1a6.6 6.6 0 011.55-.9l.38-2.65h4l.38 2.65c.55.22 1.07.52 1.55.9l2.5-1 2 3.46-2.1 1.65c.04.3.07.6.07.9z"/></svg></button>
-          <div class="setmenu" id="setmenu" onclick="event.stopPropagation()">
-            <div class="glabel">Speed</div>
-            <div class="spdrow" id="spdrow"></div>
-          </div>
-        </div>
-        <button onclick="UP.fullscreen()" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="ctawrap">
-  <div class="err" id="err"></div>
-  <button class="add" id="addBtn" onclick="addUpsell()">Add the 24/7 Receptionist — $500<span class="sm">One time. No monthly fees.</span></button>
-  <button class="skip" onclick="skip()">No thanks — set up my website</button>
+<div class="confirm">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+  Your website order is confirmed — check your email.
 </div>
 
-<!-- FAQ -->
-<section class="faq">
-  <div id="faqList"></div>
-</section>
+<div class="wait">WAIT — <span>Special one-time offer. Not available after this page.</span></div>
 
+<div class="wrap">
+  <div class="box">
+
+    <h1>Every missed call is a job<br>that went to <em>someone else.</em></h1>
+
+    <p class="bridge">The website gets them to call. AI Receptionist makes sure someone always answers.</p>
+
+    <ul class="bullets">
+      <li>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        Answers every call 24/7 — nights, weekends, holidays
+      </li>
+      <li>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        Books appointments automatically while you sleep
+      </li>
+      <li>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        Captures every lead — name, number, and what they need
+      </li>
+    </ul>
+
+    <p class="anchor">A part-time receptionist costs <strong>$1,500–$3,000/month.</strong> This is <strong>$500, one time.</strong></p>
+
+    <div class="video">
+      <video id="upvid" playsinline preload="metadata"
+        src="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell.mp4?v=1"
+        poster="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell-poster.jpg?v=1"></video>
+      <div class="vplay" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </div>
+
+    <div class="err" id="err"></div>
+    <button class="add" id="addBtn" onclick="addUpsell()">Yes — Add AI Receptionist · $500</button>
+    <button class="skip" onclick="skip()">No thanks — I'll handle calls on my own</button>
+
+  </div>
+</div>
 <footer>&copy; 2026 ScalingSOS</footer>
 
 <script>
 window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
-
-/* ── short FAQ ── */
-(function(){
-  var FAQ=[
-    {q:'Do I have to set it up?', a:"No. It's installed with your site. You just pick <b>calls, texts, or both</b>."},
-    {q:'Will it sound like a robot?', a:"You just heard it live in the video. We tune it to your business and your pace."},
-    {q:'Any monthly fees?', a:"None. <b>$500 once.</b> A human doing this is $2,500/month."},
-    {q:'Calls or texts?', a:"Your choice — run one or both."},
-    {q:'What if it isn’t right?', a:"Same written guarantee as your site. You're refunded."}
-  ];
-  var list=document.getElementById('faqList');
-  FAQ.forEach(function(item){
-    var it=document.createElement('div');it.className='faq-item';
-    var btn=document.createElement('button');btn.className='faq-q';btn.type='button';
-    btn.innerHTML='<span>'+item.q+'</span><span class="ic">+</span>';
-    var ans=document.createElement('div');ans.className='faq-a';ans.innerHTML='<p>'+item.a+'</p>';
-    btn.onclick=function(){
-      var open=it.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(function(o){if(o!==it){o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight=null;o.querySelector('.ic').textContent='+';}});
-      if(open){it.classList.remove('open');ans.style.maxHeight=null;btn.querySelector('.ic').textContent='+';}
-      else{it.classList.add('open');ans.style.maxHeight=ans.scrollHeight+'px';btn.querySelector('.ic').textContent='–';}
-    };
-    it.appendChild(btn);it.appendChild(ans);list.appendChild(it);
-  });
-})();
-
-/* ── chapter player ── */
-(function(){
-  var CHAPTERS=[
-    {t:18,  label:'Why add it'},
-    {t:36,  label:'How owners use it first'},
-    {t:79,  label:'Live Call Demo'},
-    {t:164, label:'What it costs'}
-  ];
-  var DEFAULT_RATE=1.2, SPEEDS=[0.75,1,1.2,1.5,1.75,2];
-  var v=document.getElementById('v'), player=document.getElementById('player');
-  var bigplay=document.getElementById('bigplay'), tapSound=document.getElementById('tapSound');
-  var seek=document.getElementById('seek'), fill=document.getElementById('fill'), chtip=document.getElementById('chtip');
-  function buildDots(){
-    var d=v.duration||(CHAPTERS[CHAPTERS.length-1].t+30);
-    Array.prototype.slice.call(seek.querySelectorAll('.dot')).forEach(function(el){el.parentNode.removeChild(el);});
-    CHAPTERS.forEach(function(ch,i){
-      if(ch.t>=d) return;
-      var el=document.createElement('div');el.className='dot';el.dataset.i=i;
-      el.style.left=(ch.t/d*100)+'%';
-      el.addEventListener('mouseenter',function(){showTip(ch.label,ch.t/d*100);});
-      el.addEventListener('mouseleave',hideTip);
-      el.addEventListener('click',function(e){e.stopPropagation();v.currentTime=ch.t;if(v.paused)v.play();flashTip(ch.label,ch.t/d*100);});
-      seek.appendChild(el);
-    });
-  }
-  function showTip(label,leftPct){chtip.textContent=label;chtip.style.left=leftPct+'%';chtip.classList.add('show');}
-  function hideTip(){chtip.classList.remove('show');}
-  function flashTip(label,leftPct){showTip(label,leftPct);clearTimeout(flashTip._t);flashTip._t=setTimeout(hideTip,1400);}
-  function markActiveDot(){
-    var t=v.currentTime||0,idx=-1;
-    CHAPTERS.forEach(function(ch,i){if(t>=ch.t-0.25)idx=i;});
-    seek.querySelectorAll('.dot').forEach(function(el){el.classList.toggle('active',+el.dataset.i===idx);});
-  }
-  function buildSpeeds(){
-    var row=document.getElementById('spdrow');row.innerHTML='';
-    SPEEDS.forEach(function(s){
-      var b=document.createElement('button');b.className='spd'+(s===DEFAULT_RATE?' active':'');b.textContent=s+'x';
-      b.onclick=function(){v.playbackRate=s;row.querySelectorAll('.spd').forEach(function(x){x.classList.remove('active')});b.classList.add('active');};
-      row.appendChild(b);
-    });
-  }
-  window.UP={
-    toggle:function(){if(v.paused)v.play();else v.pause();closeSettings();},
-    toggleMute:function(){v.muted=!v.muted;updateMute();if(!v.muted)tapSound.classList.remove('show');},
-    unmute:function(){v.muted=false;if(v.paused)v.play();tapSound.classList.remove('show');updateMute();},
-    seekClick:function(e){if(e.target.classList.contains('dot'))return;var r=seek.getBoundingClientRect();var p=(e.clientX-r.left)/r.width;if(v.duration){v.currentTime=Math.max(0,Math.min(1,p))*v.duration;if(v.paused)v.play();}},
-    toggleSettings:function(e){e.stopPropagation();document.getElementById('setmenu').classList.toggle('open');},
-    fullscreen:function(){var p=player;(p.requestFullscreen||p.webkitRequestFullscreen||function(){}).call(p);}
-  };
-  function closeSettings(){var m=document.getElementById('setmenu');if(m)m.classList.remove('open');}
-  document.addEventListener('click',closeSettings);
-  function updatePP(){var playing=!v.paused;player.classList.toggle('playing',playing);player.classList.toggle('paused',!playing);document.getElementById('ppIcon').innerHTML=playing?'<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';bigplay.classList.toggle('hide',playing||v.currentTime>0);}
-  function updateMute(){document.getElementById('muteIcon').innerHTML=v.muted?'<path d="M3 9v6h4l5 5V4L7 9H3zm13 3 3 3 1.4-1.4L17.8 12l1.6-1.6L18 9l-2 2-2-2-1.4 1.4L14.2 12l-1.6 1.6L14 16z"/>':'<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/>';}
-  var hideT;
-  function showUI(){player.classList.add('show-ui','show-dots');clearTimeout(hideT);if(!v.paused){hideT=setTimeout(function(){player.classList.remove('show-ui');closeSettings();},2800);}}
-  player.addEventListener('mousemove',showUI);
-  player.addEventListener('mouseleave',function(){if(!v.paused){clearTimeout(hideT);player.classList.remove('show-ui');closeSettings();}});
-  v.addEventListener('loadedmetadata',function(){v.playbackRate=DEFAULT_RATE;buildDots();});
-  v.addEventListener('play',function(){v.playbackRate=v.playbackRate||DEFAULT_RATE;updatePP();player.classList.add('show-dots');showUI();});
-  v.addEventListener('pause',function(){updatePP();clearTimeout(hideT);player.classList.add('show-ui');});
-  v.addEventListener('ended',updatePP);
-  v.addEventListener('timeupdate',function(){var d=v.duration||0;if(!d)return;fill.style.width=(v.currentTime/d*100)+'%';markActiveDot();});
-  bigplay.addEventListener('click',function(){v.muted=false;updateMute();});
-  v.addEventListener('playing',function(){if(v.muted)tapSound.classList.add('show');});
-  updatePP();updateMute();buildSpeeds();
-})();
-
-/* ── charge / skip (unchanged behavior) ── */
 (function(){
   var N8N=window.SSOS_FN.N8N;
+  var RATE=1.2, v=document.getElementById('upvid'), vplay=document.getElementById('vplay');
+  v.addEventListener('loadedmetadata',function(){ v.playbackRate=RATE; });
+  function startVid(){ v.muted=false; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vplay.classList.add('hide'); }
+  vplay.addEventListener('click',startVid);
+  v.addEventListener('play',function(){ v.playbackRate=RATE; vplay.classList.add('hide'); });
+  v.addEventListener('click',function(){ if(v.paused){v.play();} else {v.pause();} });
   var sessionId=new URLSearchParams(location.search).get('session_id')||'';
-  try{if(sessionId)localStorage.setItem('ssos_checkout_session',sessionId);}catch(e){}
-  if(sessionId){fetch(N8N+'/ssos-funnel-order?session_id='+encodeURIComponent(sessionId)).then(function(r){return r.json()}).then(function(d){if(d&&d.email){try{localStorage.setItem('ssos_email',d.email);}catch(e){}}}).catch(function(){});}
-  function setupUrl(){var em='';try{em=localStorage.getItem('ssos_email')||''}catch(e){}return '/setup/?session_id='+encodeURIComponent(sessionId)+(em?'&email='+encodeURIComponent(em):'');}
-  window.skip=function(){location.href=setupUrl();};
+  try{ if(sessionId) localStorage.setItem('ssos_checkout_session', sessionId); }catch(e){}
+  if(sessionId){ fetch(N8N+'/ssos-funnel-order?session_id='+encodeURIComponent(sessionId)).then(function(r){return r.json()}).then(function(d){ if(d&&d.email){ try{localStorage.setItem('ssos_email',d.email);}catch(e){} } }).catch(function(){}); }
+  function setupUrl(){ var em=''; try{em=localStorage.getItem('ssos_email')||''}catch(e){} return '/setup/?session_id='+encodeURIComponent(sessionId)+(em?'&email='+encodeURIComponent(em):''); }
+  window.skip=function(){ location.href=setupUrl(); };
   window.addUpsell=function(){
     var btn=document.getElementById('addBtn'), err=document.getElementById('err');
-    if(err){err.style.display='none';}
-    document.querySelectorAll('.add').forEach(function(b){b.disabled=true;});
-    if(btn)btn.textContent='Adding to your order…';
+    err.style.display='none'; btn.disabled=true; btn.textContent='Adding to your order…';
     fetch(N8N+'/ssos-funnel-upsell-charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId,product:'receptionist_500'})})
       .then(function(r){return r.json()}).then(function(d){
-        if(d&&d.ok){try{localStorage.setItem('ssos_bought_receptionist','1')}catch(e){}location.href=setupUrl()+'&recep=1';}
-        else{showErr((d&&d.error)||'Could not add it right now. Your website order is safe.');}
-      }).catch(function(){showErr('Network error. Your website order is safe.');});
+        if(d&&d.ok){ try{localStorage.setItem('ssos_bought_receptionist','1')}catch(e){} location.href=setupUrl()+'&recep=1'; }
+        else{ err.textContent=(d&&d.error)||'Could not add it right now. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add AI Receptionist · $500'; }
+      }).catch(function(){ err.textContent='Network error. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add AI Receptionist · $500'; });
   };
-  function showErr(m){
-    var err=document.getElementById('err');if(err){err.textContent=m;err.style.display='block';}
-    document.querySelectorAll('.add').forEach(function(b){b.disabled=false;});
-    var btn=document.getElementById('addBtn');if(btn)btn.innerHTML='Add the 24/7 Receptionist — $500<span class="sm">One time. No monthly fees.</span>';
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
 })();
 </script>
 </body>
