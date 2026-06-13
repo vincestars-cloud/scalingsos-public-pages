@@ -114,6 +114,7 @@ tr:hover td{background:#f9fafb}
 /* PROSPECTOR */
 .control-panel{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-bottom:20px}
 .control-panel h3{font-size:1rem;font-weight:700;margin-bottom:16px}
+.sms2-template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
 .toggle-wrap{display:flex;align-items:center;gap:12px;margin-bottom:20px}
 .toggle{width:48px;height:26px;background:#ccc;border-radius:13px;cursor:pointer;position:relative;transition:background .3s}
 .toggle.on{background:var(--green)}
@@ -266,6 +267,7 @@ tr:hover td{background:#f9fafb}
   .main{margin-left:0}
   .mobile-toggle{display:block}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .sms2-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .content{padding:16px}
   .topbar{padding:10px 16px}
   .chat-modal{width:100%;max-width:100%;left:0}
@@ -278,6 +280,7 @@ tr:hover td{background:#f9fafb}
 }
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr}
+  .sms2-template-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -691,7 +694,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 1 Initial SMS<textarea id="settingsMsg1" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Offer Template<textarea id="settingsOfferTemplate" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px">
+        <div class="sms2-template-grid">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version A<textarea id="settingsMsg2NoWebsiteA" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version B<textarea id="settingsMsg2NoWebsiteB" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version C<textarea id="settingsMsg2NoWebsiteC" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
