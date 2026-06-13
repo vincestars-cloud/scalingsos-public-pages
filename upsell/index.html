@@ -13,27 +13,20 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
 
-/* confirm bar */
-.confirm{background:#dcfce7;color:#15803d;text-align:center;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
-.confirm svg{width:15px;height:15px;flex-shrink:0;}
-
-/* stage / layout — matches the funnel */
-.stage{max-width:920px;margin:0 auto;width:100%;padding:clamp(20px,3.5vw,40px) 18px clamp(10px,2vw,18px);}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--gold-border);background:var(--gold-bg);border-radius:999px;padding:6px 15px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold-hover);margin:0 auto clamp(14px,2.4vw,20px);}
-.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
+.stage{max-width:920px;margin:0 auto;width:100%;padding:clamp(26px,4.5vw,52px) 18px clamp(10px,2vw,18px);}
 .head{text-align:center;display:flex;flex-direction:column;align-items:center;}
-h1{font-size:clamp(27px,4.7vw,46px);font-weight:900;letter-spacing:-.025em;line-height:1.08;max-width:18ch;}
+h1{font-size:clamp(28px,5vw,50px);font-weight:900;letter-spacing:-.028em;line-height:1.05;max-width:16ch;}
 h1 .g{color:var(--gold-hover);}
-.sub{margin:clamp(14px,2.4vw,20px) auto 0;max-width:640px;font-size:clamp(15px,1.9vw,18px);line-height:1.55;color:rgba(10,31,58,.78);}
+.sub{margin:clamp(15px,2.4vw,22px) auto 0;max-width:600px;font-size:clamp(16px,2vw,19px);line-height:1.5;color:rgba(10,31,58,.8);}
+.sub b{color:var(--navy);font-weight:800;}
 .sub .tel{display:inline-block;font-weight:900;color:var(--navy);white-space:nowrap;border-bottom:2px solid var(--gold);text-decoration:none;}
-.sub strong{color:var(--navy);font-weight:800;}
 
-/* ── custom video player (chapters, like the funnel) ── */
-.player{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 24px 64px rgba(10,31,58,.24),0 0 0 1px rgba(0,0,0,.08);margin:clamp(20px,3.2vw,30px) 0 0;}
+/* video player with chapters */
+.player{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 24px 64px rgba(10,31,58,.24),0 0 0 1px rgba(0,0,0,.08);margin:clamp(22px,3.2vw,32px) 0 0;}
 .player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
-.bigplay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(10,31,58,.30);cursor:pointer;transition:opacity .25s;}
+.bigplay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(10,31,58,.28);cursor:pointer;transition:opacity .25s;}
 .bigplay.hide{opacity:0;pointer-events:none;}
-.bigplay .circle{width:clamp(62px,11vw,86px);height:clamp(62px,11vw,86px);border-radius:50%;background:rgba(120,128,140,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.32);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
+.bigplay .circle{width:clamp(64px,11vw,88px);height:clamp(64px,11vw,88px);border-radius:50%;background:rgba(120,128,140,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(255,255,255,.32);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.22);transition:transform .15s;}
 .bigplay:hover .circle{transform:scale(1.06);}
 .bigplay .circle svg{width:40%;height:40%;margin-left:8%;fill:#fff;}
 .bigplay .label{color:#fff;font-size:14px;font-weight:700;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.4);}
@@ -54,7 +47,7 @@ h1 .g{color:var(--gold-hover);}
 .ctrlrow button svg{width:22px;height:22px;fill:#fff;}
 .ctrlrow .spacer{flex:1;}
 .setwrap{position:relative;}
-.setmenu{position:absolute;right:0;bottom:42px;background:rgba(10,31,58,.97);border-radius:10px;padding:10px;width:170px;display:none;}
+.setmenu{position:absolute;right:0;bottom:42px;background:rgba(10,31,58,.97);border-radius:10px;padding:10px;width:160px;display:none;}
 .setmenu.open{display:block;}
 .setmenu .glabel{color:rgba(255,255,255,.6);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
 .spdrow{display:flex;flex-wrap:wrap;gap:5px;}
@@ -62,102 +55,49 @@ h1 .g{color:var(--gold-hover);}
 .spd.active{background:var(--gold);color:var(--navy);}
 
 /* CTA */
-.ctawrap{max-width:920px;margin:0 auto;width:100%;padding:clamp(18px,2.8vw,26px) 18px 0;text-align:center;}
+.ctawrap{max-width:920px;margin:0 auto;width:100%;padding:clamp(20px,3vw,28px) 18px 0;text-align:center;}
 .err{color:#dc2626;font-size:13px;margin-bottom:12px;display:none;font-weight:600;}
-.add{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:520px;margin:0 auto;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(17px,2.2vw,21px);font-weight:900;letter-spacing:.01em;padding:clamp(18px,2.4vw,23px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s,box-shadow .14s;}
+.add{display:inline-flex;align-items:center;justify-content:center;flex-direction:column;width:100%;max-width:520px;background:linear-gradient(to bottom,#22c55e,#15803d);color:#fff;font-size:clamp(17px,2.2vw,21px);font-weight:900;letter-spacing:.01em;padding:clamp(18px,2.4vw,23px) 30px;border:none;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 16px 40px -10px rgba(21,128,61,.5);transition:transform .14s,box-shadow .14s;}
 .add:hover{transform:translateY(-1px);box-shadow:0 22px 50px -12px rgba(21,128,61,.55);}
 .add:disabled{opacity:.65;cursor:not-allowed;transform:none;}
-.add .sm{display:block;font-size:12px;font-weight:600;opacity:.92;letter-spacing:.02em;margin-top:2px;}
-.skip{display:block;width:100%;text-align:center;margin-top:16px;background:none;border:none;color:var(--gray);font-size:14px;font-family:inherit;cursor:pointer;text-decoration:underline;}
+.add .sm{display:block;font-size:12px;font-weight:600;opacity:.9;margin-top:3px;}
+.skip{display:block;width:100%;text-align:center;margin-top:15px;background:none;border:none;color:var(--gray);font-size:14px;font-family:inherit;cursor:pointer;text-decoration:underline;}
 .skip:hover{color:var(--navy);}
-.micro{margin-top:12px;font-size:12.5px;color:rgba(10,31,58,.5);}
 
-/* content sections */
-.sec{max-width:760px;margin:0 auto;width:100%;padding:clamp(34px,5vw,56px) 18px 0;}
-.sec.tight{padding-top:clamp(24px,3.5vw,38px);}
-.kicker{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-hover);text-align:center;margin-bottom:10px;}
-.sec h2{text-align:center;font-size:clamp(22px,3.4vw,32px);font-weight:900;letter-spacing:-.02em;line-height:1.15;margin-bottom:clamp(14px,2vw,20px);}
-.sec h2 .g{color:var(--gold-hover);}
-.lead{text-align:center;font-size:clamp(15px,1.9vw,18px);line-height:1.65;color:rgba(10,31,58,.74);max-width:640px;margin:0 auto;}
-.lead strong{color:var(--navy);font-weight:700;}
-
-/* does list */
-.does{display:grid;gap:10px;margin:clamp(18px,2.6vw,26px) auto 0;max-width:640px;}
-.does li{list-style:none;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid rgba(10,31,58,.08);border-radius:12px;padding:14px 16px;box-shadow:0 4px 16px -10px rgba(10,31,58,.25);}
-.does li .ck{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;margin-top:1px;}
-.does li .ck svg{width:13px;height:13px;stroke:var(--gold-hover);}
-.does li b{font-weight:700;}
-.does li span{font-size:15px;line-height:1.5;color:rgba(10,31,58,.82);}
-
-/* proof stats */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:clamp(18px,2.6vw,26px) auto 0;max-width:680px;}
-.stat{background:#fff;border:1px solid rgba(10,31,58,.08);border-radius:14px;padding:18px 12px;text-align:center;box-shadow:0 6px 20px -12px rgba(10,31,58,.3);}
-.stat .n{font-size:clamp(26px,4.4vw,40px);font-weight:900;letter-spacing:-.02em;color:var(--navy);line-height:1;}
-.stat .l{font-size:12.5px;line-height:1.4;color:rgba(10,31,58,.62);margin-top:8px;}
-.src{text-align:center;font-size:12px;color:rgba(10,31,58,.45);margin-top:12px;}
-@media(max-width:560px){.stats{grid-template-columns:1fr;}}
-
-/* anchor / price reveal */
-.anchor{background:var(--navy);color:#fff;border-radius:18px;padding:clamp(26px,4vw,42px) clamp(20px,3vw,40px);max-width:680px;margin:clamp(22px,3vw,32px) auto 0;text-align:center;}
-.anchor .strike{font-size:clamp(16px,2vw,19px);color:rgba(255,255,255,.62);}
-.anchor .strike b{color:#fff;text-decoration:line-through;text-decoration-color:rgba(239,68,68,.85);text-decoration-thickness:2px;}
-.anchor .ask{margin:18px auto;max-width:520px;display:grid;gap:10px;text-align:left;}
-.anchor .ask li{list-style:none;display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.5;color:rgba(255,255,255,.9);}
-.anchor .ask .q{color:var(--gold);font-weight:900;flex-shrink:0;}
-.anchor .reveal{font-size:clamp(18px,2.4vw,23px);font-weight:800;line-height:1.4;margin-top:20px;}
-.anchor .reveal .price{color:var(--gold);font-weight:900;}
-.anchor .nofee{font-size:14px;color:rgba(255,255,255,.6);margin-top:6px;}
-
-/* FAQ — matches funnel */
-.faq{max-width:760px;margin:0 auto;width:100%;padding:clamp(34px,5vw,56px) 18px clamp(20px,3vw,30px);}
-.faq h2{text-align:center;font-size:clamp(22px,3.6vw,32px);font-weight:900;letter-spacing:-.02em;margin-bottom:clamp(18px,2.4vw,26px);}
-.faq-item{border:1px solid rgba(10,31,58,.1);border-radius:12px;margin-bottom:10px;background:#fff;overflow:hidden;transition:box-shadow .15s,border-color .15s;}
+/* FAQ */
+.faq{max-width:620px;margin:0 auto;width:100%;padding:clamp(34px,5vw,52px) 18px clamp(16px,2.5vw,24px);}
+.faq-item{border:1px solid rgba(10,31,58,.1);border-radius:12px;margin-bottom:9px;background:#fff;overflow:hidden;}
 .faq-item.open{border-color:var(--gold-border);box-shadow:0 8px 24px -12px rgba(10,31,58,.2);}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;padding:17px 18px;font-size:clamp(15px,1.9vw,17px);font-weight:700;color:var(--navy);}
-.faq-q .ic{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--gold-bg);color:var(--gold-hover);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;line-height:1;}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .28s ease;}
-.faq-a p{padding:0 18px 17px;font-size:15px;line-height:1.62;color:rgba(10,31,58,.74);}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;padding:16px 18px;font-size:clamp(15px,1.9vw,16px);font-weight:700;color:var(--navy);}
+.faq-q .ic{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold-bg);color:var(--gold-hover);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;line-height:1;}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .26s ease;}
+.faq-a p{padding:0 18px 16px;font-size:14.5px;line-height:1.55;color:rgba(10,31,58,.74);}
 .faq-a p b{color:var(--navy);}
-
-/* final */
-.final{max-width:760px;margin:0 auto;width:100%;padding:clamp(8px,1.5vw,14px) 18px 0;text-align:center;}
-.final .gtee{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:rgba(10,31,58,.6);margin-top:16px;}
-.final .gtee svg{width:16px;height:16px;fill:var(--gold-hover);}
-footer{margin-top:auto;padding:26px 18px;text-align:center;font-size:12px;color:rgba(10,31,58,.32);}
+footer{margin-top:auto;padding:24px 18px;text-align:center;font-size:12px;color:rgba(10,31,58,.32);}
 </style>
 </head>
 <body>
 
-<div class="confirm">
-  <svg viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-  Payment confirmed — your new website is locked in.
-</div>
-
 <!-- HERO -->
 <section class="stage">
-  <span class="eyebrow"><span class="dot"></span>One-Time Add-On · Only With Today's Order</span>
   <div class="head">
-    <h1>Your Site Brings Them In. Your <span class="g">24/7 Receptionist</span> Makes Sure You Never Lose One.</h1>
-    <p class="sub">Don't take my word for it — <strong>call your new receptionist right now:</strong> <a class="tel" href="tel:+14709180516">(470) 918-0516</a>. When it asks for your 4-digit demo code, read it off the <strong>purple bar at the top of your site</strong>. Ask it anything. That's it answering — 24/7.</p>
+    <h1>This <span class="g">$500 Receptionist</span> Replaces a $2,500/Month Front Desk.</h1>
+    <p class="sub">Never sleeps. Never quits. Never clocks out. Call it right now at <a class="tel" href="tel:+14709180516">(470) 918-0516</a> — your demo code's in the <b>purple bar</b> at the top of your site.</p>
   </div>
 
-  <!-- PLAYER -->
   <div class="player paused" id="player">
     <video id="v" playsinline preload="metadata"
       src="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell.mp4?v=1"
       poster="https://xxxmrbrwucsqeqbmwggd.supabase.co/storage/v1/object/public/vsl/upsell-poster.jpg?v=1"
       onclick="UP.toggle()"></video>
-
     <div class="tap-sound" id="tapSound" onclick="UP.unmute()">
       <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
       Tap for sound
     </div>
-
     <div class="bigplay" id="bigplay" onclick="UP.toggle()">
       <div class="circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <span class="label">Watch the 3-min demo (incl. a live call)</span>
+      <span class="label">Watch the live call</span>
     </div>
-
     <div class="controls" id="controls">
       <div class="seek" id="seek" onclick="UP.seekClick(event)">
         <div class="fill" id="fill"></div>
@@ -180,101 +120,31 @@ footer{margin-top:auto;padding:26px 18px;text-align:center;font-size:12px;color:
   </div>
 </section>
 
-<!-- CTA 1 -->
+<!-- CTA -->
 <div class="ctawrap">
   <div class="err" id="err"></div>
-  <button class="add" id="addBtn" onclick="addUpsell()">Add the 24/7 AI Receptionist · $500<span class="sm">One-time. No monthly fees. Added to today's order.</span></button>
-  <button class="skip" onclick="skip()">No thanks — continue to set up my website</button>
-  <p class="micro">Your card is already on file from your website order — adding it is one click.</p>
-</div>
-
-<!-- EMOTION: the pain -->
-<section class="sec">
-  <p class="kicker">The one thing your site can't do</p>
-  <h2>You got the site. Now <span class="g">who answers when they call at 8 PM?</span></h2>
-  <p class="lead">Every call after 5, every text while you're on a job, every "just checking your prices" message at 9 PM — right now it just <strong>sits</strong>. And the customer doesn't wait. They call the next name on Google. The site does everything... so let me add the one thing that finishes the job.</p>
-</section>
-
-<!-- LOGIC: what it does -->
-<section class="sec tight">
-  <p class="kicker">What it does the second a lead comes in</p>
-  <h2>Every call, text, and follow-up — <span class="g">answered instantly.</span></h2>
-  <ul class="does">
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Answers every call live, 24/7</b> — nights, weekends, while you're on the job.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Texts back instantly</b> and holds the conversation until they're ready.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Books the appointment</b> and answers your customers' questions in your words.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Follows up with every lead until they book.</b> 80% of sales happen after the 5th follow-up — most businesses stop at one.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Re-activates your old leads and past customers</b> — work you already paid to get.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Asks happy customers for reviews</b> → you rank higher on Google → more calls come in on their own.</span></li>
-    <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span><span><b>Texts and emails you</b> every lead and conversation — your choice to follow up by <b>call or text</b>.</span></li>
-  </ul>
-  <p class="lead" style="margin-top:24px">Here's how most owners start: they turn it loose on their old leads and past customers. New reviews start coming in. You climb on Google. More calls come in on their own — and it follows up on those too. <strong>It feeds itself. And you don't have to do anything.</strong></p>
-</section>
-
-<!-- LOGIC: proof -->
-<section class="sec tight">
-  <p class="kicker">Why the missed ones cost you the most</p>
-  <h2>Customers go with whoever <span class="g">answers first.</span></h2>
-  <div class="stats">
-    <div class="stat"><div class="n">78%</div><div class="l">choose the business that responds <b>first</b> — not the best or cheapest</div></div>
-    <div class="stat"><div class="n">60%</div><div class="l">of calls to businesses go straight to <b>voicemail</b></div></div>
-    <div class="stat"><div class="n">42<span style="font-size:.5em">hrs</span></div><div class="l">average time a business takes to <b>call back</b></div></div>
-  </div>
-  <p class="src">Source: Harvard Business Review studies on lead response.</p>
-  <p class="lead" style="margin-top:22px">The call you just heard in the video was <strong>100% live and unedited</strong> — our receptionist booking care for one of our home-care clients. Want to hear yours? <strong>Call <a class="tel" href="tel:+14709180516" style="border-bottom-width:1px">(470) 918-0516</a></strong> and give it your demo code.</p>
-</section>
-
-<!-- ANCHOR + PRICE REVEAL (Yes-State) -->
-<section class="sec tight">
-  <div class="anchor">
-    <p class="strike">A human front desk runs about <b>$2,500/month</b> — $30,000 a year — and still clocks out at 5, calls in sick, and misses every night and weekend.</p>
-    <ul class="ask">
-      <li><span class="q">→</span><span>If all this did was answer the calls you're missing after 5 PM — would it be worth it?</span></li>
-      <li><span class="q">→</span><span>If all it did was follow up until the lead actually booked — would it be worth it?</span></li>
-      <li><span class="q">→</span><span>If all it did was bring back old customers and pull in new reviews — would it be worth it?</span></li>
-    </ul>
-    <p class="reveal">This isn't $2,500 a month. It isn't a monthly fee at all. Because your card's already on file, you can add it right now — <span class="price">one time, $500.</span></p>
-    <p class="nofee">No monthly fees. No contracts. Ever.</p>
-  </div>
-</section>
-
-<!-- CTA 2 -->
-<div class="ctawrap">
-  <button class="add" onclick="addUpsell()">Add the 24/7 AI Receptionist · $500<span class="sm">One-time. No monthly fees. Added to today's order.</span></button>
-  <button class="skip" onclick="skip()">No thanks — just set up my website</button>
+  <button class="add" id="addBtn" onclick="addUpsell()">Add the 24/7 Receptionist — $500<span class="sm">One time. No monthly fees.</span></button>
+  <button class="skip" onclick="skip()">No thanks — set up my website</button>
 </div>
 
 <!-- FAQ -->
 <section class="faq">
-  <h2>Quick Questions</h2>
   <div id="faqList"></div>
 </section>
-
-<!-- FINAL -->
-<div class="final">
-  <button class="add" onclick="addUpsell()" style="max-width:520px;margin:0 auto;">Yes — Add My 24/7 Receptionist · $500</button>
-  <button class="skip" onclick="skip()">No thanks — continue to set up my website</button>
-  <span class="gtee">
-    <svg viewBox="0 0 24 24"><path d="M12 1l9 4v6c0 5.25-3.75 9.74-9 11-5.25-1.26-9-5.75-9-11V5l9-4z"/></svg>
-    Covered by the same written guarantee as your site — if it isn't what I described, you're refunded.
-  </span>
-</div>
 
 <footer>&copy; 2026 ScalingSOS</footer>
 
 <script>
 window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
 
-/* ── FAQ (Hormozi 3 beliefs + real objections) ── */
+/* ── short FAQ ── */
 (function(){
   var FAQ=[
-    {q:'Do I have to set anything up or manage it?', a:"No. It's done-for-you and installed right with your site. The only thing you decide is whether you want it following up by <b>call, text, or both</b>. After that, it runs on its own."},
-    {q:'Will it sound like a robot? Will my customers know?', a:"You just heard it — that call in the video was <b>live and unedited</b>. We tune it to your business, your services, and your pace. If you want it to slow down or say something differently, we adjust it. Most callers just feel helped."},
-    {q:'Will it actually work for my type of business?', a:"It's already answering for home-care, roofing, mold remediation and more. If you get <b>calls, texts, or form fills</b>, it works for you — it just answers questions, books, and follows up in your words."},
-    {q:'Calls or texts — which one?', a:"Your choice. A lot of owners start with <b>texts</b> because it feels lower-pressure, then turn on calls once they see it working. You can run both."},
-    {q:'Is it really one-time? Any monthly fees?', a:"<b>One-time $500. No monthly fees, ever.</b> A human receptionist doing a fraction of this is about $2,500/month — and clocks out at 5."},
-    {q:'What if I skip it now and want it later?', a:"This <b>one-click $500 add-on</b> only works because your card is already on file from today's order. You can always add it later, but it means setting it up separately — this is the simplest it'll ever be."},
-    {q:'What if it isn’t what you described?', a:"It's covered by the <b>same written guarantee as your website</b>. If it isn't what I described, you're refunded. No risk to you."}
+    {q:'Do I have to set it up?', a:"No. It's installed with your site. You just pick <b>calls, texts, or both</b>."},
+    {q:'Will it sound like a robot?', a:"You just heard it live in the video. We tune it to your business and your pace."},
+    {q:'Any monthly fees?', a:"None. <b>$500 once.</b> A human doing this is $2,500/month."},
+    {q:'Calls or texts?', a:"Your choice — run one or both."},
+    {q:'What if it isn’t right?', a:"Same written guarantee as your site. You're refunded."}
   ];
   var list=document.getElementById('faqList');
   FAQ.forEach(function(item){
@@ -292,10 +162,10 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
   });
 })();
 
-/* ── custom chapter player ── */
+/* ── chapter player ── */
 (function(){
   var CHAPTERS=[
-    {t:18,  label:'The one thing the site can’t do'},
+    {t:18,  label:'Why add it'},
     {t:36,  label:'How owners use it first'},
     {t:79,  label:'Live Call Demo'},
     {t:164, label:'What it costs'}
@@ -304,7 +174,6 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
   var v=document.getElementById('v'), player=document.getElementById('player');
   var bigplay=document.getElementById('bigplay'), tapSound=document.getElementById('tapSound');
   var seek=document.getElementById('seek'), fill=document.getElementById('fill'), chtip=document.getElementById('chtip');
-
   function buildDots(){
     var d=v.duration||(CHAPTERS[CHAPTERS.length-1].t+30);
     Array.prototype.slice.call(seek.querySelectorAll('.dot')).forEach(function(el){el.parentNode.removeChild(el);});
@@ -360,7 +229,7 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
   updatePP();updateMute();buildSpeeds();
 })();
 
-/* ── checkout / upsell-charge logic (unchanged behavior) ── */
+/* ── charge / skip (unchanged behavior) ── */
 (function(){
   var N8N=window.SSOS_FN.N8N;
   var sessionId=new URLSearchParams(location.search).get('session_id')||'';
@@ -382,7 +251,7 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
   function showErr(m){
     var err=document.getElementById('err');if(err){err.textContent=m;err.style.display='block';}
     document.querySelectorAll('.add').forEach(function(b){b.disabled=false;});
-    var btn=document.getElementById('addBtn');if(btn)btn.innerHTML='Add the 24/7 AI Receptionist · $500<span class="sm">One-time. No monthly fees. Added to today’s order.</span>';
+    var btn=document.getElementById('addBtn');if(btn)btn.innerHTML='Add the 24/7 Receptionist — $500<span class="sm">One time. No monthly fees.</span>';
     window.scrollTo({top:0,behavior:'smooth'});
   }
 })();
