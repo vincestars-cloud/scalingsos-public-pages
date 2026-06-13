@@ -172,7 +172,7 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
 (function(){
   var N8N=window.SSOS_FN.N8N;
   var RATE=1.2, v=document.getElementById('upvid'), vplay=document.getElementById('vplay'), vsound=document.getElementById('vsound');
-  function enableSound(){ v.muted=false; v.loop=false; v.currentTime=0; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vsound.classList.add('hide'); vplay.classList.add('hide'); }
+  function enableSound(){ v.muted=false; v.loop=false; v.currentTime=0; v.playbackRate=RATE; v.play(); v.setAttribute('controls','controls'); vsound.classList.add('hide'); vplay.classList.add('hide'); v.removeEventListener('click',enableSound); }
   vsound.addEventListener('click',function(e){ e.stopPropagation(); enableSound(); });
   v.addEventListener('click',enableSound);
   var sessionId=new URLSearchParams(location.search).get('session_id')||'';
