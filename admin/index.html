@@ -3588,7 +3588,7 @@ function renderOutreachQueue() {
 async function loadProspectorState() {
   try {
     const cfg = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'get'}) }).then(r => r.json());
-    prospectorOn = cfg.outreach_enabled === true || cfg.enabled === true;
+    prospectorOn = (cfg.outreach_enabled === true || cfg.enabled === true) && cfg.outbound_paused !== true;
     prospectorConfigCache = cfg && cfg.ok !== false ? cfg : prospectorConfigCache;
     if (currentPageName && currentPageName()==='settings') { try{ fillSmsMessageTemplateFields(true); }catch(_e){} }
     renderProspector();
@@ -3620,7 +3620,7 @@ async function loadProspectorState() {
 async function toggleProspector() {
   const next = !prospectorOn;
   try {
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next } }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next, outbound_paused: !next } }) });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     prospectorOn = next;
     showToast(prospectorOn ? 'SMS outreach enabled' : 'SMS outreach paused');
@@ -3803,7 +3803,7 @@ async function toggleProspector() {
     const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
     const target = Math.max(1, Math.min(60, parseInt(document.getElementById('targetSlider').value, 10) || 1));
     const dailyCap = Math.max(1, parseInt(document.getElementById('dailyCapInput')?.value, 10) || 1);
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next, states, industries, cities: citiesForStates(states), outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true } }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next, outbound_paused: !next, states, industries, cities: citiesForStates(states), outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true } }) });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json().catch(() => ({}));
     if (json && json.ok === false) throw new Error(json.error || 'config rejected');
