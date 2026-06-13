@@ -948,7 +948,7 @@ function submitForm() {
     industry: A.s3||'',
     source: 'vsl_book_call'
   };
-  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-events', {
     method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
   }).catch(function(){});
   if (biz && phone) {
@@ -1012,7 +1012,7 @@ function unlockVideo() {
   btn.disabled = true;
 
   // Fire lead to n8n
-  fetch('https://n8n.americanlifeteam.com/webhook/scalinsos-events', {
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-events', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
