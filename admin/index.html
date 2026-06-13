@@ -674,7 +674,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
 
       <div class="control-panel" style="margin-bottom:20px">
         <h3>SMS Message Templates</h3>
-        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">These save to the Prospector Config SSOT and are read by n8n. Msg 2 now branches by whether the business already has a website.</p>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">These save to the Prospector Config SSOT and are read by n8n. Msg 2 branches by whether the business already has a website and rotates A/B/C per branch.</p>
         <div style="font-size:.76rem;color:var(--text-secondary);line-height:1.45;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px">
           <div style="font-weight:800;color:var(--text-primary);margin-bottom:4px">Supported tokens with examples</div>
           <div><b>{name}</b>, <b>{business}</b>, <b>{business_name}</b> -> Cutler Bay Plumbing (humanized from the business name; LLC/Inc/etc removed)</div>
@@ -689,11 +689,15 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 1 Initial SMS<textarea id="settingsMsg1" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
-          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Has Existing Website<textarea id="settingsMsg2Website" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
-          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website<textarea id="settingsMsg2NoWebsite" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
-          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 Fallback Variant A<textarea id="settingsMsg2A" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
-          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 Fallback Variant B<textarea id="settingsMsg2B" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Offer Template<textarea id="settingsOfferTemplate" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px">
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version A<textarea id="settingsMsg2NoWebsiteA" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version B<textarea id="settingsMsg2NoWebsiteB" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - No Website Version C<textarea id="settingsMsg2NoWebsiteC" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Existing Website Version A<textarea id="settingsMsg2WebsiteA" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Existing Website Version B<textarea id="settingsMsg2WebsiteB" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Existing Website Version C<textarea id="settingsMsg2WebsiteC" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
         <button class="btn btn-primary" style="margin-top:12px" onclick="saveSmsMessageTemplates()">Save Message Templates</button>
         <span id="settingsMsgStatus" style="margin-left:10px;font-size:.8rem;color:var(--text-muted)"></span>
@@ -2598,38 +2602,73 @@ function renderSettings() {
 
 function fillSmsMessageTemplateFields(force){
   var mt=(prospectorConfigCache&&prospectorConfigCache.message_templates)||{};
-  var m1=document.getElementById('settingsMsg1'), a=document.getElementById('settingsMsg2A'), b=document.getElementById('settingsMsg2B'), w=document.getElementById('settingsMsg2Website'), nw=document.getElementById('settingsMsg2NoWebsite'), o=document.getElementById('settingsOfferTemplate');
-  if(m1 && (force || !m1.dataset.loaded)){ m1.value=mt.outreach_initial || 'Hey {name}, are you still taking on more {noun}?'; m1.dataset.loaded='1'; }
+  var $=function(id){return document.getElementById(id);};
+  var m1=$('settingsMsg1'), o=$('settingsOfferTemplate');
   var vars=Array.isArray(mt.followup_after_reply_variants)?mt.followup_after_reply_variants:[];
   var has=Array.isArray(mt.followup_after_reply_has_website_variants)?mt.followup_after_reply_has_website_variants:[];
   var none=Array.isArray(mt.followup_after_reply_no_website_variants)?mt.followup_after_reply_no_website_variants:[];
-  var fallbackA=(vars[0]&&vars[0].text) || 'Made this for you, figured it could be useful if you are open to more {noun}. You can change anything on it.\n\n{link}';
-  var fallbackB=(vars[1]&&vars[1].text) || 'Made this for you, thought you might want it. You can change anything on it.\n\n{link}';
-  if(w && (force || !w.dataset.loaded)){ w.value=(has[0]&&has[0].text) || fallbackA; w.dataset.loaded='1'; }
-  if(nw && (force || !nw.dataset.loaded)){ nw.value=(none[0]&&none[0].text) || fallbackB; nw.dataset.loaded='1'; }
-  if(a && (force || !a.dataset.loaded)){ a.value=fallbackA; a.dataset.loaded='1'; }
-  if(b && (force || !b.dataset.loaded)){ b.value=fallbackB; b.dataset.loaded='1'; }
+  var textOf=function(v){ return String((v&&(v.text||v.message||v.body))||'').trim(); };
+  var findVariant=function(list, keys, idx){
+    var keyset={}; (keys||[]).forEach(function(k){keyset[String(k).toUpperCase()]=1;});
+    for(var i=0;i<list.length;i++){ var k=String((list[i]&&list[i].key)||'').toUpperCase(); if(keyset[k] && textOf(list[i])) return textOf(list[i]); }
+    return textOf(list[idx]) || '';
+  };
+  var fill=function(id, value){ var el=$(id); if(el && (force || !el.dataset.loaded)){ el.value=value||''; el.dataset.loaded='1'; } };
+  var legacyA=findVariant(vars,['A','UI'],0);
+  var legacyB=findVariant(vars,['B'],1);
+  var defaultNoA='Made this for you, figured it could be useful so more people can find you.\n\nI can make any changes you need.\n\nIf you want it, I can have it live in 24hrs for you.';
+  var defaultNoB='Quick context - I am Vince with ScalingSOS. I attached a first-pass screenshot for {name} so people who Google you get a clearer first impression before they call. Anything I should change?';
+  var defaultNoC='Quick context - I am Vince with ScalingSOS. Looks like Google/Maps is doing most of the trust work right now, so I attached a first-pass screenshot for {name}. Anything feel off?';
+  var defaultHasA='Made this for you, figured it is a nice site update. I can make changes as well.\n\nIf it is worth keeping I can have it live for you in 24hrs for 99.';
+  var defaultHasB='Quick context - I am Vince with ScalingSOS. I attached a first-pass screenshot showing a cleaner online first impression for {name}. Anything I should change?';
+  var defaultHasC='Quick context - I am Vince with ScalingSOS. I attached a first-pass screenshot so people checking you out online see the same trust your reviews already show. Anything feel off?';
+  if(m1 && (force || !m1.dataset.loaded)){ m1.value=mt.outreach_initial || 'Hey {name}, are you still taking on more {noun}?'; m1.dataset.loaded='1'; }
+  fill('settingsMsg2NoWebsiteA', findVariant(none,['A','NO_A','NO_WEBSITE'],0) || mt.followup_after_reply_no_website_body || legacyA || defaultNoA);
+  fill('settingsMsg2NoWebsiteB', findVariant(none,['B','NO_B'],1) || legacyB || defaultNoB);
+  fill('settingsMsg2NoWebsiteC', findVariant(none,['C','NO_C'],2) || defaultNoC);
+  fill('settingsMsg2WebsiteA', findVariant(has,['A','HAS_A','HAS_WEBSITE'],0) || mt.followup_after_reply_has_website_body || legacyA || defaultHasA);
+  fill('settingsMsg2WebsiteB', findVariant(has,['B','HAS_B'],1) || legacyB || defaultHasB);
+  fill('settingsMsg2WebsiteC', findVariant(has,['C','HAS_C'],2) || defaultHasC);
   if(o && (force || !o.dataset.loaded)){ o.value=mt.offer_template || ''; o.dataset.loaded='1'; }
 }
 async function saveSmsMessageTemplates(){
   var st=document.getElementById('settingsMsgStatus'); if(st){ st.textContent='Saving...'; st.style.color='var(--text-muted)'; }
   var mt=Object.assign({}, (prospectorConfigCache&&prospectorConfigCache.message_templates)||{});
   mt.outreach_initial=(document.getElementById('settingsMsg1')?.value||'').trim();
-  var msg2A=(document.getElementById('settingsMsg2A')?.value||'').trim();
-  var msg2B=(document.getElementById('settingsMsg2B')?.value||'').trim();
-  var msg2Website=(document.getElementById('settingsMsg2Website')?.value||'').trim();
-  var msg2NoWebsite=(document.getElementById('settingsMsg2NoWebsite')?.value||'').trim();
+  var val=function(id){ return (document.getElementById(id)?.value||'').trim(); };
+  var msg2NoWebsiteA=val('settingsMsg2NoWebsiteA') || val('settingsMsg2NoWebsite') || val('settingsMsg2A');
+  var msg2NoWebsiteB=val('settingsMsg2NoWebsiteB');
+  var msg2NoWebsiteC=val('settingsMsg2NoWebsiteC');
+  var msg2WebsiteA=val('settingsMsg2WebsiteA') || val('settingsMsg2Website') || val('settingsMsg2A');
+  var msg2WebsiteB=val('settingsMsg2WebsiteB');
+  var msg2WebsiteC=val('settingsMsg2WebsiteC');
+  var keep=function(v){ return v && v.text; };
   mt.followup_after_reply_body='';
   mt.followup_template_body='';
   mt.followup_body='';
-  mt.followup_after_reply_variants=[{key:'A', text:msg2A},{key:'B', text:msg2B}];
-  mt.followup_after_reply_has_website_body=msg2Website || msg2A;
-  mt.followup_after_reply_no_website_body=msg2NoWebsite || msg2B;
-  mt.followup_after_reply_has_website_variants=[{key:'HAS_WEBSITE', text:msg2Website || msg2A}];
-  mt.followup_after_reply_no_website_variants=[{key:'NO_WEBSITE', text:msg2NoWebsite || msg2B}];
+  mt.followup_after_reply_has_website_body=msg2WebsiteA;
+  mt.followup_after_reply_no_website_body=msg2NoWebsiteA;
+  mt.followup_after_reply_has_website_variants=[
+    {key:'A', text:msg2WebsiteA},
+    {key:'B', text:msg2WebsiteB},
+    {key:'C', text:msg2WebsiteC}
+  ].filter(keep);
+  mt.followup_after_reply_no_website_variants=[
+    {key:'A', text:msg2NoWebsiteA},
+    {key:'B', text:msg2NoWebsiteB},
+    {key:'C', text:msg2NoWebsiteC}
+  ].filter(keep);
+  mt.followup_after_reply_variants=[
+    {key:'HAS_A', branch:'has_website', text:msg2WebsiteA},
+    {key:'HAS_B', branch:'has_website', text:msg2WebsiteB},
+    {key:'HAS_C', branch:'has_website', text:msg2WebsiteC},
+    {key:'NO_A', branch:'no_website', text:msg2NoWebsiteA},
+    {key:'NO_B', branch:'no_website', text:msg2NoWebsiteB},
+    {key:'NO_C', branch:'no_website', text:msg2NoWebsiteC}
+  ].filter(keep);
   mt.outreach_initial_variants=[{key:'A', text:mt.outreach_initial},{key:'B', text:mt.outreach_initial}];
   mt.offer_template=(document.getElementById('settingsOfferTemplate')?.value||'').trim();
-  if(!mt.outreach_initial || !mt.followup_after_reply_has_website_variants[0].text || !mt.followup_after_reply_no_website_variants[0].text){ if(st){st.textContent='Msg 1, Msg 2 Has Website, and Msg 2 No Website are required'; st.style.color='var(--red)';} return; }
+  if(!mt.outreach_initial || !mt.followup_after_reply_has_website_variants.length || !mt.followup_after_reply_no_website_variants.length){ if(st){st.textContent='Msg 1 plus at least one Existing Website and No Website Msg 2 are required'; st.style.color='var(--red)';} return; }
   try{
     var resp=await fetch(N8N_BASE+'/scalingsos-prospector-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',config:{message_templates:mt}})});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
@@ -3558,7 +3597,7 @@ function outreachWindowForBusiness(b) {
   const now = new Date();
   const localHour = Number(new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hour12: false }).format(now));
   const localTime = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).format(now);
-  return { state, tz, localHour, localTime, allowed: localHour >= 8 && localHour < 18 };
+  return { state, tz, localHour, localTime, allowed: localHour >= 8 && localHour < 19 };
 }
 
 function renderOutreachQueue() {
