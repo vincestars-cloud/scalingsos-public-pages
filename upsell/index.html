@@ -47,6 +47,13 @@ h1 em{font-style:normal;color:var(--gold);}
 .stack-today-val{font-size:22px;font-weight:900;color:var(--gold);}
 .stack-today-val small{font-size:12px;font-weight:500;color:rgba(201,168,76,.7);margin-left:3px;}
 
+/* demo box */
+.demo-box{background:#fff;border:1.5px solid rgba(10,31,58,.13);border-radius:12px;padding:16px 18px;margin-bottom:16px;text-align:center;}
+.demo-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);margin-bottom:10px;}
+.demo-call{display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;font-size:15px;font-weight:800;padding:11px 20px;border-radius:10px;text-decoration:none;margin-bottom:8px;}
+.demo-call:hover{opacity:.9;}
+.demo-sub{font-size:12px;color:var(--gray);margin-top:4px;}
+
 /* math */
 .math{font-size:13px;color:var(--gray);margin-bottom:24px;font-style:italic;}
 
@@ -88,7 +95,7 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
     <h1>What if you woke up Monday to<br><em>new appointments already booked?</em></h1>
 
     <p class="truism">Every job you'll ever get started with someone picking up the phone.</p>
-    <p class="bridge">Your website brings the traffic. AI Receptionist makes sure none of it walks away.</p>
+    <p class="bridge">Your website brings the traffic. Your 24/7 Receptionist makes sure none of it walks away.</p>
 
     <div class="stack">
       <div class="stack-item">
@@ -131,12 +138,21 @@ footer{padding:18px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
       <div class="vplay" id="vplay"><div class="vcircle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
     </div>
 
+    <div class="demo-box">
+      <p class="demo-label">Want to hear it for yourself?</p>
+      <a class="demo-call" href="tel:+14709180516">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        Call the demo line now — (470) 918-0516
+      </a>
+      <p class="demo-sub">A real receptionist picks up. That's what your customers will hear.</p>
+    </div>
+
     <p class="math">One average job pays for this. That's all it needs to do — once.</p>
 
     <p class="yes-q">If all this did was save you one job you would have missed — does $500 make sense?</p>
 
     <div class="err" id="err"></div>
-    <button class="add" id="addBtn" onclick="addUpsell()">Yes — Add AI Receptionist · $500</button>
+    <button class="add" id="addBtn" onclick="addUpsell()">Yes — Add 24/7 Receptionist · $500</button>
     <button class="skip" onclick="skip()">No thanks — I'll handle missed calls myself</button>
 
   </div>
@@ -164,8 +180,8 @@ window.SSOS_FN = { N8N:'https://n8n.americanlifeteam.com/webhook' };
     fetch(N8N+'/ssos-funnel-upsell-charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId,product:'receptionist_500'})})
       .then(function(r){return r.json()}).then(function(d){
         if(d&&d.ok){ try{localStorage.setItem('ssos_bought_receptionist','1')}catch(e){} location.href=setupUrl()+'&recep=1'; }
-        else{ err.textContent=(d&&d.error)||'Could not add it right now. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add AI Receptionist · $500'; }
-      }).catch(function(){ err.textContent='Network error. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add AI Receptionist · $500'; });
+        else{ err.textContent=(d&&d.error)||'Could not add it right now. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add 24/7 Receptionist · $500'; }
+      }).catch(function(){ err.textContent='Network error. Your website order is safe.'; err.style.display='block'; btn.disabled=false; btn.textContent='Yes — Add 24/7 Receptionist · $500'; });
   };
 })();
 </script>
