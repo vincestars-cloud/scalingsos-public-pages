@@ -676,6 +676,24 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
       </div>
 
       <div class="control-panel" style="margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px">
+          <div>
+            <h3>Send Health</h3>
+            <p style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Preflight checks for SMS, sender pool, Telnyx, Supabase, Browserless, media, queue depth, and carrier caps.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="runSendPreflight()">Run Preflight</button>
+        </div>
+        <div id="sendHealthSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px">
+          <div class="stat-card"><div class="label">Status</div><div class="value" id="shStatus" style="font-size:1rem">--</div></div>
+          <div class="stat-card"><div class="label">Queue Depth</div><div class="value" id="shQueueDepth" style="font-size:1rem">--</div></div>
+          <div class="stat-card"><div class="label">Senders</div><div class="value" id="shSenders" style="font-size:1rem">--</div></div>
+          <div class="stat-card"><div class="label">T-Mobile</div><div class="value" id="shTmobile" style="font-size:1rem">--</div></div>
+          <div class="stat-card"><div class="label">Failed Today</div><div class="value" id="shFailed" style="font-size:1rem">--</div></div>
+        </div>
+        <div id="sendHealthChecks" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;font-size:.78rem;color:var(--text-secondary)"></div>
+      </div>
+
+      <div class="control-panel" style="margin-bottom:20px">
         <h3>SMS Message Templates</h3>
         <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">These save to the Prospector Config SSOT and are read by n8n. Msg 2 branches by whether the business already has a website and rotates A/B/C per branch.</p>
         <div style="font-size:.76rem;color:var(--text-secondary);line-height:1.45;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px">
@@ -2098,6 +2116,8 @@ const WEBHOOK_ENDPOINTS = [
   { name: 'Process Demo', path: '/webhook/scalingsos-process-demo', method: 'POST' },
   { name: 'Get Business', path: '/webhook/scalingsos-get-business', method: 'GET' },
   { name: 'SMS Inbound', path: '/webhook/scalingsos-sms-inbound', method: 'POST' },
+  { name: 'Send Preflight', path: '/webhook/scalingsos-send-preflight', method: 'POST' },
+  { name: 'Outbound Queue Worker', path: '/webhook/scalingsos-outbound-queue-worker', method: 'POST' },
   { name: 'Lead Capture', path: '/webhook/scalingsos-lead-capture', method: 'POST' },
   { name: 'Event Logger', path: '/webhook/scalingsos-event-logger', method: 'POST' },
   { name: 'Vapi Callback', path: '/webhook/scalingsos-vapi-callback', method: 'POST' },
@@ -2595,6 +2615,7 @@ function rebuildBiz(name, industry, city, state, website, slug) {
 // ============================================================
 function renderSettings() {
   try { fillSmsMessageTemplateFields(); } catch(e) {}
+  try { if (!window._sendHealthLastRun || Date.now() - window._sendHealthLastRun > 60000) runSendPreflight(); } catch(e) {}
   const list = document.getElementById('webhookRefList');
   if (list && !list.children.length) {
     list.innerHTML = WEBHOOK_ENDPOINTS.map(wh => {
@@ -2637,6 +2658,62 @@ function operationalSettingsPayload(){
       }
     }
   };
+}
+
+function setSendHealthText(id, value, color){
+  var el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=value == null || value === '' ? '--' : String(value);
+  if(color) el.style.color=color;
+}
+function renderSendHealth(data){
+  data=data||{};
+  var summary=data.summary||{};
+  var stats=summary.stats||{};
+  var status=String(data.status||'--');
+  var color=status==='READY'?'var(--green)':(status==='READY_WITH_WARNINGS'?'var(--yellow)':'var(--red)');
+  setSendHealthText('shStatus', status, color);
+  setSendHealthText('shQueueDepth', summary.queue_depth != null ? summary.queue_depth : '--', 'var(--blue)');
+  setSendHealthText('shSenders', summary.senders != null ? summary.senders : '--', 'var(--green)');
+  var tm='--';
+  var tmCheck=(data.checks||[]).find(function(c){return c.label==='tmobile_cap';});
+  if(tmCheck&&tmCheck.data) tm=String(tmCheck.data.used||0)+' / '+String(tmCheck.data.cap||0);
+  else if(stats.tmobile_today!=null) tm=String(stats.tmobile_today);
+  setSendHealthText('shTmobile', tm, 'var(--purple)');
+  setSendHealthText('shFailed', stats.failed_today != null ? stats.failed_today : '--', stats.failed_today>0?'var(--red)':'var(--green)');
+  var box=document.getElementById('sendHealthChecks');
+  if(!box) return;
+  var checks=Array.isArray(data.checks)?data.checks:[];
+  if(!checks.length){ box.innerHTML='<div style="color:var(--text-muted)">No preflight result yet.</div>'; return; }
+  box.innerHTML=checks.map(function(c){
+    var ok=c.ok===true;
+    var bg=ok?'var(--green-light)':'var(--red-light)';
+    var fg=ok?'var(--green)':'var(--red)';
+    var detail='';
+    if(c.data&&typeof c.data==='object'){
+      if(c.label==='sender_pool') detail=(c.data.count||0)+' sender(s)';
+      else if(c.label==='queue_scan') detail=(c.data.queued_phase1||0)+' queued';
+      else if(c.label==='today_message_scan') detail=(c.data.rows||0)+' today rows';
+      else if(c.label==='tmobile_cap') detail=String(c.data.used||0)+' / '+String(c.data.cap||0);
+    }
+    if(!detail&&c.error) detail=c.error;
+    return '<div style="border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#fff;min-width:0"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="overflow:hidden;text-overflow:ellipsis">'+esc(String(c.label||'check').replace(/_/g,' '))+'</strong><span style="color:'+fg+';font-weight:800">'+(ok?'OK':'FAIL')+'</span></div><div style="color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(detail||((c.ms!=null?c.ms+'ms':'')))+'</div></div>';
+  }).join('');
+}
+async function runSendPreflight(){
+  window._sendHealthLastRun=Date.now();
+  setSendHealthText('shStatus','Checking...','var(--text-muted)');
+  var box=document.getElementById('sendHealthChecks');
+  if(box) box.innerHTML='<div style="color:var(--text-muted)">Running preflight...</div>';
+  try{
+    var resp=await fetch(N8N_BASE+'/scalingsos-send-preflight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'admin_ui'})});
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    var data=await resp.json();
+    renderSendHealth(data);
+  }catch(e){
+    setSendHealthText('shStatus','ERROR','var(--red)');
+    if(box) box.innerHTML='<div style="color:var(--red)">Preflight failed: '+esc(e.message||String(e))+'</div>';
+  }
 }
 
 function fillSmsMessageTemplateFields(force){
