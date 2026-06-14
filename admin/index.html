@@ -702,6 +702,18 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Existing Website Version B<textarea id="settingsMsg2WebsiteB" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 2 - Existing Website Version C<textarea id="settingsMsg2WebsiteC" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px">
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">6hr Follow-up SMS<textarea id="settingsFollowup6h" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">24hr Follow-up SMS<textarea id="settingsFollowup24h" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px;align-items:end">
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Sender Numbers<textarea id="settingsSenderNumbers" rows="3" placeholder="+14702846486&#10;+14042324867" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Active Sender<input id="settingsActiveSender" type="text" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Start Hour<input id="settingsSendStart" type="number" min="0" max="23" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">End Hour<input id="settingsSendEnd" type="number" min="0" max="23" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">T-Mobile Daily<input id="settingsTmobileDaily" type="number" min="0" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">T-Mobile Cold<input id="settingsTmobileCold" type="number" min="0" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+        </div>
         <button class="btn btn-primary" style="margin-top:12px" onclick="saveSmsMessageTemplates()">Save Message Templates</button>
         <span id="settingsMsgStatus" style="margin-left:10px;font-size:.8rem;color:var(--text-muted)"></span>
       </div>
@@ -2603,8 +2615,33 @@ function renderSettings() {
   }
 }
 
+function settingsVal(id){ return (document.getElementById(id)?.value || '').trim(); }
+function settingsNum(id, fallback){
+  var n = parseInt(settingsVal(id), 10);
+  return Number.isFinite(n) ? n : fallback;
+}
+function operationalSettingsPayload(){
+  var cfg = prospectorConfigCache || {};
+  var caps = (cfg.carrier_caps && cfg.carrier_caps.tmobile) || {};
+  return {
+    sender_numbers: settingsVal('settingsSenderNumbers') || (Array.isArray(cfg.sender_numbers) ? cfg.sender_numbers.join('\n') : ''),
+    active_sender_number: settingsVal('settingsActiveSender') || cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486',
+    telnyx_from_number: settingsVal('settingsActiveSender') || cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486',
+    send_window_start: settingsNum('settingsSendStart', Number(cfg.send_window_start || 9)),
+    send_window_end: settingsNum('settingsSendEnd', Number(cfg.send_window_end || 19)),
+    carrier_caps: {
+      tmobile: {
+        daily: settingsNum('settingsTmobileDaily', Number(caps.daily || 1800)),
+        cold_daily: settingsNum('settingsTmobileCold', Number(caps.cold_daily || 1500)),
+        warm_reserved: Math.max(0, settingsNum('settingsTmobileDaily', Number(caps.daily || 1800)) - settingsNum('settingsTmobileCold', Number(caps.cold_daily || 1500)))
+      }
+    }
+  };
+}
+
 function fillSmsMessageTemplateFields(force){
   var mt=(prospectorConfigCache&&prospectorConfigCache.message_templates)||{};
+  var cfg=prospectorConfigCache||{};
   var $=function(id){return document.getElementById(id);};
   var m1=$('settingsMsg1'), o=$('settingsOfferTemplate');
   var vars=Array.isArray(mt.followup_after_reply_variants)?mt.followup_after_reply_variants:[];
@@ -2633,6 +2670,15 @@ function fillSmsMessageTemplateFields(force){
   fill('settingsMsg2WebsiteB', findVariant(has,['B','HAS_B'],1) || legacyB || defaultHasB);
   fill('settingsMsg2WebsiteC', findVariant(has,['C','HAS_C'],2) || defaultHasC);
   if(o && (force || !o.dataset.loaded)){ o.value=mt.offer_template || ''; o.dataset.loaded='1'; }
+  fill('settingsFollowup6h', mt.followup_sms_1a_body || '{name}, are you pretty busy at the moment?');
+  fill('settingsFollowup24h', mt.followup_sms_1b_body || "No pressure if now's not the right time - just figured I'd reach out. Want me to send over details or leave it alone??");
+  fill('settingsSenderNumbers', Array.isArray(cfg.sender_numbers) && cfg.sender_numbers.length ? cfg.sender_numbers.join('\n') : '+14702846486\n+14042324867');
+  fill('settingsActiveSender', cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486');
+  fill('settingsSendStart', cfg.send_window_start != null ? String(cfg.send_window_start) : '9');
+  fill('settingsSendEnd', cfg.send_window_end != null ? String(cfg.send_window_end) : '19');
+  var tm=(cfg.carrier_caps&&cfg.carrier_caps.tmobile)||{};
+  fill('settingsTmobileDaily', tm.daily != null ? String(tm.daily) : '1800');
+  fill('settingsTmobileCold', tm.cold_daily != null ? String(tm.cold_daily) : '1500');
 }
 async function saveSmsMessageTemplates(){
   var st=document.getElementById('settingsMsgStatus'); if(st){ st.textContent='Saving...'; st.style.color='var(--text-muted)'; }
@@ -2671,9 +2717,11 @@ async function saveSmsMessageTemplates(){
   ].filter(keep);
   mt.outreach_initial_variants=[{key:'A', text:mt.outreach_initial},{key:'B', text:mt.outreach_initial}];
   mt.offer_template=(document.getElementById('settingsOfferTemplate')?.value||'').trim();
+  mt.followup_sms_1a_body=val('settingsFollowup6h');
+  mt.followup_sms_1b_body=val('settingsFollowup24h');
   if(!mt.outreach_initial || !mt.followup_after_reply_has_website_variants.length || !mt.followup_after_reply_no_website_variants.length){ if(st){st.textContent='Msg 1 plus at least one Existing Website and No Website Msg 2 are required'; st.style.color='var(--red)';} return; }
   try{
-    var resp=await fetch(N8N_BASE+'/scalingsos-prospector-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',config:{message_templates:mt}})});
+    var resp=await fetch(N8N_BASE+'/scalingsos-prospector-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',config:Object.assign({message_templates:mt}, operationalSettingsPayload())})});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     var json=await resp.json().catch(function(){return {};}); if(json&&json.ok===false) throw new Error(json.error||'config rejected');
     prospectorConfigCache=(json&&json.ok!==false)?json:Object.assign({},prospectorConfigCache||{}, {message_templates:mt});
@@ -3600,7 +3648,7 @@ function outreachWindowForBusiness(b) {
   const now = new Date();
   const localHour = Number(new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hour12: false }).format(now));
   const localTime = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).format(now);
-  return { state, tz, localHour, localTime, allowed: localHour >= 8 && localHour < 19 };
+  return { state, tz, localHour, localTime, allowed: localHour >= 9 && localHour < 19 };
 }
 
 function renderOutreachQueue() {
@@ -3619,7 +3667,7 @@ function renderOutreachQueue() {
   }).map(b => ({ b, win: outreachWindowForBusiness(b) })).sort((a,b) => Number(b.win.allowed) - Number(a.win.allowed));
   const blocked = rows.filter(r => !r.win.allowed).length;
   const ready = rows.length - blocked;
-  summary.textContent = ready + ' ready to send now, ' + blocked + ' waiting for local 8 AM-6 PM outreach window';
+  summary.textContent = ready + ' ready to send now, ' + blocked + ' waiting for local 9 AM-7 PM outreach window';
   tbody.innerHTML = rows.slice(0, 50).map(({b, win}) => {
     const contact = [b.owner_email || b.email || '', formatPhone(b.owner_phone || b.phone || '')].filter(Boolean).join(' / ') || '--';
     const demo = b.demo_url ? '<a href="' + esc(b.demo_url) + '" target="_blank" style="color:var(--blue)">Demo</a>' : '--';
@@ -3662,7 +3710,7 @@ async function loadProspectorState() {
 async function toggleProspector() {
   const next = !prospectorOn;
   try {
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next, outbound_paused: !next } }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: Object.assign({ enabled: next, outreach_enabled: next, outbound_paused: !next }, operationalSettingsPayload()) }) });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     prospectorOn = next;
     showToast(prospectorOn ? 'SMS outreach enabled' : 'SMS outreach paused');
@@ -3692,7 +3740,7 @@ async function saveProspectorConfig() {
   }
   localStorage.setItem('sos_prospector_config', JSON.stringify({ states, industries, target, dailyCap, cities }));
   try {
-    const cfgResp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:{ enabled: prospectorOn, outreach_enabled: prospectorOn, states, industries, cities, outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true, message_templates: (prospectorConfigCache&&prospectorConfigCache.message_templates)||undefined } }) });
+    const cfgResp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:Object.assign({ enabled: prospectorOn, outreach_enabled: prospectorOn, states, industries, cities, outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true, message_templates: (prospectorConfigCache&&prospectorConfigCache.message_templates)||undefined }, operationalSettingsPayload()) }) });
     if (!cfgResp.ok) throw new Error('config HTTP ' + cfgResp.status);
     const cfgJson = await cfgResp.json().catch(() => ({}));
     if (cfgJson && cfgJson.ok === false) throw new Error(cfgJson.error || 'config rejected');
@@ -3845,7 +3893,7 @@ async function toggleProspector() {
     const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
     const target = Math.max(1, Math.min(60, parseInt(document.getElementById('targetSlider').value, 10) || 1));
     const dailyCap = Math.max(1, parseInt(document.getElementById('dailyCapInput')?.value, 10) || 1);
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: { enabled: next, outreach_enabled: next, outbound_paused: !next, states, industries, cities: citiesForStates(states), outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true } }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: Object.assign({ enabled: next, outreach_enabled: next, outbound_paused: !next, states, industries, cities: citiesForStates(states), outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true }, operationalSettingsPayload()) }) });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json().catch(() => ({}));
     if (json && json.ok === false) throw new Error(json.error || 'config rejected');
