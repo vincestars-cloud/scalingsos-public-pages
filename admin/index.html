@@ -2706,7 +2706,7 @@ async function runSendPreflight(){
   var box=document.getElementById('sendHealthChecks');
   if(box) box.innerHTML='<div style="color:var(--text-muted)">Running preflight...</div>';
   try{
-    var resp=await fetch(N8N_BASE+'/scalingsos-send-preflight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'admin_ui'})});
+    var resp=await fetch(N8N_BASE+'/scalingsos-send-preflight',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({source:'admin_ui'})});
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     var data=await resp.json();
     renderSendHealth(data);
