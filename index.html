@@ -48,9 +48,9 @@ h1.display .ln1,h1.display .ln2{display:block;}
 .bigplay svg{width:42%;height:42%;margin-left:8%;fill:#fff;opacity:.95;}
 .bigplay .label{position:absolute;bottom:clamp(14px,4vw,26px);left:0;right:0;text-align:center;color:#fff;font-weight:700;font-size:clamp(12px,1.6vw,15px);letter-spacing:.04em;text-shadow:0 2px 10px rgba(0,0,0,.5);}
 
-.tap-sound{position:absolute;z-index:9;top:18px;right:14px;background:rgba(10,31,58,.78);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:999px;display:none;align-items:center;gap:7px;cursor:pointer;}
+.tap-sound{position:absolute;z-index:9;top:12px;left:12px;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;font-size:13px;font-weight:700;padding:7px 12px;border-radius:8px;display:none;align-items:center;gap:6px;cursor:pointer;user-select:none;}
 .tap-sound.show{display:inline-flex;}
-.tap-sound svg{width:14px;height:14px;fill:#fff;}
+.tap-sound svg{width:15px;height:15px;flex-shrink:0;}
 
 /* ── Wistia-style bottom controls ── */
 .controls{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;flex-direction:column;gap:8px;padding:14px 16px 12px;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0));opacity:0;transition:opacity .35s;pointer-events:none;}
@@ -121,18 +121,6 @@ h1.display .ln1,h1.display .ln2{display:block;}
 .faq-q .faq-ic{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--gold-bg);color:var(--gold-hover);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;line-height:1;}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .28s ease;}
 .faq-a p{padding:0 20px 18px;font-size:15px;line-height:1.6;color:rgba(10,31,58,.7);}
-/* ── WALL OF WORK ── */
-.wall{padding:clamp(40px,6vw,76px) 18px;background:var(--white);border-top:1px solid rgba(10,31,58,.07);}
-.wall-in{max-width:1080px;margin:0 auto;}
-.wall-eyebrow{text-align:center;color:var(--gold-hover);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:9px;}
-.wall-h{text-align:center;font-size:clamp(24px,4vw,38px);font-weight:900;letter-spacing:-.02em;color:var(--navy);margin-bottom:clamp(26px,3.6vw,40px);}
-.wall-sub{text-align:center;font-size:clamp(13px,1.7vw,15px);color:rgba(10,31,58,.55);margin:7px auto clamp(26px,3.6vw,40px);max-width:540px;line-height:1.5;}
-.wall-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,26px);align-items:start;}
-@media(max-width:640px){.wall-grid{grid-template-columns:1fr;}}
-.wall-card{background:var(--cream);border:1px solid rgba(10,31,58,.08);border-radius:16px;overflow:hidden;box-shadow:0 12px 32px -16px rgba(10,31,58,.25);transition:transform .18s,box-shadow .18s;}
-.wall-card:hover{transform:translateY(-3px);box-shadow:0 20px 46px -16px rgba(10,31,58,.34);}
-.wall-card img{display:block;width:100%;height:auto;background:#f1efe9;}
-.wall-card figcaption{padding:13px 16px;font-size:clamp(13px,1.6vw,15px);font-weight:700;color:var(--navy);border-top:1px solid rgba(10,31,58,.07);}
 footer{background:rgba(10,31,58,.03);border-top:1px solid rgba(10,31,58,.06);padding:22px 20px;text-align:center;font-size:12px;color:rgba(10,31,58,.3);}
 @media(max-width:520px){.controls{gap:10px;padding:8px 10px;}.controls button svg{width:20px;height:20px;}}
 </style>
@@ -175,12 +163,12 @@ window.SSOS = {
 
   <!-- PLAYER -->
   <div class="player paused" id="player">
-    <video id="v" playsinline preload="metadata" poster="" onclick="SP.toggle()"></video>
+    <video id="v" playsinline preload="auto" autoplay muted loop poster="" onclick="SP.toggle()"></video>
     <div class="loadbar"><div class="lfill" id="lfill"></div></div>
 
     <div class="tap-sound" id="tapSound" onclick="SP.unmute()">
-      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-      Tap for sound
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+      Enable sound
     </div>
 
     <div class="bigplay" id="bigplay" onclick="SP.toggle()">
@@ -230,24 +218,6 @@ window.SSOS = {
   </div>
 </section>
 
-<section class="wall">
-  <div class="wall-in">
-    <h2 class="wall-h">Real Sites. Real Before &amp; Afters.</h2>
-    <div class="wall-grid">
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/rebrandit.jpg" alt="Rebrandit website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/thrst.jpg" alt="THRST website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/parcelcube.jpg" alt="Parcelcube website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/oma-organics.jpg?v=6" alt="OMA Organics website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/zubalenok.jpg" alt="Zubalenok Split Now or Never website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/rtt.jpg" alt="RTT website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/eleni.jpg" alt="Eleni website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/kendall.jpg" alt="Kendall Summerhawk website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/sarah-walton.jpg" alt="Sarah Walton website before and after redesign"/></figure>
-      <figure class="wall-card"><img loading="lazy" src="assets/wall-of-work/ashley-stahl.jpg" alt="Ashley Stahl website before and after redesign"/></figure>
-    </div>
-  </div>
-</section>
-
 <section class="faq">
   <div class="faq-in">
     <h2 class="faq-h">Frequently Asked Questions</h2>
@@ -284,6 +254,7 @@ window.SSOS = {
   var seek=document.getElementById('seek'), chtip=document.getElementById('chtip');
   var DEFAULT_RATE=1.2, SPEEDS=[0.5,0.75,1,1.2,1.5,1.75,2];
   var DOTS_AFTER=(C.DOTS_AFTER!=null?C.DOTS_AFTER:5); // reveal chapter dots after this many seconds of play
+  var gifMode=true; // true while video is autoplaying muted (GIF mode); first unmute restarts from 0
 
   v.src=C.VIDEO_URL; if(C.POSTER) v.setAttribute('poster',C.POSTER);
 
@@ -338,7 +309,7 @@ window.SSOS = {
   window.SP={
     toggle:function(){ if(v.paused)v.play(); else v.pause(); closeSettings(); },
     toggleMute:function(){ v.muted=!v.muted; updateMute(); if(!v.muted) tapSound.classList.remove('show'); },
-    unmute:function(){ v.muted=false; if(v.paused)v.play(); tapSound.classList.remove('show'); updateMute(); },
+    unmute:function(){ if(gifMode){gifMode=false;v.loop=false;v.currentTime=0;} v.muted=false; if(v.paused)v.play(); tapSound.classList.remove('show'); updateMute(); },
     seekTo:function(t){ v.currentTime=Math.max(0,t); if(v.paused)v.play(); },
     seekClick:function(e){ var r=seek.getBoundingClientRect(); var disp=(e.clientX-r.left)/r.width; if(v.duration){ v.currentTime=feelInv(disp)*v.duration; if(v.paused)v.play(); } },
     toggleSettings:function(e){ e.stopPropagation(); document.getElementById('setmenu').classList.toggle('open'); },
