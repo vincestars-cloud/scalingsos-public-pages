@@ -307,7 +307,7 @@ window.SSOS = {
   }
 
   window.SP={
-    toggle:function(){ if(v.paused)v.play(); else v.pause(); closeSettings(); },
+    toggle:function(){ if(gifMode){ SP.unmute(); return; } if(v.paused)v.play(); else v.pause(); closeSettings(); },
     toggleMute:function(){ v.muted=!v.muted; updateMute(); if(!v.muted) tapSound.classList.remove('show'); },
     unmute:function(){ if(gifMode){gifMode=false;v.loop=false;v.currentTime=0;} v.muted=false; if(v.paused)v.play(); tapSound.classList.remove('show'); updateMute(); },
     seekTo:function(t){ v.currentTime=Math.max(0,t); if(v.paused)v.play(); },
