@@ -2651,6 +2651,10 @@ function operationalSettingsPayload(){
     telnyx_from_number: settingsVal('settingsActiveSender') || cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486',
     send_window_start: settingsNum('settingsSendStart', Number(cfg.send_window_start || 9)),
     send_window_end: settingsNum('settingsSendEnd', Number(cfg.send_window_end || 19)),
+    queue_mode_enabled: true,
+    queue_worker_enabled: true,
+    queue_max_batch: Math.max(1, Math.min(100, Number(cfg.queue_max_batch || 50))),
+    queue_send_spacing_ms: Math.max(50, Math.min(2000, Number(cfg.queue_send_spacing_ms || 250))),
     carrier_caps: {
       tmobile: {
         daily: settingsNum('settingsTmobileDaily', Number(caps.daily || 1800)),
