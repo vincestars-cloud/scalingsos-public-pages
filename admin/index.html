@@ -1429,16 +1429,19 @@ function renderDashboard() {
   var allTime=(range==='all');
   var msgStats=(window._msgLogRows!=null && typeof computeMsgStats==='function') ? computeMsgStats(allTime, range) : {sent:0,delivered:0,failed:0};
   var contactStats=(window._msgLogRows!=null && typeof computeContactMsgStats==='function') ? computeContactMsgStats(allTime, range) : {contacts:0,messages:0,deliveredContacts:0,deliveredMessages:0};
-  var convs=(data.conversations&&data.conversations.length?data.conversations:buildConversationsFromSheet(data.sms||[]));
-  var reply1=0, reply2=0;
-  convs.forEach(function(c){ if(allTime?_commsIsReplied(c):_commsIsRepliedInRange(c,range)) reply1++; if(allTime?_hasFollowupReply(c):_hasFollowupReplyIn(c,range)) reply2++; });
-  var delivered=Number(msgStats.delivered||0);
-  var contactedUnique=Number(contactStats.deliveredContacts||contactStats.contacts||0);
-  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
-  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
-  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
-  set('dbReply1Sub', contactedUnique ? ((reply1*100/contactedUnique).toFixed(1)+'% response rate') : '-- response rate');
-  set('dbReply2Sub', contactedUnique ? ((reply2*100/contactedUnique).toFixed(2)+'% response rate') : '-- response rate');
+	  var convs=(data.conversations&&data.conversations.length?data.conversations:buildConversationsFromSheet(data.sms||[]));
+	  var reply1=0, reply2=0;
+	  convs.forEach(function(c){ if(allTime?_commsIsReplied(c):_commsIsRepliedInRange(c,range)) reply1++; if(allTime?_hasFollowupReply(c):_hasFollowupReplyIn(c,range)) reply2++; });
+	  var delivered=Number(msgStats.delivered||0);
+	  var contactedUnique=Number(contactStats.deliveredContacts||contactStats.contacts||0);
+	  var convItems=convs.map(function(s){ return {s:s}; });
+	  var msg1Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg1Message,range):contactedUnique;
+	  var msg2Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg2Message,range):contactedUnique;
+	  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
+	  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
+	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
+	  set('dbReply1Sub', msg1Denom ? ((reply1*100/msg1Denom).toFixed(1)+'% of '+msg1Denom.toLocaleString()+' Msg1 contacts') : '0 Msg1 contacts in period');
+	  set('dbReply2Sub', msg2Denom ? ((reply2*100/msg2Denom).toFixed(2)+'% of '+msg2Denom.toLocaleString()+' Msg2 contacts') : '0 Msg2 contacts in period');
   set('dbOfferSentSub', reply2 ? ((offers*100/reply2).toFixed(1)+'% of Msg 2 replies') : '-- of Msg 2');
   set('dbClientsSub', offers ? ((clients*100/offers).toFixed(1)+'% conversion') : '-- conversion');
   set('dbSmsSentSub', Number(contactStats.messages||0).toLocaleString()+' total sent messages');
@@ -1455,7 +1458,7 @@ function renderDashboard() {
 	  }
   renderDashboardAnalytics(range, rows);
 	}
-	function _commsIsRepliedInRange(s,range){ return ((s&&s.history)||[]).some(function(m){ return _isInboundMsg(m)&&_tsInRangeOf(m.timestamp||m.time,range); }); }
+		function _commsIsRepliedInRange(s,range){ return _hasReplyAfterMessageInRange(s,range,_isMsg1Message); }
 
 function renderDashboardAnalytics(range, prospectRows) {
   if (typeof renderBarChart !== 'function') return;
@@ -3248,8 +3251,8 @@ function dispLabel(v){ for(var i=0;i<SCRAPE_DISPOSITIONS.length;i++){ if(SCRAPE_
 function dispColors(v){ return ({not_interested:['#fee2e2','#991b1b'], not_interested_called:['#fee2e2','#991b1b'], interested_sms:['#fef9c3','#854d0e'], interested_called:['#dbeafe','#1e40af'], interested:['#dbeafe','#1e40af'], considering:['#fef3c7','#92400e'], offer_sent:['#ffedd5','#9a3412'], client:['#dcfce7','#166534']})[String(v||'').toLowerCase().replace(/[\s-]+/g,'_')]||['#f1f5f9','#475569']; }
 function dispPill(v){ v=String(v||''); if(!v) return ''; var c=dispColors(v); return ' <span class="badge" style="background:'+c[0]+';color:'+c[1]+';font-weight:700;font-size:.66rem">'+esc(dispLabel(v))+'</span>'; }
 function _dispRank(v){ v=String(v||'').toLowerCase(); if(v==='client')return 0; if(v==='offer_sent')return 1; if(v==='interested_called')return 2; if(v==='interested_sms'||v==='considering'||v==='interested')return 3; if(v==='not_interested_called')return 4; if(v==='not_interested'||v==='do_not_contact'||v==='opted_out')return 5; return 9; }
-function _buildDispMap(){ var rows=window._scrapeRows||[]; var map={}; var gg=function(r,k){for(var kk in r){if(kk.toLowerCase()===k)return r[kk];}return '';}; var dispVals={}; SCRAPE_DISPOSITIONS.forEach(function(d){ if(d[0]) dispVals[d[0]]=1; }); for(var i=0;i<rows.length;i++){ var r=rows[i]; var ph=_normPh10(gg(r,'phone')||gg(r,'formatted_phone')); if(!ph) continue; var disp=String(gg(r,'disposition')||'').toLowerCase(); var next={disposition:disp,place_id:gg(r,'place_id'),slug:gg(r,'slug'),business_name:gg(r,'business_name'),demo_url:gg(r,'demo_url'),website:gg(r,'website_url')||gg(r,'website')||gg(r,'root_domain'),maps_url:gg(r,'maps_url')||gg(r,'google_maps_url')||gg(r,'google_maps')||gg(r,'map_url'),industry:gg(r,'industry'),rating:gg(r,'rating'),review_count:gg(r,'review_count')}; var old=map[ph]; if(!old || _dispRank(next.disposition)<_dispRank(old.disposition) || (_dispRank(next.disposition)===_dispRank(old.disposition) && (next.demo_url||next.business_name) && !(old.demo_url&&old.business_name))) map[ph]=next; }
-  ((data&&data.conversations)||[]).forEach(function(c){ var ph=_normPh10(c.phone); if(!ph) return; var st=String(c.disposition||c.manual_disposition||c.pipeline||c.status||'').toLowerCase(); if(!dispVals[st]) st=''; if(!map[ph]) map[ph]={disposition:st,place_id:'',slug:'',business_name:c.business_name||'',demo_url:c.demo_url||'',website:c.website||c.website_url||'',maps_url:c.maps_url||'',industry:c.industry||''}; else if(!map[ph].disposition && st) map[ph].disposition=st; if(!map[ph].business_name && c.business_name) map[ph].business_name=c.business_name; });
+function _buildDispMap(){ var rows=window._scrapeRows||[]; var map={}; var gg=function(r,k){for(var kk in r){if(kk.toLowerCase()===k)return r[kk];}return '';}; var normDisp=function(v){ return String(v||'').toLowerCase().replace(/[\s-]+/g,'_'); }; var dispVals={}; SCRAPE_DISPOSITIONS.forEach(function(d){ if(d[0]) dispVals[d[0]]=1; }); for(var i=0;i<rows.length;i++){ var r=rows[i]; var ph=_normPh10(gg(r,'phone')||gg(r,'formatted_phone')); if(!ph) continue; var disp=normDisp(gg(r,'disposition')); var next={disposition:disp,place_id:gg(r,'place_id'),slug:gg(r,'slug'),business_name:gg(r,'business_name'),demo_url:gg(r,'demo_url'),website:gg(r,'website_url')||gg(r,'website')||gg(r,'root_domain'),maps_url:gg(r,'maps_url')||gg(r,'google_maps_url')||gg(r,'google_maps')||gg(r,'map_url'),industry:gg(r,'industry'),rating:gg(r,'rating'),review_count:gg(r,'review_count')}; var old=map[ph]; if(!old || _dispRank(next.disposition)<_dispRank(old.disposition) || (_dispRank(next.disposition)===_dispRank(old.disposition) && (next.demo_url||next.business_name) && !(old.demo_url&&old.business_name))) map[ph]=next; }
+  ((data&&data.conversations)||[]).forEach(function(c){ var ph=_normPh10(c.phone); if(!ph) return; var st=normDisp(c.disposition||c.manual_disposition||c.pipeline||c.status||''); if(!dispVals[st]) st=''; if(!map[ph]) map[ph]={disposition:st,place_id:'',slug:'',business_name:c.business_name||'',demo_url:c.demo_url||'',website:c.website||c.website_url||'',maps_url:c.maps_url||'',industry:c.industry||''}; else if(!map[ph].disposition && st) map[ph].disposition=st; if(!map[ph].business_name && c.business_name) map[ph].business_name=c.business_name; });
   window._dispByPhone=map; window._dispMapLen=rows.length; window._dispConvLen=((data&&data.conversations)||[]).length; return map; }
 function dispForPhone(phone){ if(!window._dispByPhone || window._dispMapLen!==((window._scrapeRows||[]).length) || window._dispConvLen!==(((data&&data.conversations)||[]).length)) _buildDispMap(); return (window._dispByPhone||{})[_normPh10(phone)]||{disposition:'',place_id:'',slug:''}; }
 function commsDispSelect(phone){ var cur=String(dispForPhone(phone).disposition||''); var opts=SCRAPE_DISPOSITIONS.map(function(d){ return '<option value="'+d[0]+'"'+(cur===d[0]?' selected':'')+'>'+d[1]+'</option>'; }).join(''); var c=dispColors(cur); return '<select onchange="setCommsDisposition('+_jsq(phone)+',this.value)" title="Lead status" style="font-size:.78rem;padding:5px 9px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:'+(cur?c[0]:'#f8fafc')+';color:'+(cur?c[1]:'#475569')+'">'+opts+'</select>'; }
@@ -4423,6 +4426,10 @@ function toggleScrapeDisp(grp){ var f='dispg:'+grp; window._scrapePage=0; if(typ
 function toggleCommsDisp(grp){ window._commsDispFilter=(window._commsDispFilter===grp?'':grp); window._commsPage=0; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
+  var range=String(window._commsDateRange||'today');
+  return _hasReplyAfterMessageInRange(s,range,_isMsg1Message);
+}
+function _commsHasInboundInPeriod(s){
   if(String(window._commsDateRange||'today')==='all') return _commsIsReplied(s);
   return ((s&&s.history)||[]).some(function(m){ return _isInboundMsg(m)&&_tsInRange(m.timestamp||m.time); });
 }
@@ -4451,6 +4458,14 @@ function _msgObjMeta(m){
 }
 function _msgObjText(m){ return String((m&&(m.content||m.text||m.body||m.message))||''); }
 function _msgObjIsOutbound(m){ var d=String((m&&(m.direction||m.role||m.type))||'').toLowerCase(); return d.indexOf('out')>=0||d.indexOf('assistant')>=0||d.indexOf('admin')>=0; }
+function _isMsg1Message(m){
+  if(!m || !_msgObjIsOutbound(m) || _isCalledNoReplyMsg(m)) return false;
+  var meta=_msgObjMeta(m);
+  var marker=(String(meta.message_type||m.message_type||m.intent||'')+' '+String(meta.template_key||m.template_key||'')).toLowerCase();
+  if(/sms_?1|msg1|initial|cold|outreach/.test(marker) && !/sms_?2|msg2|demo_followup|followup/.test(marker)) return true;
+  var txt=_msgObjText(m);
+  return /are you still taking on more/i.test(txt) && !_isMsg2Message(m);
+}
 function _isMsg2Message(m){
   if(!m || !_msgObjIsOutbound(m)) return false;
   var meta=_msgObjMeta(m);
@@ -4460,6 +4475,35 @@ function _isMsg2Message(m){
   var txt=_msgObjText(m);
   if(/made this for you|quick context|nice site update|thought you might want|update for your site|can make any changes/i.test(txt) && !_isCalledNoReplyMsg(m)) return true;
   return false;
+}
+function _hasReplyAfterMessageInRange(s,range,isMessageFn){
+  range=String(range||'all');
+  var h=((s&&s.history)||[]).slice().sort(function(a,b){return new Date(a.timestamp||a.time||0)-new Date(b.timestamp||b.time||0);});
+  var sendTime=null;
+  for(var i=0;i<h.length;i++){
+    var m=h[i], ts=m.timestamp||m.time;
+    if(isMessageFn(m) && (range==='all' || _msgDateInRange(m,range))){
+      sendTime=new Date(ts||0).getTime();
+    } else if(sendTime && _isInboundMsg(m)){
+      var rt=new Date(ts||0).getTime();
+      if(!isNaN(rt) && rt>=sendTime) return true;
+    }
+  }
+  return false;
+}
+function _countMessageContactsInRange(items,isMessageFn,range){
+  var seen={}; range=String(range||'all');
+  (items||[]).forEach(function(x){
+    var s=x.s||x, ph=_normPhone(s&&s.phone);
+    if(!ph) return;
+    var h=(s.history||[]);
+    for(var i=0;i<h.length;i++){
+      if(isMessageFn(h[i]) && (range==='all' || _msgDateInRange(h[i],range))){
+        seen[ph]=1; break;
+      }
+    }
+  });
+  return Object.keys(seen).length;
 }
 function _inferMsg2VariantFromText(txt){
   var t=String(txt||'').toLowerCase();
@@ -4641,11 +4685,12 @@ function renderSmsComms() {
   var _isAllTime=String(window._commsDateRange||'today')==='all';
   if(!_isAllTime){ items=items.filter(function(x){return ((x.s.history||[]).some(function(m){ return _msgDateInRange(m,window._commsDateRange); }) || _convInRange(x.s));}); }
   if(typeof renderMsg2VariantTallies==='function') renderMsg2VariantTallies(items.map(function(x){ return x.s; }));
+  var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
   var replied2=items.filter(function(x){return _hasFollowupReplyInPeriod(x.s);}).length;
   var calledNoReply=Object.keys(calledPhones).length;
   var _ca=document.getElementById('commsCntAll'); if(_ca) _ca.textContent=items.length;
-  var _cr=document.getElementById('commsCntReplied'); if(_cr) _cr.textContent=repliedCount;
+  var _cr=document.getElementById('commsCntReplied'); if(_cr) _cr.textContent=inboundReplyCount;
   var _MSGST=['sms_sent','replied','responded','awaiting_reply','contacted','handed_off','both_sent','email_sent','outreach_sent','interested'];
   function _sumMsg(co){ return co ? _MSGST.reduce(function(a,k){return a+(Number(co[k])||0);},0) : 0; }
   var _mst=(window._msgStats&&window._msgStats.sent>0)?window._msgStats.sent:(_isAllTime?(_sumMsg&&_sumMsg(window._serverCounts)||_sumMsg&&_sumMsg(window._scrapeCounts)||repliedCount):items.filter(function(x){return (x.s.history||[]).some(function(m){var d=String(m.direction||m.role||'').toLowerCase();return (d.indexOf('out')>=0||d.indexOf('assistant')>=0||d.indexOf('admin')>=0)&&_tsInRange(m.timestamp||m.time);});}).length);
@@ -4659,8 +4704,7 @@ function renderSmsComms() {
   var _cmRange=String(window._commsDateRange||'today');
   var _cmst=(window._msgLogRows!=null&&typeof computeMsgStats==='function')?computeMsgStats(_cmRange==='all', _cmRange):null;
   if(_cmst){
-    var _cfgSent=Number((prospectorConfigCache&&prospectorConfigCache.outreach&&prospectorConfigCache.outreach.sms_today)||prospectorConfigCache&&prospectorConfigCache.daily_sent_today||0);
-    var _ssotSent=Math.max(Number(sentTotal)||0, Number(_cmst.sent)||0, (_isAllTime||String(window._commsDateRange||'today')==='today')?_cfgSent:0);
+    var _ssotSent=Number(_cmst.sent)||0;
     sentTotal=_ssotSent;
     if(_ms) _ms.textContent=Number(sentTotal).toLocaleString();
     if(_m1r) _m1r.textContent=sentTotal?(Math.round(100*repliedCount/sentTotal)+'% reply rate'):'';
@@ -4671,15 +4715,17 @@ function renderSmsComms() {
   var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&_contactStats)_ccm.textContent=Number(_contactStats.deliveredContacts||_contactStats.contacts||0).toLocaleString();
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
   var _ccms=document.getElementById('cmContactsMessagedSub'); if(_ccms&&_contactStats)_ccms.textContent=Number(_contactStats.deliveredContacts||0).toLocaleString()+' delivered contacts / '+Number(_contactStats.messages||0).toLocaleString()+' messages';
-  if(_m1r) _m1r.textContent=_denom?(Math.round(100*repliedCount/_denom)+'% response rate'):'';
-  var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub) _m2sub.textContent=_denom?((replied2*100/_denom).toFixed(1)+'% response rate'):'';
+  var _msg1Denom=typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg1Message,_cmRange):_denom;
+  var _msg2Denom=typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg2Message,_cmRange):_denom;
+  if(_m1r) _m1r.textContent=_msg1Denom?(Math.round(100*repliedCount/_msg1Denom)+'% of '+_msg1Denom.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts in period';
+  var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts in period';
   var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var dv=_resolvedDisp(x.s); if(dv==='not_interested'||dv==='not_interested_called'||dv==='do_not_contact'||dv==='opted_out')_cdc.ni++; else if(dv==='considering'||dv==='interested_sms'||dv==='interested_called'||dv==='interested')_cdc.co++; else if(dv==='offer_sent')_cdc.offer++; else if(dv==='client')_cdc.client++; });
   var _cni=document.getElementById('cmNotInt'); if(_cni)_cni.textContent=Number(_cdc.ni).toLocaleString();
   var _cco=document.getElementById('cmConsidering'); if(_cco)_cco.textContent=Number(_cdc.co).toLocaleString(); var _cof=document.getElementById('cmOfferSent'); if(_cof)_cof.textContent=Number(_cdc.offer).toLocaleString(); var _ccl=document.getElementById('cmClients'); if(_ccl)_ccl.textContent=Number(_cdc.client).toLocaleString();
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
   calledNoReply=(function(){ var seen={}; items.forEach(function(x){ var ph=_normPhone(x.s.phone); if(ph && (calledPhones[ph] || _commsCalledNoReply(x.s))) seen[ph]=1; }); return Object.keys(seen).length; })();
   var _cnr=document.getElementById('cmCalledNoReply'); if(_cnr) _cnr.textContent=Number(calledNoReply).toLocaleString();
-  if (window._commsFilter==='replied') items=items.filter(function(x){return _commsIsReplied(x.s);});
+  if (window._commsFilter==='replied') items=items.filter(function(x){return _commsHasInboundInPeriod(x.s);});
   else if (window._commsFilter==='replied2') items=items.filter(function(x){return _hasFollowupReply(x.s);});
   else if (window._commsFilter==='called') { var _seenCalled={}; items=items.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
   if (window._commsDispFilter) { var _dg=DISP_GROUPS[window._commsDispFilter]||[]; items=items.filter(function(x){ return _dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; }); }
@@ -4688,7 +4734,20 @@ function renderSmsComms() {
   var q=String(window._commsSearch||'').toLowerCase().trim();
   if(searchEl && searchEl.value!==q) searchEl.value=q;
   if (q) { var qd=q.replace(/\D/g,''); items=items.filter(function(x){ var text=(String(x.s.business_name||bizForPhone(x.s.phone)||'')+' '+String(x.s.phone||'')).toLowerCase(); if(text.indexOf(q)>=0) return true; if(qd.length>=3){ return String(x.s.phone||'').replace(/\D/g,'').indexOf(qd)>=0; } return false; }); }
-  function _resolvedDisp(s){ return String((s&&s.disposition)||dispForPhone(s&&s.phone).disposition||'').toLowerCase(); }
+  function _resolvedDisp(s){
+    var raw=String(
+      (s&&s.disposition)||
+      (s&&s.manual_disposition)||
+      (s&&s.manual_status)||
+      (s&&s.pipeline_status)||
+      (s&&s.pipeline)||
+      dispForPhone(s&&s.phone).disposition||
+      (s&&s.status)||
+      ''
+    ).toLowerCase().replace(/[\s-]+/g,'_');
+    if(raw==='dnc') return 'do_not_contact';
+    return raw;
+  }
   function _commsPriority(o){ var s=o.s, d=_resolvedDisp(s); if(d==='client') return 0; if(d==='offer_sent') return 1; if(d==='interested_called') return 2; if(d==='interested_sms'||d==='considering'||d==='interested') return 3; if(d==='not_interested_called') return 4; if(d==='not_interested'||d==='do_not_contact'||d==='opted_out') return 5; if(_hasFollowupReply(s)) return 6; if(_commsIsReplied(s)) return 7; return 9; }
   items.sort(function(a,b){ var pa=_commsPriority(a), pb=_commsPriority(b); if(pa!==pb) return pa-pb; return (new Date(b.s.last_active||0))-(new Date(a.s.last_active||0)); });
   var per=100, page=window._commsPage||0, total=items.length, pages=Math.max(1,Math.ceil(total/per));
