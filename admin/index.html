@@ -4662,6 +4662,7 @@ function openEmailThread(i, supplied) {
   currentChatId = 'email:' + thread.email;
   document.getElementById('chatTitle').textContent = thread.email + ' - Email';
   document.getElementById('chatInput').placeholder = 'Type an email reply...';
+  { const _dw = document.getElementById('chatDispWrap'); if (_dw) _dw.innerHTML = ''; }
   { const _b = document.getElementById('chatPending'); if (_b) _b.style.display = 'none'; const _sb = document.getElementById('chatSendOnlyBtn'); if (_sb) _sb.textContent = 'Send'; }
   const body = document.getElementById('chatBody');
   body.innerHTML = (thread.history || []).map(m => {
@@ -4760,6 +4761,7 @@ function openCallDetail(phone, rowKey) {
   currentEmailThread = null;
   document.getElementById('chatTitle').textContent = formatPhone(phone) + (m.business_name ? ' - ' + m.business_name : ' - Unknown caller');
   if (typeof setChatQuickLinks === 'function') setChatQuickLinks(phone, m);
+  { const _dw = document.getElementById('chatDispWrap'); if (_dw) _dw.innerHTML = (typeof commsDispSelect === 'function' ? commsDispSelect(phone) : ''); }
   const body = document.getElementById('chatBody');
   const conv = (data.conversations || []).find(c => _normPhone(c.phone) === _normPhone(phone));
   const callRows = (data.calls || []).filter(c => _normPhone(field(c, ['caller_phone','lead_phone'], ['caller','phone']) || phoneFromText(field(c, ['summary','transcript'], ['summary','transcript']) || '')) === _normPhone(phone));
@@ -4882,6 +4884,7 @@ function closeChat() {
   const input = document.getElementById('chatInput');
   if (input) input.placeholder = 'Type a message...';
   const _b = document.getElementById('chatPending'); if (_b) _b.style.display = 'none';
+  const _dw = document.getElementById('chatDispWrap'); if (_dw) _dw.innerHTML = '';
   const _sb = document.getElementById('chatSendOnlyBtn'); if (_sb) _sb.textContent = 'Send';
   setCallUiState('hidden', '');
 }
