@@ -543,6 +543,13 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('ni')" title="Filter Not Interested"><div class="label">Not Interested</div><div class="value" id="cmNotInt" style="color:#dc2626">--</div></div>
           <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('client')" title="Filter Clients"><div class="label">Clients</div><div class="value" id="cmClients" style="color:#16a34a">--</div><div class="sub" id="cmClientsSub"></div></div>
         </div>
+        <div id="msg2VariantTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px;display:none">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
+            <div style="font-size:.88rem;font-weight:800;color:#0f172a">Msg 2 Variant Results</div>
+            <div id="msg2VariantTallySub" style="font-size:.73rem;color:var(--text-muted);font-weight:600"></div>
+          </div>
+          <div id="msg2VariantTallyBody" style="overflow-x:auto"></div>
+        </div>
         <div id="commsControls" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
           <input id="commsSearch" placeholder="Search business or phone..." oninput="window._commsSearch=this.value;window._commsPage=0;requestCommsRender()" style="flex:1;min-width:200px;max-width:340px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:.85rem">
           <button id="commsFltAll" onclick="setCommsFilter('all')" style="padding:6px 13px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:700;background:#0f172a;color:#fff">All (<span id="commsCntAll">0</span>)</button>
@@ -4434,6 +4441,121 @@ function _hasFollowupReplyInPeriod(s){
   return false;
 }
 function setCommsFilter(f){ window._commsFilter=f; window._commsPage=0; [['all','commsFltAll'],['replied','commsFltReplied'],['replied2','commsFltReplied2']].forEach(function(pp){ var b=document.getElementById(pp[1]); if(b){ var on=(f===pp[0]); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
+function _msgObjMeta(m){
+  var meta=(m&&m.meta)||{};
+  if(typeof meta==='string' && meta.trim()){
+    try{ meta=JSON.parse(meta); }catch(e){ meta={}; }
+  }
+  return (meta&&typeof meta==='object')?meta:{};
+}
+function _msgObjText(m){ return String((m&&(m.content||m.text||m.body||m.message))||''); }
+function _msgObjIsOutbound(m){ var d=String((m&&(m.direction||m.role||m.type))||'').toLowerCase(); return d.indexOf('out')>=0||d.indexOf('assistant')>=0||d.indexOf('admin')>=0; }
+function _isMsg2Message(m){
+  if(!m || !_msgObjIsOutbound(m)) return false;
+  var meta=_msgObjMeta(m);
+  var marker=String(meta.message_type||m.message_type||m.intent||'')+' '+String(meta.template_key||m.template_key||'');
+  marker=marker.toLowerCase();
+  if(/sms_?2|msg2|demo_followup|followup/.test(marker)) return true;
+  var txt=_msgObjText(m);
+  if(/made this for you|quick context|nice site update|thought you might want|update for your site|can make any changes/i.test(txt) && !_isCalledNoReplyMsg(m)) return true;
+  return false;
+}
+function _inferMsg2VariantFromText(txt){
+  var t=String(txt||'').toLowerCase();
+  if(/quick context/.test(t)) return 'C';
+  if(/thought you might want/.test(t)) return 'B';
+  if(/nice site update|could be useful/.test(t)) return 'A';
+  return '';
+}
+function _variantWebsiteGroup(m,s){
+  var meta=_msgObjMeta(m);
+  var tk=String(meta.template_key||m.template_key||'').toLowerCase();
+  if(/no[_\s-]?website|without[_\s-]?website/.test(tk)) return 'No Website';
+  if(/existing|has[_\s-]?website|website/.test(tk) && !/no[_\s-]?website/.test(tk)) return 'Existing Website';
+  var hv=meta.has_website;
+  if(hv===false || hv==='false' || hv===0 || hv==='0') return 'No Website';
+  if(hv===true || hv==='true' || hv===1 || hv==='1') return 'Existing Website';
+  if(String(meta.website||s&&s.website||dispForPhone(s&&s.phone).website||'').trim()) return 'Existing Website';
+  return 'No Website';
+}
+function _msg2VariantLabel(m,s){
+  var meta=_msgObjMeta(m);
+  var v=String(meta.variant_key||m.variant_key||meta.sms_variant||m.sms_variant||'').trim().toUpperCase();
+  if(!/^[ABC]$/.test(v)) v=_inferMsg2VariantFromText(_msgObjText(m));
+  var group=_variantWebsiteGroup(m,s);
+  if(/^[ABC]$/.test(v)) return group+' Version '+v;
+  return group+' Legacy/custom';
+}
+function _sessionMsg2Message(s){
+  var hist=mergeContactTimeline ? mergeContactTimeline(s&&s.phone,(s&&s.history)||[]) : ((s&&s.history)||[]);
+  var found=null;
+  for(var i=0;i<hist.length;i++){
+    if(_isMsg2Message(hist[i])) found=hist[i];
+  }
+  return found;
+}
+function _msg2OutcomeBucket(s){
+  var raw=String((s&&s.disposition)||dispForPhone(s&&s.phone).disposition||s&&s.manual_disposition||s&&s.pipeline||s&&s.status||'').toLowerCase().replace(/[\s-]+/g,'_');
+  if(raw==='client'||raw==='closed_won'||raw==='paid') return 'client';
+  if(raw==='offer_sent'||raw==='proposal_sent'||raw==='quote_sent') return 'offer_sent';
+  if(raw==='interested_sms'||raw==='interested_called'||raw==='interested'||raw==='considering'||raw==='warm_lead') return 'interested';
+  if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
+  return '';
+}
+function renderMsg2VariantTallies(sessions){
+  var panel=document.getElementById('msg2VariantTally');
+  var body=document.getElementById('msg2VariantTallyBody');
+  var sub=document.getElementById('msg2VariantTallySub');
+  if(!panel||!body) return;
+  var range=String(window._commsDateRange||'today');
+  var rows={};
+  (sessions||[]).forEach(function(s){
+    var msg=_sessionMsg2Message(s);
+    if(!msg) return;
+    if(range!=='all' && !_msgDateInRange(msg,range)) return;
+    var label=_msg2VariantLabel(msg,s);
+    if(!rows[label]) rows[label]={label:label,sent:0,replied2:0,interested:0,offer_sent:0,client:0,not_interested:0,delivered:0};
+    var r=rows[label];
+    r.sent++;
+    if(String(msg.status||msg.delivery_status||'').toLowerCase()==='delivered') r.delivered++;
+    if(_hasFollowupReply(s)) r.replied2++;
+    var bucket=_msg2OutcomeBucket(s);
+    if(bucket) r[bucket]++;
+  });
+  var arr=Object.keys(rows).map(function(k){return rows[k];});
+  function sortKey(label){
+    var g=label.indexOf('Existing Website')===0?1:0;
+    var v=/Version A/.test(label)?0:/Version B/.test(label)?1:/Version C/.test(label)?2:9;
+    return g*10+v;
+  }
+  arr.sort(function(a,b){ return sortKey(a.label)-sortKey(b.label) || a.label.localeCompare(b.label); });
+  panel.style.display='block';
+  if(sub) sub.textContent=(range==='all'?'All time':range.replace('7d','Last 7 days'))+' · current manual status from SSOT';
+  if(!arr.length){
+    body.innerHTML='<div style="color:var(--text-muted);font-size:.82rem;padding:4px 0">No Msg 2 variant data for this period yet.</div>';
+    return;
+  }
+  function pct(n,d){ return d?Math.round((Number(n)||0)*100/(Number(d)||0))+'%':'--'; }
+  body.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:760px">'
+    +'<thead><tr style="text-align:left;color:#64748b;border-bottom:1px solid var(--border)">'
+    +'<th style="padding:7px 8px">Variant</th><th style="padding:7px 8px;text-align:right">Msg 2 sent</th><th style="padding:7px 8px;text-align:right">Delivered</th><th style="padding:7px 8px;text-align:right">Replied</th><th style="padding:7px 8px;text-align:right">Interested</th><th style="padding:7px 8px;text-align:right">Offers</th><th style="padding:7px 8px;text-align:right">Clients</th><th style="padding:7px 8px;text-align:right">Not interested</th><th style="padding:7px 8px;text-align:right">Positive</th>'
+    +'</tr></thead><tbody>'
+    +arr.map(function(r){
+      var positive=r.interested+r.offer_sent+r.client;
+      return '<tr style="border-bottom:1px solid #eef2f7">'
+        +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(r.label)+'</td>'
+        +'<td style="padding:8px;text-align:right;font-weight:700">'+r.sent+'</td>'
+        +'<td style="padding:8px;text-align:right">'+r.delivered+'</td>'
+        +'<td style="padding:8px;text-align:right">'+r.replied2+' <span style="color:#94a3b8">('+pct(r.replied2,r.sent)+')</span></td>'
+        +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:700">'+r.interested+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#b45309;font-weight:700">'+r.offer_sent+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#16a34a;font-weight:700">'+r.client+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">'+r.not_interested+'</td>'
+        +'<td style="padding:8px;text-align:right;font-weight:800;color:#2563eb">'+pct(positive,r.sent)+'</td>'
+      +'</tr>';
+    }).join('')
+    +'</tbody></table>';
+}
 function commsGoPage(p){ window._commsPage=Math.max(0,p); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function openCommsForPhone(phone){
   var ph=String(phone||'').replace(/\D/g,'').replace(/^1(\d{10})$/,'$1').slice(-10);
@@ -4517,6 +4639,7 @@ function renderSmsComms() {
   items = items.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,''); if(ph.length<10||ph.length>11) return false; if(ph.slice(-10).slice(0,3)==='555') return false; if(/BATCH TEST|DEDUP CHECK|manual send test|continuous log|TEST retry/i.test(String(x.s.last_message||''))) return false; return true; });
   var _isAllTime=String(window._commsDateRange||'today')==='all';
   if(!_isAllTime){ items=items.filter(function(x){return ((x.s.history||[]).some(function(m){ return _msgDateInRange(m,window._commsDateRange); }) || _convInRange(x.s));}); }
+  if(typeof renderMsg2VariantTallies==='function') renderMsg2VariantTallies(items.map(function(x){ return x.s; }));
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
   var replied2=items.filter(function(x){return _hasFollowupReplyInPeriod(x.s);}).length;
   var calledNoReply=Object.keys(calledPhones).length;
