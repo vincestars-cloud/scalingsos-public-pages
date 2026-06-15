@@ -4686,14 +4686,17 @@ function renderMsg2VariantTallies(sessions){
       +'</tr>';
     }).join('')
     +'</tbody></table>';
-  if(typeof loadTelnyxMessageMetrics==='function'){
-    var req=Date.now()+':'+range;
-    window._msg2VariantTallyReq=req;
-    loadTelnyxMessageMetrics(range).then(function(tm){
+  // Authoritative variant stats: messages (full history) grouped by edit-proof content fingerprint,
+  // matched to the 6 current templates from config. Recovers untagged sends, splits older copy out,
+  // auto-detects template edits. Replaces the old variant_key/text-regex reconstruction.
+  var req=Date.now()+':'+range;
+  window._msg2VariantTallyReq=req;
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-msg2-variant-stats?period='+encodeURIComponent(range))
+    .then(function(r){ return r.json(); })
+    .then(function(tm){
       if(window._msg2VariantTallyReq!==req) return;
       if(tm&&tm.ok&&Array.isArray(tm.msg2_variants)) renderAuthoritativeMsg2VariantTallies(tm.msg2_variants,range,tm.msg2_variants_source);
     }).catch(function(){});
-  }
 }
 function commsGoPage(p){ window._commsPage=Math.max(0,p); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function openCommsForPhone(phone){
