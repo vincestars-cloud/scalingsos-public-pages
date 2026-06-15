@@ -4587,6 +4587,42 @@ function _msg2OutcomeBucket(s){
   if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
   return '';
 }
+function renderAuthoritativeMsg2VariantTallies(arr, range, source){
+  var panel=document.getElementById('msg2VariantTally');
+  var body=document.getElementById('msg2VariantTallyBody');
+  var sub=document.getElementById('msg2VariantTallySub');
+  if(!panel||!body||!Array.isArray(arr)) return;
+  function sortKey(label){
+    var g=label.indexOf('Existing Website')===0?1:(label.indexOf('Unknown')===0?2:0);
+    var v=/Version A/.test(label)?0:/Version B/.test(label)?1:/Version C/.test(label)?2:9;
+    return g*10+v;
+  }
+  function pct(n,d){ return d?Math.round((Number(n)||0)*100/(Number(d)||0))+'%':'--'; }
+  var rows=arr.slice().sort(function(a,b){ return sortKey(a.label)-sortKey(b.label) || String(a.label||'').localeCompare(String(b.label||'')); });
+  panel.style.display='block';
+  if(sub) sub.textContent=(range==='all'?'All time':String(range||'today').replace('7d','Last 7 days'))+' · Msg2 from Supabase messages SSOT; outcomes use current manual status';
+  body.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:760px">'
+    +'<thead><tr style="text-align:left;color:#64748b;border-bottom:1px solid var(--border)">'
+    +'<th style="padding:7px 8px">Variant</th><th style="padding:7px 8px;text-align:right">Msg 2 sent</th><th style="padding:7px 8px;text-align:right">Delivered</th><th style="padding:7px 8px;text-align:right">Replied</th><th style="padding:7px 8px;text-align:right">Interested</th><th style="padding:7px 8px;text-align:right">Offers</th><th style="padding:7px 8px;text-align:right">Clients</th><th style="padding:7px 8px;text-align:right">Not interested</th><th style="padding:7px 8px;text-align:right">Positive</th>'
+    +'</tr></thead><tbody>'
+    +rows.map(function(r){
+      var sent=Number(r.sent||0), delivered=Number(r.delivered||0), replied=Number(r.replied2||r.replied||0);
+      var interested=Number(r.interested||0), offers=Number(r.offer_sent||r.offers||0), clients=Number(r.client||r.clients||0), notInterested=Number(r.not_interested||0);
+      var positive=interested+offers+clients;
+      return '<tr style="border-bottom:1px solid #eef2f7">'
+        +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(r.label||'Unknown')+'</td>'
+        +'<td style="padding:8px;text-align:right;font-weight:700">'+sent+'</td>'
+        +'<td style="padding:8px;text-align:right">'+delivered+'</td>'
+        +'<td style="padding:8px;text-align:right">'+replied+' <span style="color:#94a3b8">('+pct(replied,sent)+')</span></td>'
+        +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:700">'+interested+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#b45309;font-weight:700">'+offers+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#16a34a;font-weight:700">'+clients+'</td>'
+        +'<td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">'+notInterested+'</td>'
+        +'<td style="padding:8px;text-align:right;font-weight:800;color:#2563eb">'+pct(positive,sent)+'</td>'
+      +'</tr>';
+    }).join('')
+    +'</tbody></table>';
+}
 function _conversationOutcomeBucket(s){
   var raw=String(
     (s&&s.disposition)||
@@ -4660,6 +4696,14 @@ function renderMsg2VariantTallies(sessions){
       +'</tr>';
     }).join('')
     +'</tbody></table>';
+  if(typeof loadTelnyxMessageMetrics==='function'){
+    var req=Date.now()+':'+range;
+    window._msg2VariantTallyReq=req;
+    loadTelnyxMessageMetrics(range).then(function(tm){
+      if(window._msg2VariantTallyReq!==req) return;
+      if(tm&&tm.ok&&Array.isArray(tm.msg2_variants)) renderAuthoritativeMsg2VariantTallies(tm.msg2_variants,range,tm.msg2_variants_source);
+    }).catch(function(){});
+  }
 }
 function commsGoPage(p){ window._commsPage=Math.max(0,p); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function openCommsForPhone(phone){
