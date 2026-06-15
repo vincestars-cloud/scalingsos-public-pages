@@ -1429,14 +1429,21 @@ function renderDashboard() {
   var allTime=(range==='all');
   var msgStats=(window._msgLogRows!=null && typeof computeMsgStats==='function') ? computeMsgStats(allTime, range) : {sent:0,delivered:0,failed:0};
   var contactStats=(window._msgLogRows!=null && typeof computeContactMsgStats==='function') ? computeContactMsgStats(allTime, range) : {contacts:0,messages:0,deliveredContacts:0,deliveredMessages:0};
-	  var convs=(data.conversations&&data.conversations.length?data.conversations:buildConversationsFromSheet(data.sms||[]));
-	  var reply1=0, reply2=0;
-	  convs.forEach(function(c){ if(allTime?_commsIsReplied(c):_commsIsRepliedInRange(c,range)) reply1++; if(allTime?_hasFollowupReply(c):_hasFollowupReplyIn(c,range)) reply2++; });
-	  var delivered=Number(msgStats.delivered||0);
-	  var contactedUnique=Number(contactStats.deliveredContacts||contactStats.contacts||0);
-	  var convItems=convs.map(function(s){ return {s:s}; });
-	  var msg1Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg1Message,range):contactedUnique;
-	  var msg2Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg2Message,range):contactedUnique;
+  var convs=(data.conversations&&data.conversations.length?data.conversations:buildConversationsFromSheet(data.sms||[]));
+  var reply1=0, reply2=0;
+  convs.forEach(function(c){
+    if(typeof _hasReplyAfterMessageInRange==='function' && _hasReplyAfterMessageInRange(c,range,_isMsg1Message)) reply1++;
+    if(typeof _hasReplyAfterMessageInRange==='function' && _hasReplyAfterMessageInRange(c,range,_isMsg2Message)) reply2++;
+  });
+  var delivered=Number(msgStats.delivered||0);
+  var contactedUnique=Number(contactStats.deliveredContacts||contactStats.contacts||0);
+  var convItems=convs.map(function(s){ return {s:s}; });
+  var msg1Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg1Message,range):contactedUnique;
+  var msg2Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg2Message,range):contactedUnique;
+  var dashItems=convs.filter(function(s){ var ph=_normPh10(s&&s.phone); return ph && ph.slice(0,3)!=='555' && (typeof _sessionInRangeOf!=='function' || _sessionInRangeOf(s,range)); });
+  var dashDisp={ni:0,co:0,offer:0,client:0};
+  dashItems.forEach(function(s){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(s):''; if(b==='not_interested')dashDisp.ni++; else if(b==='interested')dashDisp.co++; else if(b==='offer')dashDisp.offer++; else if(b==='client')dashDisp.client++; });
+  notInterested=dashDisp.ni; considering=dashDisp.co; offers=dashDisp.offer; clients=dashDisp.client;
 	  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
 	  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
 	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
@@ -3157,7 +3164,7 @@ function applyTelnyxMessageMetrics(range, ids){
   loadTelnyxMessageMetrics(requested).then(function(tm){
     if(!tm || !tm.ok) return;
     var rate=0.0129;
-    var useTelnyxCounts=!/^(today|yesterday)$/.test(requested);
+    var useTelnyxCounts=false;
     var delivered=useTelnyxCounts?Number(tm.delivered||0):(ids.delivered?num(ids.delivered):Number(tm.delivered||0));
     var cost=delivered*rate;
     function money(n){ return '$'+Number(n||0).toFixed(2); }
@@ -3172,7 +3179,7 @@ function applyTelnyxMessageMetrics(range, ids){
     }
     if(ids.sentSub){
       var sentSub=document.getElementById(ids.sentSub);
-      if(sentSub) sentSub.textContent=useTelnyxCounts?'Telnyx outbound message count':'local-day SSOT count';
+      if(sentSub) sentSub.textContent='MsgLog SSOT count';
     }
     if(ids.deliveredSub){
       var delSub=document.getElementById(ids.deliveredSub);
@@ -4319,6 +4326,12 @@ function _msgDateInRange(m,range){
   if(ds && allowed && allowed.indexOf(ds)>=0) return true;
   return _tsInRangeOf((m&&m.timestamp)||(m&&m.time),range);
 }
+function _sessionInRangeOf(s,range){
+  if(String(range||'all')==='all') return true;
+  var h=(s&&s.history)||[];
+  for(var i=0;i<h.length;i++){ if(_msgDateInRange(h[i],range)) return true; }
+  return _tsInRangeOf((s&&s.last_active)||(s&&s.last_message_at)||(s&&s.updated_at)||(s&&s.created_at),range);
+}
 function enrichSessionsWithMsgLog(sessions){
   sessions = (sessions || []).slice();
   var byPhone = {};
@@ -4547,6 +4560,23 @@ function _msg2OutcomeBucket(s){
   if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
   return '';
 }
+function _conversationOutcomeBucket(s){
+  var raw=String(
+    (s&&s.disposition)||
+    (s&&s.manual_disposition)||
+    (s&&s.manual_status)||
+    (s&&s.pipeline_status)||
+    (s&&s.pipeline)||
+    dispForPhone(s&&s.phone).disposition||
+    (s&&s.status)||
+    ''
+  ).toLowerCase().replace(/[\s-]+/g,'_');
+  if(raw==='client'||raw==='closed_won'||raw==='paid') return 'client';
+  if(raw==='offer_sent'||raw==='proposal_sent'||raw==='quote_sent') return 'offer';
+  if(raw==='interested_sms'||raw==='interested_called'||raw==='interested'||raw==='considering'||raw==='warm_lead') return 'interested';
+  if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
+  return '';
+}
 function renderMsg2VariantTallies(sessions){
   var panel=document.getElementById('msg2VariantTally');
   var body=document.getElementById('msg2VariantTallyBody');
@@ -4719,7 +4749,7 @@ function renderSmsComms() {
   var _msg2Denom=typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg2Message,_cmRange):_denom;
   if(_m1r) _m1r.textContent=_msg1Denom?(Math.round(100*repliedCount/_msg1Denom)+'% of '+_msg1Denom.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts in period';
   var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts in period';
-  var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var dv=_resolvedDisp(x.s); if(dv==='not_interested'||dv==='not_interested_called'||dv==='do_not_contact'||dv==='opted_out')_cdc.ni++; else if(dv==='considering'||dv==='interested_sms'||dv==='interested_called'||dv==='interested')_cdc.co++; else if(dv==='offer_sent')_cdc.offer++; else if(dv==='client')_cdc.client++; });
+  var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(x.s):''; if(b==='not_interested')_cdc.ni++; else if(b==='interested')_cdc.co++; else if(b==='offer')_cdc.offer++; else if(b==='client')_cdc.client++; });
   var _cni=document.getElementById('cmNotInt'); if(_cni)_cni.textContent=Number(_cdc.ni).toLocaleString();
   var _cco=document.getElementById('cmConsidering'); if(_cco)_cco.textContent=Number(_cdc.co).toLocaleString(); var _cof=document.getElementById('cmOfferSent'); if(_cof)_cof.textContent=Number(_cdc.offer).toLocaleString(); var _ccl=document.getElementById('cmClients'); if(_ccl)_ccl.textContent=Number(_cdc.client).toLocaleString();
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
