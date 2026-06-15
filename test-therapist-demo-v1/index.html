@@ -966,11 +966,12 @@
 </style>
 
 <style id="solo-therapist-overrides">.therapist-cards.solo{grid-template-columns:1fr;max-width:540px;margin-left:auto;margin-right:auto}.therapist-cards.solo .photo-placeholder{min-height:230px;display:grid;place-items:center}.therapist-cards.solo .photo-placeholder span{font-size:54px;font-weight:600;letter-spacing:.02em}.therapist-cards.solo .therapist-info{padding:26px 26px 30px;text-align:center}.therapist-cards.solo .therapist-info h3{font-size:23px}.therapist-cards.solo .detail{justify-content:center}.therapist-cards.solo .view-btn{margin:14px auto 0}.topbar .client-logo,.nav .client-logo{max-height:44px;width:auto;max-width:210px;object-fit:contain;display:block}@media(max-width:720px){.nav .client-logo{max-height:36px;max-width:150px}}</style>
+<style id="solo-fixes-v2">.therapist-cards.solo{grid-template-columns:1fr!important;max-width:540px;margin-left:auto!important;margin-right:auto!important;gap:0!important;float:none!important}.therapist-cards.solo .therapist-card{width:100%}.therapist-cards.solo .therapist-info h3{font-size:23px!important;line-height:1.14!important;overflow-wrap:anywhere}@media(max-width:980px){.therapist-cards.solo{max-width:460px!important}}@media(max-width:720px){.therapist-cards.solo{max-width:400px!important}.therapist-cards.solo .therapist-info h3{font-size:22px!important}.therapist-cards.solo .photo-placeholder span{font-size:46px!important}}.therapist-cards.solo .detail{display:flex!important;justify-content:center}.story-marquee{min-height:280px}.story-track{position:relative!important;animation:storyLoopReliable 60s linear infinite!important}.insurance-logo{border:0!important;background:transparent!important;box-shadow:none!important}.ann-short{display:none}@media(max-width:720px){.ann-full{display:none}.ann-short{display:inline}.announcement-inner{flex-wrap:nowrap;justify-content:center;gap:0;font-size:12px;padding:8px 10px;line-height:1.3}.announcement-inner a{display:none}}</style>
 </head>
-<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 4778</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 9335</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
 <div class="announcement-bar" role="banner">
   <div class="announcement-inner">
-    <span>Now accepting new clients in Austin, TX — virtual &amp; in-person sessions available this week</span>
+    <span class="ann-full">Now accepting new clients in Austin, TX — virtual &amp; in-person sessions available this week</span><span class="ann-short">Now accepting new clients · Austin, TX &amp; online</span>
     <a data-open-booking="true" href="#book-session">Book your free 15-min consult →</a>
   </div>
 </div>
@@ -997,11 +998,11 @@
 <symbol id="check" viewbox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path></symbol>
 <symbol id="star" viewbox="0 0 24 24"><path d="m12 2 3 6 6.6 1-4.8 4.7 1.1 6.6L12 17.2 6.1 20.3l1.1-6.6L2.4 9 9 8l3-6Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
 </svg>
-<section class="hero">
+<section class="hero" id="home">
 <header class="container nav">
 <a aria-label="Still Waters Counseling home" class="brand" href="#"><svg><use href="#lotus"></use></svg><span>Still Waters Counseling</span></a>
 <nav aria-label="Main navigation" class="nav-links">
-<a href="#">Home</a><a href="#services">About</a><a href="#services">Services</a><a href="#stories">Resources</a><a href="#footer">Contact</a>
+<a href="#home">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#stories">Reviews</a><a href="#footer">Contact</a>
 </nav>
 <a class="btn btn-dark" data-open-booking="true" href="#book-session">Start Your Journey</a>
 </header>
@@ -1097,7 +1098,7 @@
 
 </div>
 </section>
-<section class="wellness">
+<section class="wellness" id="about">
 <div class="container wellness-panel">
 <div class="wellness-content">
 <h2>Your Wellness, Our Priority!</h2>
@@ -1107,7 +1108,7 @@
 <li><svg><use href="#check"></use></svg>Evidence-Based Approaches</li>
 <li><svg><use href="#check"></use></svg>100% Confidential &amp; Safe</li>
 </ul>
-<a class="btn btn-light" href="#">About Still Waters Counseling</a>
+<button class="btn btn-light" type="button" data-open-about="true">About Still Waters Counseling</button>
 </div>
 <a class="video-caption" href="#"><span class="play-circle">▶</span><span>See How We Help<br/>(2 min video)</span></a>
 </div>
@@ -1171,9 +1172,9 @@
 <p><b style="color:#fff; font-weight:600;">Stronger Mind. Better You.</b><br/><br/>Compassionate mental wellness care designed to help you heal, grow, and thrive emotionally, mentally, and personally.</p>
 <p style="margin-top:15px;">Serving Austin, TX<br/>&amp; online across TX<br/>(470) 918-0516</p>
 </div>
-<div><h3>Essentials</h3><ul><li>Home</li><li>About Us</li><li>Services</li><li>Therapists</li><li>Resources</li><li>Pricing</li><li>Contact</li></ul></div>
-<div><h3>Support</h3><ul><li>Get in Touch</li><li>Book Session</li><li>Privacy Policy</li><li>Terms &amp; Conditions</li><li>Refund Policy</li><li>FAQ Page</li><li>Emergency Help</li></ul></div>
-<div><h3>Our Services</h3><ul><li>Individual Therapy</li><li>Couples Counseling</li><li>Anxiety Support</li><li>Depression Care</li><li>Mindfulness Therapy</li><li>Workplace Wellness</li><li>Online Sessions</li></ul></div>
+<div><h3>Explore</h3><ul><li><a href="#home">Home</a></li><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#stories">Client Stories</a></li><li><a data-open-booking="true" href="#book-session">Book a Session</a></li><li><a href="#footer">Contact</a></li></ul></div>
+<div><h3>Support</h3><ul><li><a data-open-booking="true" href="#book-session">Book a Session</a></li><li><a data-open-chat="true" href="#chat">Ask a Question</a></li><li><a href="#services">Insurance &amp; Payment</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms &amp; Conditions</a></li><li><a href="tel:988">Crisis Help · Call or Text 988</a></li></ul></div>
+<div><h3>Our Services</h3><ul><li><a href="#services">Individual Therapy</a></li><li><a href="#services">Couples Counseling</a></li><li><a href="#services">Anxiety Support</a></li><li><a href="#services">Depression Care</a></li><li><a href="#services">Mindfulness Therapy</a></li><li><a href="#services">Workplace Wellness</a></li><li><a data-open-booking="true" href="#book-session">Online Sessions</a></li></ul></div>
 <div><h3>Therapy Gallery</h3><div class="gallery"><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-1.webp"/><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-2.webp"/><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-3.webp"/><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-4.webp"/><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-5.webp"/><img alt="" src="https://demo.scalingsos.com/assets/therapist/gallery-6.webp"/></div></div>
 </div>
 <div class="container footer-bottom">
@@ -1279,9 +1280,9 @@
 <section aria-label="Still Waters Counseling AI chat assistant" class="chat-panel" id="chat-panel">
 <div class="chat-head"><div><b><span class="online-dot head-dot" aria-hidden="true"></span>Still Waters Counseling AI</b><span>Online now — ask about services, therapists, booking, or insurance.</span></div><button aria-label="Close chat" class="chat-close" type="button">×</button></div>
 <div class="chat-messages" id="chat-messages">
-<div class="bot-msg">Hi, I’m the Still Waters Counseling assistant. I can help you choose a service, check payment options, or start a booking request.</div>
+<div class="bot-msg">Hi, I’m the Still Waters Counseling assistant. Ask me about services, fees & insurance, what a first session is like, online vs in-person, or scheduling — or I can start a booking request.</div>
 </div>
-<div class="chat-chips"><button type="button">Book a session</button><button type="button">Insurance options</button><button type="button">Which therapy is right?</button></div>
+<div class="chat-chips"><button type="button">Book a session</button><button type="button">Fees & insurance</button><button type="button">What’s a first session like?</button><button type="button">Online or in-person?</button></div>
 <form class="chat-form" id="chat-form"><input aria-label="Type your question" autocomplete="off" id="chat-input" placeholder="Type your question..."/><button type="submit">Send</button></form>
 </section>
 </div>
@@ -1374,6 +1375,9 @@
       );
     });
   });
+
+  /* About popup */
+  $$('[data-open-about]').forEach(function(el){ el.addEventListener('click', function(e){ e.preventDefault(); setInfoModal('About', 'About Still Waters Counseling', 'Still Waters Counseling is a licensed therapy practice serving Austin, TX and offering secure online sessions across TX. We provide compassionate, evidence-based care for individuals and couples \u2014 support for anxiety, stress, grief, relationships, and life transitions in a calm, confidential space.', ['Licensed & experienced \u2014 individual and couples therapy','In person in Austin, TX and online across TX','Insurance-friendly: Cigna, Aetna, United, Humana, Oscar, HSA/FSA','Free 15-minute consult to find the right fit']); }); });
 
   /* Multi-step booking form. */
   const bookingForm = $('#booking-form');
@@ -1609,28 +1613,61 @@
 
   function botReply(message) {
     const m = message.toLowerCase();
-    if (/book|appointment|schedule|session|form|consult/.test(m)) {
-      return ['I can help. The booking form asks five quick questions: service, provider history, how you feel about starting, availability, and contact details.', true];
+    if (/crisis|emergency|suicid|self.?harm|hurt myself|hurt myself|unsafe|\bkill\b|end my life|want to die|harm myself/.test(m)) {
+      return ['I’m not an emergency service. If you’re in immediate danger or thinking about harming yourself, please call or text 988 (Suicide & Crisis Lifeline) or call 911 right now. You matter, and help is available.', false];
     }
-    if (/insurance|payment|pay|cost|cigna|humana|aetna|united|oscar|hsa|fsa/.test(m)) {
-      return ['Still Waters Counseling shows options for Cigna, Humana, United Healthcare, Oscar, Aetna, and HSA/FSA. A coordinator can confirm benefits after you submit a request.', true];
+    if (/^(hi|hey|hello|yo|good (morning|afternoon|evening))\b/.test(m)) {
+      return ['Hi! I can help with services, fees & insurance, what a first session is like, online vs in-person, and scheduling. What’s on your mind?', false];
     }
-    if (/therapist|doctor|profile|bio|match|provider/.test(m)) {
-      return ['Click any therapist profile to view their bio, specialties, experience, and approach. If you are not sure who to choose, select “Not sure yet” in the booking form.', true];
+    if (/book|appointment|schedule|consult|get started|sign up|intake|new client/.test(m)) {
+      return ['Happy to help you get started. Booking takes about a minute — a few quick questions about what you’re looking for, your availability, and how to reach you.', true];
     }
-    if (/couple|relationship|partner|marriage/.test(m)) {
-      return ['Couples Wellness is the best starting point for communication, trust, conflict cycles, and relationship transitions.', true];
+    if (/\bcost\b|price|\bfees?\b|\brates?\b|how much|afford|sliding scale|expensive|out of pocket/.test(m)) {
+      return ['Fees depend on the service and whether you use insurance — many clients are fully or partly covered, and a sliding scale may be available. Start a request and we’ll confirm your exact cost before anything is scheduled.', true];
     }
-    if (/anxiety|stress|depress|grief|trauma|overwhelmed|sad|burnout/.test(m)) {
-      return ['Individual Therapy is a strong starting point for anxiety, stress, grief, trauma, burnout, life transitions, and feeling overwhelmed.', true];
+    if (/insurance|covered|in.?network|cigna|humana|aetna|united|oscar|hsa|fsa|benefits|copay|deductible/.test(m)) {
+      return ['We work with Cigna, Aetna, United Healthcare, Humana, and Oscar, and accept HSA/FSA. Send a request and we’ll verify your benefits and out-of-pocket cost before your first session.', true];
     }
-    if (/online|virtual|remote|video/.test(m)) {
-      return ['Virtual sessions are available. Choose “Online Session” or “Either online or in-person” in the booking form.', true];
+    if (/first session|what to expect|nervous|never been|first time|how does it work|what happens/.test(m)) {
+      return ['Totally normal to feel unsure. Your first session is a relaxed conversation — no pressure. We talk about what brought you in, what you’d like to change, and how therapy can help. You set the pace.', true];
     }
-    if (/crisis|emergency|suicide|harm|unsafe/.test(m)) {
-      return ['I’m not an emergency service. If there is immediate danger or someone may be harmed, contact local emergency services or a crisis line right now.', false];
+    if (/confidential|private|privacy|hipaa|\bsafe\b|secure|stays between/.test(m)) {
+      return ['Your privacy is protected. Sessions are confidential and HIPAA-compliant, and online sessions use a secure, encrypted platform. What you share stays between you and your therapist, aside from rare legal/safety exceptions we explain up front.', false];
     }
-    return ['I can help with services, therapist matching, online sessions, booking, and insurance/payment options. What would you like help with?', false];
+    if (/online|virtual|remote|video|telehealth|in.?person|office|location|near me|where are you/.test(m)) {
+      return ['You can meet in person or online by secure video — whatever feels comfortable. Choose “Online Session” or “Either online or in-person” when you book.', true];
+    }
+    if (/hours|available|availability|evening|weekend|after work|\bnight\b|when can|are you open/.test(m)) {
+      return ['There’s daytime, evening, and some weekend availability, and it fills up week to week. Pick the windows that work for you and we’ll match the closest opening.', true];
+    }
+    if (/cancel|reschedul|\bmiss\b|change my appointment/.test(m)) {
+      return ['Life happens — you can reschedule or cancel ahead of time without a hassle. Your therapist will walk through the simple policy at your first session.', false];
+    }
+    if (/\bcbt\b|emdr|\bdbt\b|mindful|approach|method|modality|technique|somatic/.test(m)) {
+      return ['Care is evidence-based and tailored to you — drawing on approaches like CBT, mindfulness, and trauma-informed and solution-focused methods, with practical tools you can use between sessions.', true];
+    }
+    if (/couple|relationship|partner|marriage|spouse|divorce/.test(m)) {
+      return ['Couples work is a great fit for communication, trust, recurring conflict, and relationship transitions. Choose “Couples Wellness” when you book.', true];
+    }
+    if (/teen|child|\bkid\b|adolescent|\bson\b|daughter|my (teen|kid|child)/.test(m)) {
+      return ['Thanks for looking out for them. Tell us their age and what’s going on in a request and we’ll share the best fit or a trusted referral.', true];
+    }
+    if (/medication|\bmeds\b|prescri|psychiatr|refill/.test(m)) {
+      return ['We provide talk therapy rather than prescribing medication. If meds may help, your therapist can coordinate with or refer you to a prescriber — therapy and medication often work well together.', false];
+    }
+    if (/how long|how many|duration|\blength\b|how many sessions/.test(m)) {
+      return ['It varies — some people come for a few focused sessions, others stay longer for deeper work. Sessions are usually weekly to start, and you and your therapist set the plan together.', true];
+    }
+    if (/anxiety|stress|depress|grief|trauma|overwhelmed|burnout|panic|lonely|\bangry\b|can.?t sleep|insomnia/.test(m)) {
+      return ['Individual therapy is a strong starting point for anxiety, stress, depression, grief, trauma, and burnout. You don’t have to keep carrying it alone — want to start a request?', true];
+    }
+    if (/therapist|provider|\bbio\b|profile|\bwho\b|match|qualified|licensed|experience/.test(m)) {
+      return ['You’ll work with a licensed, experienced therapist. Tap “View Profile” to see specialties and approach, or choose “Not sure yet” when booking and we’ll match you.', true];
+    }
+    if (/thank|thanks|appreciate|great|awesome|perfect/.test(m)) {
+      return ['You’re welcome. Whenever you’re ready I can open a booking request — no pressure, and the first consult is free.', true];
+    }
+    return ['I can help with services, fees & insurance, what a first session is like, online vs in-person, scheduling, and matching you with the right therapist. What would you like to know?', true];
   }
 
   if (chatToggle) chatToggle.addEventListener('click', () => chat && chat.classList.contains('is-open') ? closeChat() : openChat());
