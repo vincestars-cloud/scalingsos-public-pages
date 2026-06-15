@@ -1446,14 +1446,14 @@ function renderDashboard() {
   notInterested=dashDisp.ni; considering=dashDisp.co; offers=dashDisp.offer; clients=dashDisp.client;
 	  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
 	  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
-	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
+	  set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
 	  set('dbReply1Sub', msg1Denom ? ((reply1*100/msg1Denom).toFixed(1)+'% of '+msg1Denom.toLocaleString()+' Msg1 contacts') : '0 Msg1 contacts in period');
 	  set('dbReply2Sub', msg2Denom ? ((reply2*100/msg2Denom).toFixed(2)+'% of '+msg2Denom.toLocaleString()+' Msg2 contacts') : '0 Msg2 contacts in period');
   set('dbOfferSentSub', reply2 ? ((offers*100/reply2).toFixed(1)+'% of Msg 2 replies') : '-- of Msg 2');
   set('dbClientsSub', offers ? ((clients*100/offers).toFixed(1)+'% conversion') : '-- conversion');
-  set('dbSmsSentSub', Number(contactStats.messages||0).toLocaleString()+' total sent messages');
-  set('dbDeliveredSub', 'sent '+Number(msgStats.sent||0).toLocaleString()+' / failed '+Number(msgStats.failed||0).toLocaleString());
-  set('dbContactsMessagedSub', Number(contactStats.contacts||0).toLocaleString()+' unique attempted / '+Number(contactStats.messages||0).toLocaleString()+' messages');
+  /* dbSmsSentSub written by applyTelnyxMessageMetrics (single Telnyx source) */
+  /* dbDeliveredSub written by applyTelnyxMessageMetrics */
+  /* dbContactsMessagedSub written by applyTelnyxMessageMetrics */
   if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(range,{sent:'dbSmsSent',sentSub:'dbSmsSentSub',delivered:'dbDelivered',deliveredSub:'dbDeliveredSub',contacts:'dbContactsMessaged',contactsSub:'dbContactsMessagedSub',reply2:'dbReply2',reply2Sub:'dbReply2Sub',offer:'dbOfferSent',offerSub:'dbOfferSentSub',client:'dbClients',clientSub:'dbClientsSub'});
 	  var chart=document.getElementById('buildsChart');
 	  if(chart){
@@ -3187,10 +3187,10 @@ function applyTelnyxMessageMetrics(range, ids){
     }
     if(ids.deliveredSub){
       var delSub=document.getElementById(ids.deliveredSub);
-      if(delSub) delSub.textContent=money(rate)+' x '+delivered.toLocaleString()+' = '+money(cost);
+      if(delSub) delSub.textContent='sent '+Number(tm.sent||0).toLocaleString()+' / failed '+Number(tm.failed||0).toLocaleString();
     }
     if(ids.contacts){
-      var telnyxContacts=Number(tm.delivered_contacts||0);
+      var telnyxContacts=Number(tm.sent_contacts||0);
       var contactsEl=document.getElementById(ids.contacts);
       if(contactsEl) contactsEl.textContent=Number(telnyxContacts||0).toLocaleString();
     }
