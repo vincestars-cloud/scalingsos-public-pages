@@ -4564,8 +4564,7 @@ function _msg2OutcomeBucket(s){
   if(raw==='client'||raw==='closed_won'||raw==='paid') return 'client';
   if(raw==='offer_sent'||raw==='proposal_sent'||raw==='quote_sent') return 'offer_sent';
   if(raw==='interested_sms'||raw==='interested_called'||raw==='interested'||raw==='considering'||raw==='warm_lead') return 'interested';
-  if(raw==='not_interested'||raw==='not_interested_called') return 'not_interested';
-  if(raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'opted_out';
+  if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
   return '';
 }
 function _conversationOutcomeBucket(s){
@@ -4582,8 +4581,7 @@ function _conversationOutcomeBucket(s){
   if(raw==='client'||raw==='closed_won'||raw==='paid') return 'client';
   if(raw==='offer_sent'||raw==='proposal_sent'||raw==='quote_sent') return 'offer';
   if(raw==='interested_sms'||raw==='interested_called'||raw==='interested'||raw==='considering'||raw==='warm_lead') return 'interested';
-  if(raw==='not_interested'||raw==='not_interested_called') return 'not_interested';
-  if(raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'opted_out';
+  if(raw==='not_interested'||raw==='not_interested_called'||raw==='do_not_contact'||raw==='opted_out'||raw==='dnc'||raw==='stop') return 'not_interested';
   return '';
 }
 function renderMsg2VariantTallies(sessions){
