@@ -3169,48 +3169,38 @@ function applyTelnyxMessageMetrics(range, ids){
   loadTelnyxMessageMetrics(requested).then(function(tm){
     if(!tm || !tm.ok) return;
     var rate=0.0129;
-    var useTelnyxCounts=true;
-    var delivered=useTelnyxCounts?Number(tm.delivered||0):(ids.delivered?num(ids.delivered):Number(tm.delivered||0));
+    var delivered=Number(tm.delivered||0);
     var cost=delivered*rate;
     function money(n){ return '$'+Number(n||0).toFixed(2); }
     function num(id){ var el=id&&document.getElementById(id); return Number(String((el&&el.textContent)||'').replace(/[^0-9.-]/g,''))||0; }
-    var liveSent=ids.sent?num(ids.sent):0;
-    var liveDelivered=ids.delivered?num(ids.delivered):0;
-    var liveContacts=ids.contacts?num(ids.contacts):0;
-    var liveContactsSub='';
-    if(ids.contactsSub){
-      var liveContactsSubEl=document.getElementById(ids.contactsSub);
-      liveContactsSub=String((liveContactsSubEl&&liveContactsSubEl.textContent)||'').trim();
-    }
-    if(ids.sent && useTelnyxCounts){
+    if(ids.sent){
       var sentEl=document.getElementById(ids.sent);
       if(sentEl) sentEl.textContent=Number(tm.sent||0).toLocaleString();
     }
-    if(ids.delivered && useTelnyxCounts){
+    if(ids.delivered){
       var delEl=document.getElementById(ids.delivered);
       if(delEl) delEl.textContent=Number(tm.delivered||0).toLocaleString();
     }
     if(ids.sentSub){
       var sentSub=document.getElementById(ids.sentSub);
-      if(sentSub) sentSub.textContent='Telnyx billing count'+(liveSent&&liveSent!==Number(tm.sent||0)?' · live log '+liveSent.toLocaleString():'');
+      if(sentSub) sentSub.textContent='Telnyx-confirmed outbound count';
     }
     if(ids.deliveredSub){
       var delSub=document.getElementById(ids.deliveredSub);
-      if(delSub) delSub.textContent=money(rate)+' x '+delivered.toLocaleString()+' = '+money(cost)+(liveDelivered&&liveDelivered!==delivered?' · live DLR '+liveDelivered.toLocaleString():'');
+      if(delSub) delSub.textContent=money(rate)+' x '+delivered.toLocaleString()+' = '+money(cost);
     }
-    if(ids.contacts && useTelnyxCounts){
+    if(ids.contacts){
       var telnyxContacts=Number(tm.delivered_contacts||0);
-      if(!telnyxContacts && Number(tm.delivered||0)>0) telnyxContacts=Math.min(liveContacts||Number(tm.delivered||0),Number(tm.delivered||0));
       var contactsEl=document.getElementById(ids.contacts);
       if(contactsEl) contactsEl.textContent=Number(telnyxContacts||0).toLocaleString();
     }
-    if(ids.contactsSub && useTelnyxCounts){
+    if(ids.contactsSub){
       var contactsSub=document.getElementById(ids.contactsSub);
       var sentContacts=Number(tm.sent_contacts||0);
       var deliveredContacts=Number(tm.delivered_contacts||0);
       var basis='Telnyx delivered contacts';
       if(sentContacts || deliveredContacts) basis='Telnyx '+Number(deliveredContacts||0).toLocaleString()+' delivered contacts / '+Number(sentContacts||0).toLocaleString()+' sent contacts';
-      if(contactsSub) contactsSub.textContent=basis+(liveContactsSub&&liveContacts&&liveContacts!==deliveredContacts?' · live DLR '+liveContactsSub:'');
+      if(contactsSub) contactsSub.textContent=basis;
     }
     if(ids.reply2Sub){
       var r2=num(ids.reply2);
