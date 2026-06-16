@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roofing — Owner Pain Research (Website-as-Vehicle)</title>
+<style>
+  :root{
+    --brand:#1a2f1a; --accent:#e85d26; --accent-light:#fff3ee;
+    --green:#1a6b3c; --green-light:#e8f5e9; --red:#c62828; --red-light:#ffebee;
+    --gold:#d97706; --gold-light:#fffbeb; --dark:#111827; --gray:#f8f9fa;
+    --mid:#6b7280; --border:#e5e7eb; --text:#1f2937;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text);background:#f9fafb;line-height:1.65;overflow-x:hidden;}
+  .hero{background:linear-gradient(135deg,var(--brand) 0%,#2c4a2c 100%);color:#fff;padding:52px 24px 44px;text-align:center;}
+  .hero .badge{display:inline-block;background:var(--accent);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+  .hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;margin-bottom:10px;line-height:1.2;}
+  .hero .sub{font-size:1rem;opacity:.85;max-width:720px;margin:0 auto 20px;}
+  .hero .meta-row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-size:.8rem;opacity:.62;}
+  .hero .meta-row span::before{content:'· ';}
+  .tab-nav{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+  .tab-nav-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;padding:0 8px;}
+  .tab-btn{padding:11px 14px;font-size:.78rem;font-weight:600;color:var(--mid);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;white-space:nowrap;transition:all .18s;}
+  .tab-btn:hover{color:var(--accent);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--accent-light);}
+  .tab-panel{display:none;min-height:calc(100vh - 200px);}
+  .tab-panel.active{display:block;}
+  .container{max-width:960px;margin:0 auto;padding:44px 24px 80px;}
+  .section-label{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+  h2{font-size:1.8rem;color:var(--brand);margin-bottom:6px;}
+  .section-desc{color:var(--mid);font-size:.93rem;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  h3{font-size:.82rem;font-weight:700;color:var(--dark);margin:28px 0 12px;text-transform:uppercase;letter-spacing:.5px;border-left:3px solid var(--accent);padding-left:10px;}
+  .quote{background:#fff;border-left:4px solid var(--accent);padding:14px 18px;margin:12px 0;border-radius:0 8px 8px 0;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .quote p{font-size:.95rem;font-style:italic;color:#2d2d2d;margin:0 0 10px;line-height:1.6;}
+  .quote.cust{border-left-color:#1565c0;}
+  .quote.praise{border-left-color:var(--green);}
+  .meta-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .src{font-size:.78rem;color:var(--mid);font-style:normal;flex:1;min-width:0;}
+  .src a{color:var(--accent);text-decoration:none;}
+  .src a:hover{text-decoration:underline;}
+  .badge-freq{display:inline-flex;align-items:center;gap:4px;background:#f0f4ff;color:var(--brand);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid #c7d7f8;}
+  .badge-freq::before{content:'\21BB';}
+  .badge-upvote{display:inline-flex;align-items:center;gap:4px;background:#fff8f0;color:var(--accent);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid #fcd9c0;}
+  .badge-upvote::before{content:'\2191';}
+  .badge-source{display:inline-flex;align-items:center;gap:3px;background:#f0faf4;color:var(--green);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid #a7d7b8;}
+  .badge-star{display:inline-flex;align-items:center;gap:3px;background:#fffbeb;color:var(--gold);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid #f5e0a8;}
+  .badge-snip{display:inline-flex;align-items:center;gap:3px;background:#f5f5f5;color:var(--mid);font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;border:1px solid #e0e0e0;}
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:22px 0;}
+  .stat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+  .stat-card .num{font-size:2rem;font-weight:800;color:var(--accent);line-height:1;}
+  .stat-card .lbl{font-size:.78rem;color:var(--mid);margin-top:6px;line-height:1.4;}
+  .alert{padding:14px 18px;border-radius:8px;margin:18px 0;font-size:.91rem;line-height:1.6;}
+  .alert-red{background:var(--red-light);border-left:4px solid var(--red);}
+  .alert-green{background:var(--green-light);border-left:4px solid var(--green);}
+  .alert-gold{background:var(--gold-light);border-left:4px solid var(--gold);}
+  .alert-brand{background:#eaf3ea;border-left:4px solid var(--brand);}
+  .alert strong{display:block;margin-bottom:4px;}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin:18px 0;}
+  th{background:var(--brand);color:#fff;padding:10px 12px;text-align:left;font-weight:600;}
+  td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--gray);}
+  .top-rank td:first-child{color:var(--accent);font-weight:700;font-size:1rem;}
+  .scene{background:var(--brand);color:rgba(255,255,255,.9);border-radius:12px;padding:22px 26px;margin:18px 0;}
+  .scene .scene-title{font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#f97316;margin-bottom:10px;}
+  .scene p{margin-bottom:10px;line-height:1.7;font-size:.92rem;}
+  .scene .verbatim{border-left:3px solid #f97316;padding-left:14px;font-style:italic;margin-top:14px;color:rgba(255,255,255,.72);font-size:.88rem;}
+  .seg-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+  @media(max-width:620px){.seg-grid{grid-template-columns:1fr;}}
+  .seg-card{border-radius:12px;padding:22px;}
+  .seg-card.excluded{background:var(--red-light);border:1px solid #fca5a5;}
+  .seg-card.target{background:var(--green-light);border:1px solid #86efac;}
+  .seg-card h4{font-size:.9rem;font-weight:700;margin-bottom:12px;}
+  .seg-card.excluded h4{color:var(--red);}
+  .seg-card.target h4{color:var(--green);}
+  .seg-card ul{margin-left:18px;font-size:.86rem;line-height:1.9;}
+  .headline-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .headline-rank{font-size:1.3rem;font-weight:800;color:#ddd;width:30px;flex-shrink:0;padding-top:2px;}
+  .headline-text{font-size:.94rem;font-style:italic;color:var(--text);line-height:1.5;margin-bottom:6px;}
+  .headline-meta{display:flex;gap:8px;flex-wrap:wrap;}
+  /* awareness */
+  .aw-row{display:flex;gap:16px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:14px 0;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .aw-num{flex-shrink:0;width:42px;height:42px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+  .aw-body h4{font-size:.95rem;color:var(--brand);margin-bottom:4px;}
+  .aw-head{font-size:.8rem;color:var(--mid);margin-bottom:8px;}
+  .aw-say{font-size:.92rem;font-style:italic;color:#2d2d2d;margin-bottom:8px;}
+  .aw-offer{font-size:.86rem;background:var(--accent-light);border-radius:8px;padding:8px 12px;}
+  p{margin-bottom:12px;} ul{margin:8px 0 14px 20px;} li{margin-bottom:6px;font-size:.91rem;line-height:1.6;} strong{font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Industry Pain Research · Owner + Homeowner</div>
+  <h1>Roofing — Deep Buyer Research</h1>
+  <p class="sub">The roofer doesn't want a website. He wants the phone to ring, the quote to land, and the 5-star reviews to pile up while he's on the roof. This maps the pain — and turns the website into the vehicle that fixes it.</p>
+  <div class="meta-row">
+    <span>2026-06-16</span><span>SerpAPI</span><span>Google Maps Reviews</span><span>YouTube/Supadata</span><span>PILOT — format review</span>
+  </div>
+</div>
+
+<div class="tab-nav"><div class="tab-nav-inner">
+  <button class="tab-btn active" onclick="showTab('fears',this)">1 · Fears</button>
+  <button class="tab-btn" onclick="showTab('hopes',this)">2 · Hopes &amp; Dreams</button>
+  <button class="tab-btn" onclick="showTab('relfears',this)">3 · Relationship Fears</button>
+  <button class="tab-btn" onclick="showTab('soundbites',this)">4 · Soundbites ★</button>
+  <button class="tab-btn" onclick="showTab('frustrations',this)">5 · Frustrations</button>
+  <button class="tab-btn" onclick="showTab('solutions',this)">6 · Previous Solutions</button>
+  <button class="tab-btn" onclick="showTab('solsound',this)">7 · Solution Soundbites ★</button>
+  <button class="tab-btn" onclick="showTab('outcomes',this)">8 · Desired Outcomes</button>
+  <button class="tab-btn" onclick="showTab('typday',this)">9 · Typical Day</button>
+  <button class="tab-btn" onclick="showTab('summary',this)">10 · Buyer Summary</button>
+  <button class="tab-btn" onclick="showTab('homeowner',this)">🏠 Homeowner Layer</button>
+  <button class="tab-btn" onclick="showTab('headlines',this)">↗ Headlines</button>
+  <button class="tab-btn" onclick="showTab('freq',this)">↗ Frequency</button>
+  <button class="tab-btn" onclick="showTab('awareness',this)">⚡ Awareness → Offer Map</button>
+</div></div>
+
+<!-- 1 FEARS -->
+<div id="tab-fears" class="tab-panel active"><div class="container">
+  <div class="section-label">Tab 1 · Owner</div><h2>Fears</h2>
+  <p class="section-desc">What keeps a roofing owner up at night: the dead phone, the fail statistic, and one bad review quietly killing the pipeline.</p>
+  <div class="stat-row">
+    <div class="stat-card"><div class="num">80%</div><div class="lbl">of roofing contractors fail within 2 years</div></div>
+    <div class="stat-card"><div class="num">95%</div><div class="lbl">out of business within 5 years</div></div>
+    <div class="stat-card"><div class="num">27%→64%</div><div class="lbl">close rate when response/follow-up/quote is systematized</div></div>
+  </div>
+  <div class="quote"><p>"80% of roofing contractors will fail within first two years; 95% of roofing businesses will be out of business within five years."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.youtube.com/watch?v=0soPywcUhKc" target="_blank">YouTube · Roofing Insights</a></span><span class="badge-source">YouTube</span><span class="badge-freq">existential fear</span></div></div>
+  <div class="quote"><p>"No leads. No safety net. If I didn't generate it, I didn't eat."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.tiktok.com/@roofit.restoratio/video/7519305026628603167" target="_blank">TikTok · roofing owner</a></span><span class="badge-source">TikTok</span><span class="badge-freq">income volatility</span></div></div>
+  <div class="quote"><p>"If you have one star or two star rating online, now nobody wants to sell for you, nobody wants to work for you, homeowners don't want to hire you."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.youtube.com/watch?v=0soPywcUhKc" target="_blank">YouTube · Roofing Insights</a></span><span class="badge-source">YouTube</span><span class="badge-freq">reputation = survival</span></div></div>
+  <div class="quote"><p>"I started my roofing company over a year ago, and we've been struggling to gain consistent traction… While many other roofing companies in our area are booked weeks in advance, we often find ourselves going weeks at a time without work."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/Roofing/comments/1pt67s0/" target="_blank">r/Roofing · Business Owner — Need Advice</a></span><span class="badge-source">Reddit post</span><span class="badge-freq">empty schedule</span></div></div>
+  <div class="quote"><p>"Many roofing businesses struggle with cash flow during the off-season and stormy periods. Crews are left idle, blowing overhead budgets."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.zuper.co/blog/how-to-scale-a-roofing-business" target="_blank">zuper.co</a></span><span class="badge-snip">snippet</span><span class="badge-freq">seasonality</span></div></div>
+</div></div>
+
+<!-- 2 HOPES -->
+<div id="tab-hopes" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 2 · Owner</div><h2>Hopes &amp; Dreams</h2>
+  <p class="section-desc">A business that books itself, a reputation that sells for him, and revenue that survives a no-storm winter.</p>
+  <div class="quote"><p>"Slow season doesn't break you. Year 3 to 5, real momentum. Wealth is [built with] smart cash flow management."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.instagram.com/reel/DXKVoZgCcMZ/" target="_blank">Instagram reel</a></span><span class="badge-snip">snippet</span><span class="badge-freq">predictable revenue</span></div></div>
+  <div class="quote"><p>"A good website can generate a hundred qualified leads per month."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.roofingtalk.com/threads/best-way-to-get-leads.2342/" target="_blank">roofingtalk.com</a></span><span class="badge-snip">snippet</span><span class="badge-freq">website as engine</span></div></div>
+  <ul>
+    <li>Leads come in and get answered + quoted <em>without the owner chasing</em>.</li>
+    <li>A 4.5★+ Google reputation that does the selling before the phone rings.</li>
+    <li>Off the personal cell; the business runs without being chained to it.</li>
+    <li>A real, sellable business with enterprise value — not a job he bought himself.</li>
+  </ul>
+</div></div>
+
+<!-- 3 RELFEARS -->
+<div id="tab-relfears" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 3 · Owner</div><h2>Relationship Fears</h2>
+  <p class="section-desc">Feast-or-famine income and a personal phone that never stops bleed straight into home life.</p>
+  <div class="quote"><p>"Roofing business owner warns: personal phone = nonstop sales calls."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.tiktok.com/@roofit.restoratio/video/7519305026628603167" target="_blank">TikTok · roofing owner</a></span><span class="badge-source">TikTok</span><span class="badge-freq">always-on</span></div></div>
+  <ul>
+    <li>Good months followed by scary months → tension at home.</li>
+    <li>Dinner, weekends, kids' games interrupted by the business line (their cell).</li>
+    <li>Betting savings/credit on the business; fear of failing publicly in front of family and the crew who depend on the paycheck.</li>
+    <li>An angry homeowner review feels personal — it's their name on the truck and the door.</li>
+  </ul>
+</div></div>
+
+<!-- 4 SOUNDBITES -->
+<div id="tab-soundbites" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 4 · Owner — Use Verbatim in Copy</div><h2>Soundbites ★</h2>
+  <p class="section-desc">The owner's own words. <span class="badge-snip">snippet</span> = verbatim-but-partial (SerpAPI surfaced the text; full thread blocked at time of pull).</p>
+  <div class="alert alert-gold"><strong>★ The wedge:</strong> the felt problem is "I need leads." The real problem is the <em>leak</em> — slow response, weak follow-up, no reviews. Lead copy with the leak, not the website.</div>
+  <h3>Highest-impact (test first)</h3>
+  <div class="quote"><p>"My close rate is 34%. Many of my customers mention how they had to reach out to 10+ roofers just to get 3 to actually answer, return a call, or show up and give an estimate. A lot say how some guys come out but don't ever follow up. On the flip side, I return all of my calls &amp; emails as soon as I see them."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/RoofingSales/comments/1bzzukn/" target="_blank">r/RoofingSales · rate of being ghosted</a></span><span class="badge-upvote">8 upvotes</span><span class="badge-freq">the leak, from inside</span></div></div>
+  <div class="quote"><p>"I'll call, knock, text and email my homeowners over and over again. During my training I wrote down the word FOLLOW UP! in big bold letters like 30 times."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/RoofingSales/comments/1bzzukn/" target="_blank">r/RoofingSales</a></span><span class="badge-upvote">3 upvotes</span><span class="badge-freq">follow-up = the skill</span></div></div>
+  <div class="quote"><p>"Slow response, missed calls, and weak follow-up. Until you fix the leaks, more leads just means more wasted money."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.instagram.com/reel/DYFarRjRZAR/" target="_blank">Instagram reel</a></span><span class="badge-source">Instagram</span><span class="badge-freq">the leak</span></div></div>
+  <div class="quote"><p>"Your brand, your business is not what you think your business is — it's what Google thinks about your business."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.youtube.com/watch?v=0soPywcUhKc" target="_blank">YouTube · Roofing Insights</a></span><span class="badge-source">YouTube</span><span class="badge-freq">reputation</span></div></div>
+  <div class="quote"><p>"No leads from your website? Someone else is getting them instead."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.instagram.com/reel/DPUHBVqjWwH/" target="_blank">Instagram reel</a></span><span class="badge-snip">snippet</span><span class="badge-freq">website asleep</span></div></div>
+  <h3>Secondary</h3>
+  <div class="quote"><p>"The #1 problem is staffing/employees/subcontractors. That certainly is my #1 problem. I can't grow until I get the right people in place."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.roofingtalk.com/threads/what-are-your-major-pains-problems-in-running-your-roofing-business.2465/" target="_blank">roofingtalk.com</a></span><span class="badge-snip">snippet</span><span class="badge-freq">staffing</span></div></div>
+  <div class="quote"><p>"[My website] — is it that it doesn't generate leads? Looks outdated? Was built by someone who disappeared?"</p>
+    <div class="meta-row"><span class="src"><a href="https://www.facebook.com/groups/337460942058676/posts/792597503211682/" target="_blank">Roofing FB group</a></span><span class="badge-snip">snippet</span><span class="badge-freq">dead business card</span></div></div>
+</div></div>
+
+<!-- 5 FRUSTRATIONS -->
+<div id="tab-frustrations" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 5 · Owner</div><h2>Frustrations</h2>
+  <p class="section-desc">Junk leads, agencies that don't get roofing, and storm-chasers poisoning the well for honest operators.</p>
+  <div class="quote"><p>"Many contractors complain about wasted money on leads that don't pan out."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.uhub.ngo/post/how-washington-state-tradespeople-acquire-re" target="_blank">uhub.ngo</a></span><span class="badge-snip">snippet</span><span class="badge-freq">junk leads</span></div></div>
+  <div class="quote"><p>"If you've struggled with running Google ads or wasted money on poor management, you know most agencies don't understand the unique challenges of the roofing [business]."</p>
+    <div class="meta-row"><span class="src"><a href="https://builtrightdigital.com/google-ads-roofers/" target="_blank">builtrightdigital.com</a></span><span class="badge-snip">snippet</span><span class="badge-freq">agency distrust</span></div></div>
+  <div class="quote"><p>"I've spent over $7,000 on marketing over the past few months without landing a single job. I've tried different strategies — online ads, flyers, and even word-of-mouth — but nothing seems to be working."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/marketing/comments/1fmoz3d/" target="_blank">r/marketing · construction owner</a></span><span class="badge-source">Reddit post</span><span class="badge-freq">spend, no ROI</span></div></div>
+  <div class="quote"><p>"Those people who teach that roofing businesses [are just] sell-bill-collect… if you look at their records, their companies went out of business, and now they're teaching you."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.youtube.com/watch?v=0soPywcUhKc" target="_blank">YouTube · Roofing Insights</a></span><span class="badge-source">YouTube</span><span class="badge-freq">guru fatigue</span></div></div>
+</div></div>
+
+<!-- 6 SOLUTIONS -->
+<div id="tab-solutions" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 6 · Owner</div><h2>Previous Solutions</h2>
+  <p class="section-desc">What they've already tried — so you don't pitch the thing that already failed them.</p>
+  <div class="alert alert-red"><strong>Positioning rule:</strong> don't be "another agency renting leads." Lead with "you own this asset, and it answers the phone you keep missing."</div>
+  <table>
+    <tr><th>Tried</th><th>Why it failed</th></tr>
+    <tr><td>Pay-per-lead (Angi, lead services)</td><td>Shared/junk leads; slow follow-up means even good ones go cold</td></tr>
+    <tr><td>Door-knocking / storm chasing</td><td>Exhausting, seasonal, doesn't compound; winter knocking is brutal</td></tr>
+    <tr><td>Marketing agency / Google Ads</td><td>"Most agencies don't understand roofing"; leads with no conversion system</td></tr>
+    <tr><td>DIY website</td><td>"Looks outdated," "does nothing," "builder disappeared" — a dead business card</td></tr>
+    <tr><td>Word of mouth only</td><td>Doesn't scale; "word of mouth built your business but [no leads coming in now]"</td></tr>
+    <tr><td>HubSpot / generic CRM</td><td>Too complex for a roofer to self-serve</td></tr>
+  </table>
+</div></div>
+
+<!-- 7 SOLSOUND -->
+<div id="tab-solsound" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 7 · Owner — Use in Offer Copy</div><h2>Solution Soundbites ★</h2>
+  <p class="section-desc">How they describe the fix they want. Mirror these in the offer.</p>
+  <div class="alert alert-green"><strong>★ The framework owners are circling</strong> (useproline "why roofing revenue stalls"): slow lead response → weak follow-up → no review generation → chaotic scheduling → slow quoting → cash-flow. Fix the first three and close rate moves from ~27% toward 64%.</div>
+  <div class="quote"><p>"Use a CRM — it helps manage communications, schedule follow-ups, and track progress so no leads fall through the cracks."</p>
+    <div class="meta-row"><span class="src"><a href="https://bullseyeinternet.com/roofing-pay-per-lead-101/" target="_blank">bullseyeinternet.com</a></span><span class="badge-snip">snippet</span><span class="badge-freq">no lead falls through</span></div></div>
+  <div class="quote"><p>"The first company to respond with a call or text often books the inspection right away."</p>
+    <div class="meta-row"><span class="src"><a href="https://useproline.com/why-roofing-revenue-stalls-7-reasons/" target="_blank">useproline.com</a></span><span class="badge-source">Article</span><span class="badge-freq">speed-to-lead</span></div></div>
+  <div class="quote"><p>"Without automated reminders, leads ghost you completely."</p>
+    <div class="meta-row"><span class="src"><a href="https://useproline.com/why-roofing-revenue-stalls-7-reasons/" target="_blank">useproline.com</a></span><span class="badge-source">Article</span><span class="badge-freq">follow-up</span></div></div>
+  <div class="quote"><p>"Anybody using AI to generate roofing leads? If so I'd be interested in hearing how to do so."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.facebook.com/groups/bluecollarmillionaire/" target="_blank">Blue Collar Millionaire FB group</a></span><span class="badge-snip">snippet</span><span class="badge-freq">open to systems</span></div></div>
+</div></div>
+
+<!-- 8 OUTCOMES -->
+<div id="tab-outcomes" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 8 · Owner</div><h2>Desired Outcomes</h2>
+  <p class="section-desc">The life after — every item is something the website+system can directly produce.</p>
+  <ul>
+    <li>Phone/inbox answered the instant a lead comes in — even mid-roof — so the job doesn't go to whoever called back first.</li>
+    <li>Reviews compounding automatically → "what Google thinks" sells for them.</li>
+    <li>Quotes out the same afternoon → deals close before the homeowner shops around.</li>
+    <li>Crews scheduled with full job details → no idle crews "waiting for jobs that exist only in a sales rep's notebook."</li>
+    <li>Predictable revenue across winter / no-storm months.</li>
+  </ul>
+</div></div>
+
+<!-- 9 TYPDAY -->
+<div id="tab-typday" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 9 · Owner</div><h2>Typical Day</h2>
+  <p class="section-desc">Where the leaks happen, hour by hour.</p>
+  <div class="scene"><div class="scene-title">A Day in the Life — Owner-Operator</div>
+    <p><strong>6:30 AM</strong> — Two missed calls overnight; one voicemail from a homeowner who "already found someone." A 9pm Facebook lead, unanswered.</p>
+    <p><strong>Mid-morning</strong> — On a roof. Phone rings 4 times in the truck below; can't answer. One was a referral worth a full replacement.</p>
+    <p><strong>Midday</strong> — Returns calls from the truck. The hot one booked a competitor who texted back in 5 minutes. Promises another homeowner a quote "tonight" — knows it'll really be 2–3 days.</p>
+    <p><strong>Evening</strong> — At the kid's game answering sales calls on the personal cell. Sees a new 2-star review; stomach drops. Means to "do the website later." Never does.</p>
+    <div class="verbatim">"If I didn't generate it, I didn't eat." — more leads won't fix this; the bucket leaks.</div>
+  </div>
+  <div class="alert alert-brand"><strong>Outreach timing:</strong> he's reachable early AM and after 7 PM (off the roof). The pain is most vivid right after he's lost a job to a faster competitor or seen a bad review.</div>
+</div></div>
+
+<!-- 10 SUMMARY -->
+<div id="tab-summary" class="tab-panel"><div class="container">
+  <div class="section-label">Tab 10 · Synthesis</div><h2>Buyer Summary</h2>
+  <p class="section-desc">Who he is, what he believes, and the frame that lands.</p>
+  <div class="alert alert-brand"><strong>The one-line ICP:</strong> Owner-operator roofer (solo–15 crew, $150K–$3M), strong on the trade, weak on systems/marketing, burned by lead-sellers and agencies, lives on the phone and the roof.</div>
+  <h3>What he believes (that's wrong)</h3>
+  <ul><li>"My website's fine — it's basically a business card."</li><li>"I just need more leads."</li><li>"Marketing people don't get roofing."</li></ul>
+  <h3>What actually stops him</h3>
+  <ul><li>The follow-up leak: leads die between the call and the quote.</li><li>No review engine → "what Google thinks" works against him.</li><li>He's the bottleneck — can't answer the phone from a roof.</li></ul>
+  <h3>Segments</h3>
+  <div class="seg-grid">
+    <div class="seg-card target"><h4>✓ Target</h4><ul><li>Established local operators with reviews + an outdated/dead site</li><li>Owners losing jobs to faster competitors</li><li>Storm-belt + suburban metros</li></ul></div>
+    <div class="seg-card excluded"><h4>✗ De-prioritize</h4><ul><li>Pure storm-chasers (transient, no local brand)</li><li>Big franchises with in-house marketing</li><li>Brand-new $0-revenue startups (no proof, no budget)</li></ul></div>
+  </div>
+  <div class="alert alert-gold"><strong>The frame that works:</strong> "You're not losing jobs because your prices are too high. You're losing them because you called back second."</div>
+</div></div>
+
+<!-- HOMEOWNER LAYER -->
+<div id="tab-homeowner" class="tab-panel"><div class="container">
+  <div class="section-label">Layer 2 · The Roofer's Customer</div><h2>🏠 Homeowner Layer</h2>
+  <p class="section-desc">Verbatim Google reviews (Atlanta) + forum. Every complaint is a missed-system; every praise is something the website+system delivers. <strong>This is the proof that the offer works.</strong></p>
+  <h3>What homeowners hate (the gap — Reddit, high-upvote)</h3>
+  <div class="quote cust"><p>"Why don't contractors ever call me back? … it really pisses me off when I'm ready to drop a few grand on a project and can't find anybody to do the work."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">89 upvotes</span><span class="badge-freq">no callback</span></div></div>
+  <div class="quote cust"><p>"If you can't handle me at your busiest, you don't deserve me when you're slow."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">90 upvotes</span><span class="badge-freq">low switching cost</span></div></div>
+  <div class="quote cust"><p>"I had one not call me back after missing an estimate appointment. After a few months his work dried up and called me wanting to know if I was still interested. I told him I gave the work to his top competitor — and they'll be getting the rest of my work too."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">71 upvotes</span><span class="badge-freq">lost to competitor</span></div></div>
+  <div class="quote cust"><p>"Called several times until they finally came out. Then they didn't send a quote. I emailed several times until they sent a quote. I immediately agreed to their price… They no-showed to two [appointments] and then stopped responding altogether."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">22 upvotes</span><span class="badge-freq">slow quote + no-show</span></div></div>
+  <div class="quote cust"><p>"Out of 5 contractors including Lowes, only one has actually followed through with sending a quote. They each spent over an hour here taking measurements… Why spend the time to come out and see the project and not follow up?"</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">11 upvotes</span><span class="badge-freq">no follow-up</span></div></div>
+  <div class="quote cust"><p>"I use a more expensive HVAC, plumbing, and electrical company because I know they will show up."</p>
+    <div class="meta-row"><span class="src"><a href="https://www.reddit.com/r/HomeImprovement/comments/96n9u4/" target="_blank">r/HomeImprovement</a></span><span class="badge-upvote">6 upvotes</span><span class="badge-freq">pays MORE for reliable</span></div></div>
+
+  <h3>Same complaint, local + recent (Google reviews, Atlanta)</h3>
+  <div class="quote cust"><p>"Called over 3 weeks ago for someone to look at my roof. Followed up numerous times and nobody ever shows. Will be going with another company that actually wants my business."</p>
+    <div class="meta-row"><span class="src">Google review · Bell Roofing, Atlanta</span><span class="badge-source">1★ Google</span><span class="badge-freq">no follow-up</span></div></div>
+  <div class="quote cust"><p>"Not only did they not show up for their appointment, but they then repeatedly call and text… Not once did anyone say 'we are sorry.' Far too many roofing companies in Atlanta to mess with this nonsense."</p>
+    <div class="meta-row"><span class="src">Google review · Castle Roofing, Atlanta</span><span class="badge-source">1★ Google</span><span class="badge-freq">no-show</span></div></div>
+
+  <div class="alert alert-gold"><strong>The owners admit it too (same thread):</strong> "As a contractor, I am guilty of some ghosting." · "Source: busy person already working twelve-hour days who cannot return messages." · A contractor's wife: "Small business with three guys and a very good reputation. Some days he gets 10+ calls per day. He can't possibly return them all and work at his craft." — <em>Both sides confirm the leak. The system closes it.</em></div>
+  <h3>What homeowners praise (5★ — the baseline you must match)</h3>
+  <div class="quote praise"><p>"He was professional, responsive, and made the entire process easy and stress-free! Communication was excellent, which is few and far between nowadays."</p>
+    <div class="meta-row"><span class="src">Google review · Colony Roofers, Atlanta</span><span class="badge-source">5★</span><span class="badge-freq">responsiveness</span></div></div>
+  <div class="quote praise"><p>"Responded quickly, met with me in person… honest, hard working, thorough and professional."</p>
+    <div class="meta-row"><span class="src">Google review · Colony Roofers, Atlanta</span><span class="badge-source">5★</span><span class="badge-freq">speed + trust</span></div></div>
+  <div class="quote praise"><p>"Gave me an estimate with all the details I needed and also explained what needed to be done so I could ensure the right fix."</p>
+    <div class="meta-row"><span class="src">Google review · Colony Roofers, Atlanta</span><span class="badge-source">5★</span><span class="badge-freq">clear quote</span></div></div>
+  <div class="alert alert-green"><strong>The whole offer in one line:</strong> the 1★ complaints (no callback, no quote, no-show) and the 5★ praise (fast, clear, showed up) are mirror images — and <em>all of it is captured by the website + speed-to-lead + instant-quote + review system.</em></div>
+</div></div>
+
+<!-- HEADLINES -->
+<div id="tab-headlines" class="tab-panel"><div class="container">
+  <div class="section-label">Outreach / Ad Testing</div><h2>Top Lines for Testing</h2>
+  <p class="section-desc">Built from the research. Test top-down.</p>
+  <div class="headline-row"><div class="headline-rank">1</div><div><div class="headline-text">"You're not losing jobs on price. You called back second."</div><div class="headline-meta"><span class="badge-freq">the leak</span></div></div></div>
+  <div class="headline-row"><div class="headline-rank">2</div><div><div class="headline-text">"Your website is asleep while your competitor's is selling."</div><div class="headline-meta"><span class="badge-freq">website asleep</span></div></div></div>
+  <div class="headline-row"><div class="headline-rank">3</div><div><div class="headline-text">"More leads won't fix a leaking bucket."</div><div class="headline-meta"><span class="badge-freq">follow-up</span></div></div></div>
+  <div class="headline-row"><div class="headline-rank">4</div><div><div class="headline-text">"Your business is whatever Google says it is."</div><div class="headline-meta"><span class="badge-freq">reputation</span></div></div></div>
+  <div class="headline-row"><div class="headline-rank">5</div><div><div class="headline-text">"That $80 lead you never called back went to the guy who texted in 5 minutes."</div><div class="headline-meta"><span class="badge-freq">speed-to-lead</span></div></div></div>
+  <div class="headline-row"><div class="headline-rank">6</div><div><div class="headline-text">"A site that answers the phone when you're on the roof."</div><div class="headline-meta"><span class="badge-freq">the vehicle</span></div></div></div>
+</div></div>
+
+<!-- FREQUENCY -->
+<div id="tab-freq" class="tab-panel"><div class="container">
+  <div class="section-label">Synthesis</div><h2>Pain Frequency Ranking</h2>
+  <p class="section-desc">Owner pains by source count. Top 3 are the offer's wedge.</p>
+  <table>
+    <tr><th>#</th><th>Pain</th><th>Sources</th><th>Website-as-vehicle fix</th></tr>
+    <tr class="top-rank"><td>1</td><td>Can't get / can't trust leads</td><td>12+</td><td>Lead capture + owned funnel</td></tr>
+    <tr class="top-rank"><td>2</td><td>Slow response + weak follow-up (the leak)</td><td>10+</td><td>Missed-call text-back + auto follow-up</td></tr>
+    <tr class="top-rank"><td>3</td><td>Reputation / reviews = survival</td><td>9+</td><td>Auto review engine</td></tr>
+    <tr><td>4</td><td>Cash flow / slow-season</td><td>8+</td><td>Year-round lead flow, not storm-dependent</td></tr>
+    <tr><td>5</td><td>Staffing / crews</td><td>8+</td><td>(adjacent — scheduling that briefs the crew)</td></tr>
+    <tr><td>6</td><td>Marketing spend, no ROI</td><td>8+</td><td>Owned asset vs. rented leads</td></tr>
+    <tr><td>7</td><td>Slow quoting / chaotic scheduling</td><td>6+</td><td>Instant/same-day quote flow</td></tr>
+    <tr><td>8</td><td>Website is a dead business card</td><td>5+</td><td>The entry wound — the redesign hook</td></tr>
+  </table>
+</div></div>
+
+<!-- AWARENESS -->
+<div id="tab-awareness" class="tab-panel"><div class="container">
+  <div class="section-label">⚡ The Synthesis</div><h2>Awareness → Offer Map</h2>
+  <p class="section-desc">The product is the <strong>system</strong>; the website is the wrapper. Mechanisms: speed-to-lead / missed-call text-back · instant quote · auto-review engine · lead capture + simple CRM · crew-briefing scheduler.</p>
+  <div class="alert alert-gold"><strong>Core reframe:</strong> "Your roof's website isn't a brochure — it's a salesman that should answer the phone, send the quote, and farm reviews while you're on the roof. Right now it's asleep."</div>
+
+  <div class="aw-row"><div class="aw-num" style="background:#ff6b35">1</div><div class="aw-body">
+    <h4>Unaware</h4><div class="aw-head">"My website's fine — it's basically a business card."</div>
+    <div class="aw-say">Say: "That $80 lead you never called back went to the guy who texted in 5 minutes."</div>
+    <div class="aw-offer"><strong>DIY:</strong> free "Lead-Leak Scorecard" — their response time + review count vs. the top local competitor.</div>
+  </div></div>
+  <div class="aw-row"><div class="aw-num" style="background:#e85d4a">2</div><div class="aw-body">
+    <h4>Problem-Aware</h4><div class="aw-head">"I just need more leads."</div>
+    <div class="aw-say">Say: "You don't have a lead problem. You have a called-back-second problem."</div>
+    <div class="aw-offer"><strong>DWY:</strong> $99 site <em>+</em> missed-call text-back so no lead dies. Framed as "lead rescue," not redesign.</div>
+  </div></div>
+  <div class="aw-row"><div class="aw-num" style="background:#1a6b3c">3</div><div class="aw-body">
+    <h4>Solution-Aware</h4><div class="aw-head">"I probably need follow-up / reviews / a CRM, but it sounds like a project."</div>
+    <div class="aw-say">Say: "It's one system, not five tools — done for you in days."</div>
+    <div class="aw-offer"><strong>DWY/DFY:</strong> site + instant-quote + auto-review engine bundled. Price the outcome (jobs), anchor against one saved job.</div>
+  </div></div>
+  <div class="aw-row"><div class="aw-num" style="background:#1565c0">4</div><div class="aw-body">
+    <h4>Product-Aware</h4><div class="aw-head">Comparing agencies, GHL, ProLine, Angi.</div>
+    <div class="aw-say">Say: "Agencies rent you leads. This is an asset you own — and it's $99 to start, not $2k/mo."</div>
+    <div class="aw-offer"><strong>DFY:</strong> owned site + system, no retainer trap, setup + handoff. Differentiate on ownership + price + roofing-specific.</div>
+  </div></div>
+  <div class="aw-row"><div class="aw-num" style="background:#6a1b9a">5</div><div class="aw-body">
+    <h4>Most-Aware</h4><div class="aw-head">Ready — wants proof + safety.</div>
+    <div class="aw-say">Say: "Here's the before/after on response time and review count. Risk's on me."</div>
+    <div class="aw-offer"><strong>DFY + risk reversal:</strong> "If it doesn't book you a job in 30 days, you don't pay / I rebuild it free."</div>
+  </div></div>
+
+  <div class="alert alert-brand"><strong>One-sentence pitch (carry into outreach):</strong> "I'll turn your website from a business card into the thing that answers the phone, sends the quote, and farms 5-star reviews while you're on the roof — starts at $99."</div>
+</div></div>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
