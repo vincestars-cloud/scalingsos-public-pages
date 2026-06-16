@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<title>Austin Roofing and Construction | Roofing &amp; Exteriors</title>
+<meta name="description" content="Trusted roofing, storm damage repair, and exterior services in Austin. Free inspections, insurance claim help, and manufacturer-backed warranties."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --primary:#29388D;
+  --primary-dark:#1A2456;
+  --accent:#FACC15;
+  --accent-dark:#392D00;
+  --accent-light:#F6DC75;
+  --neutral:#5A6584;
+  --silver:#C0C6CF;
+  --ink:#1A1F2E;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Source Sans 3',sans-serif;background:#fff;color:var(--ink);overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+p{line-height:1.65}
+h1,h2,h3,h4,h5,h6{font-family:'Oswald',Impact,sans-serif;line-height:1.05}
+
+/* ── BUTTONS ── */
+.btn-gold{
+  display:inline-flex;align-items:center;justify-content:center;gap:.375rem;
+  font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink);background:linear-gradient(160deg,var(--accent-light) 0%,var(--accent) 35%,var(--accent-dark) 62%,var(--accent-light) 100%);
+  box-shadow:0 5px 0 var(--accent-dark),0 7px 16px rgba(0,0,0,.32);
+  border:none;cursor:pointer;position:relative;overflow:hidden;
+  transform:translateY(0);transition:transform .1s,box-shadow .1s;
+  border-radius:3px;padding:.7rem 1.75rem;font-size:.85rem;
+}
+.btn-gold::after{content:'';pointer-events:none;background:linear-gradient(110deg,rgba(255,255,255,.32) 0%,rgba(255,255,255,.16) 12%,transparent 26% 74%,rgba(255,255,255,.16) 88%,rgba(255,255,255,.28) 100%);position:absolute;inset:0}
+.btn-gold:hover{box-shadow:0 3px 0 var(--accent-dark),0 4px 10px rgba(0,0,0,.25);transform:translateY(2px)}
+.btn-gold:active{box-shadow:0 1px 0 var(--accent-dark);transform:translateY(4px)}
+.btn-outline-dark{display:inline-flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);background:transparent;border:1px solid rgba(41,56,141,.35);border-radius:3px;padding:.7rem 1.75rem;font-size:.85rem;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-outline-dark:hover{background:rgba(41,56,141,.06);border-color:var(--primary)}
+.btn-outline-white{display:inline-flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.4);border-radius:3px;padding:.7rem 1.75rem;font-size:.85rem;cursor:pointer;transition:background .15s}
+.btn-outline-white:hover{background:rgba(255,255,255,.1)}
+
+/* ── EYEBROW ── */
+.eyebrow{font-family:'Oswald',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+
+/* ── SECTION ── */
+.section{padding:5rem 2rem}
+.inner{max-width:80rem;margin:0 auto}
+.section-head{margin-bottom:3rem}
+.section-head h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;text-transform:uppercase;color:var(--primary);margin-top:.5rem}
+.line-gold{display:block;height:2.5px;background:var(--accent);width:3rem;margin:.875rem 0}
+
+/* ── FORM (LIGHT CARD) ── */
+.form-card{background:#fff;border-radius:4px;box-shadow:0 4px 32px rgba(15,23,42,.14);padding:2rem;border-top:3px solid var(--accent)}
+.form-card-dark{background:rgba(10,15,40,.9);backdrop-filter:blur(16px);border-radius:4px;box-shadow:0 4px 32px rgba(0,0,0,.5);padding:2rem;border-top:3px solid var(--accent)}
+.form-title{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.form-sub{font-size:.85rem;margin-bottom:1.25rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.fgroup{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.75rem}
+.flabel{font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--neutral)}
+.flabel-w{color:rgba(255,255,255,.5)}
+.finput{width:100%;padding:.65rem .875rem;border:1px solid #d1d5db;border-radius:3px;font-family:'Source Sans 3',sans-serif;font-size:.9rem;color:var(--ink);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
+.finput:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(250,204,21,.18)}
+.finput-dark{width:100%;padding:.65rem .875rem;border:1px solid rgba(192,198,207,.25);border-radius:3px;font-family:'Source Sans 3',sans-serif;font-size:.9rem;color:#fff;background:rgba(255,255,255,.08);outline:none;transition:border-color .15s,box-shadow .15s}
+.finput-dark::placeholder{color:rgba(255,255,255,.38)}
+.finput-dark:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(250,204,21,.15)}
+.form-disclaimer{font-size:.72rem;color:var(--neutral);margin-top:.875rem;line-height:1.5}
+.form-disclaimer-w{font-size:.72rem;color:rgba(255,255,255,.35);margin-top:.875rem;line-height:1.5}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .25s,box-shadow .25s;background:transparent}
+#nav.scrolled{background:#fff;box-shadow:0 1px 16px rgba(15,23,42,.12)}
+#nav.scrolled .nav-link{color:var(--primary)}
+#nav.scrolled .nav-link:hover{color:var(--accent)}
+#nav.scrolled .nav-phone{color:var(--primary)}
+.nav-inner{max-width:80rem;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:4.25rem}
+.nav-logo{display:flex;align-items:center;gap:.625rem}
+.nav-logo-img{height:2.5rem;width:auto}
+.nav-logo-text{font-family:'Oswald',sans-serif;font-weight:700;font-size:.95rem;line-height:1.15;transition:color .2s}
+#nav.scrolled .nav-logo-text{color:var(--primary)}
+.nav-logo-text:not(.scrolled *){color:#fff}
+.nav-logo-sub{display:block;font-size:.58rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:.125rem}
+.nav-link{font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.85);padding:.4rem .7rem;border-radius:3px;transition:color .15s}
+.nav-link:hover,.nav-link.active{color:var(--accent)}
+#nav.scrolled .nav-link.active{color:var(--accent);border-bottom:2px solid var(--accent)}
+.nav-phone{font-family:'Oswald',sans-serif;font-size:.85rem;font-weight:600;color:rgba(255,255,255,.9);display:flex;align-items:center;gap:.375rem;margin-left:.5rem}
+.nav-phone-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.hamburger{display:none;background:none;border:none;color:#fff;cursor:pointer;padding:.375rem}
+#nav.scrolled .hamburger{color:var(--primary)}
+#mob-menu{display:none;background:#fff;border-top:1px solid rgba(41,56,141,.1)}
+#mob-menu.open{display:block}
+.mob-link{display:block;font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);padding:.875rem 1.5rem;border-bottom:1px solid rgba(41,56,141,.08);transition:color .15s,background .15s}
+.mob-link:hover{color:var(--accent);background:rgba(41,56,141,.04)}
+@media(max-width:1023px){.nav-links{display:none}.hamburger{display:block}}
+
+/* ── LOGO TICKER ── */
+.ticker{background:var(--primary-dark);padding:.6rem 0;overflow:hidden;border-top:1px solid rgba(250,204,21,.15);border-bottom:1px solid rgba(250,204,21,.15)}
+.ticker-track{display:flex;gap:2.5rem;animation:ticker-scroll 28s linear infinite;width:max-content}
+.ticker-item{display:flex;align-items:center;gap:.75rem;white-space:nowrap;font-family:'Oswald',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.ticker-logo{height:1.25rem;width:auto;opacity:.5}
+@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── HERO ── */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;background:var(--primary-dark)}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80') center top/cover no-repeat}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(105deg,rgba(26,36,86,.94) 0%,rgba(26,36,86,.85) 42%,rgba(41,56,141,.55) 68%,rgba(41,56,141,.1) 100%)}
+.hero-inner{position:relative;z-index:1;max-width:80rem;margin:0 auto;width:100%;padding:6.5rem 2rem 4rem;display:grid;grid-template-columns:1fr;gap:2.5rem}
+@media(min-width:1024px){.hero-inner{grid-template-columns:1fr 420px;align-items:center}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.3);border-radius:2px;padding:.3rem .75rem;margin-bottom:1rem}
+.hero-eyebrow span{font-family:'Oswald',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.hero-h1{font-size:clamp(2.4rem,5.5vw,4rem);font-weight:700;text-transform:uppercase;color:#fff;line-height:1.03;margin-bottom:.875rem}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.72);max-width:32rem;margin-bottom:1.25rem;line-height:1.7}
+.rating-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.rating-badge{display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:2px;padding:.25rem .6rem}
+.rating-badge-text{font-family:'Oswald',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.06em;color:#fff}
+.stars{color:var(--accent);font-size:.8rem;letter-spacing:-.05em}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 1.5rem}
+.chip{display:flex;align-items:center;gap:.375rem;font-family:'Oswald',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8);background:rgba(255,255,255,.07);border:1px solid rgba(192,198,207,.2);border-radius:2px;padding:.28rem .6rem}
+.chip svg{color:var(--accent);flex-shrink:0}
+.hero-ctas{display:flex;gap:.875rem;flex-wrap:wrap}
+/* hero form card (WHITE) */
+.hero-form-title{font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary)}
+.hero-form-sub{font-size:.83rem;color:var(--neutral);margin-bottom:1.25rem}
+
+/* ── TRUST BAR ── */
+.trust-bar{background:var(--primary-dark);border-top:1px solid rgba(250,204,21,.2)}
+.trust-bar-inner{max-width:80rem;margin:0 auto;padding:.875rem 2rem;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem 2rem}
+.tb-item{font-family:'Oswald',sans-serif;font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.tb-sep{width:4px;height:4px;border-radius:50%;background:rgba(250,204,21,.4)}
+
+/* ── CREDENTIAL STRIP ── */
+.cred-strip{background:var(--primary);padding:.75rem 2rem}
+.cred-strip-inner{max-width:80rem;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.75rem 2rem}
+.cred-item{display:flex;align-items:center;gap:.5rem;font-family:'Oswald',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.cred-icon{font-size:.9rem}
+
+/* ── REVIEWS ── */
+.review-section{background:#fff}
+.review-score-big{font-family:'Oswald',sans-serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;color:var(--primary);line-height:1}
+.review-stars-big{color:var(--accent);font-size:1.4rem;margin:.25rem 0 .125rem}
+.review-card{background:#fff;border:1px solid #e5e7eb;border-radius:4px;padding:1.5rem;box-shadow:0 2px 12px rgba(15,23,42,.07);position:relative}
+.review-card::before{content:'"';position:absolute;top:.75rem;right:1.25rem;font-family:Georgia,serif;font-size:3.5rem;color:var(--accent);opacity:.3;line-height:1}
+.g-logo{display:flex;align-items:center;gap:.375rem;margin-bottom:.75rem}
+.g-circle{width:1.5rem;height:1.5rem;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc04,#ea4335);display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0}
+.review-text{font-size:.875rem;color:#4b5563;line-height:1.7;margin-bottom:1rem}
+.review-author-row{display:flex;align-items:center;gap:.625rem;padding-top:.875rem;border-top:1px solid #f3f4f6}
+.reviewer-avatar{width:2.125rem;height:2.125rem;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
+.reviewer-name{font-family:'Oswald',sans-serif;font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--primary)}
+.reviewer-source{font-size:.72rem;color:var(--neutral)}
+.review-cta-row{display:flex;align-items:center;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
+.btn-review-g{display:inline-flex;align-items:center;gap:.5rem;font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);background:#fff;border:1px solid #d1d5db;border-radius:3px;padding:.6rem 1.25rem;cursor:pointer;transition:border-color .15s,background .15s}
+.btn-review-g:hover{border-color:var(--primary);background:#f5f7fa}
+.btn-review-f{display:inline-flex;align-items:center;gap:.5rem;font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#1877f2;border:none;border-radius:3px;padding:.6rem 1.25rem;cursor:pointer;transition:opacity .15s}
+.btn-review-f:hover{opacity:.88}
+.reviews-grid{display:grid;gap:1.25rem}
+@media(min-width:768px){.reviews-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* ── FOUNDER ── */
+.founder-grid{display:grid;gap:3.5rem}
+@media(min-width:1024px){.founder-grid{grid-template-columns:1fr 360px;align-items:start}}
+.founder-photo{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px}
+.founder-badge{background:var(--accent);padding:1rem 1.25rem;display:inline-block;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.founder-badge-num{font-family:'Oswald',sans-serif;font-size:2.5rem;font-weight:700;color:var(--ink);line-height:1}
+.founder-badge-lbl{font-family:'Oswald',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(26,31,46,.65)}
+.vm-card{background:var(--primary-dark);border-top:2px solid var(--accent);border-radius:0 0 4px 4px;padding:1.25rem;flex:1}
+.vm-label{font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+.vm-text{font-size:.85rem;color:rgba(255,255,255,.7);line-height:1.7}
+
+/* ── SERVICES TABS ── */
+.services-section{background:#f5f7fa}
+.tab-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.tab-btn{font-family:'Oswald',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);background:#fff;border:1.5px solid rgba(41,56,141,.2);border-radius:3px;padding:.55rem 1.25rem;cursor:pointer;transition:all .15s}
+.tab-btn.active,.tab-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tab-panel{display:none;grid-template-columns:1fr;gap:3rem;align-items:center}
+@media(min-width:1024px){.tab-panel{grid-template-columns:1fr 1fr}}
+.tab-panel.active{display:grid}
+.tab-panel-img{width:100%;height:360px;object-fit:cover;border-radius:4px;box-shadow:0 8px 32px rgba(15,23,42,.12)}
+
+/* ── WHY CHOOSE ── */
+.why-section{background:#fff}
+.why-split{display:grid;gap:3.5rem;align-items:center}
+@media(min-width:1024px){.why-split{grid-template-columns:1fr 1fr}}
+.why-features{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.why-features{grid-template-columns:1fr}}
+.why-feat{display:flex;align-items:flex-start;gap:.75rem;padding:.875rem;border:1px solid rgba(41,56,141,.1);border-radius:3px;background:#f9fafb;transition:border-color .15s,box-shadow .15s}
+.why-feat:hover{border-color:rgba(41,56,141,.25);box-shadow:0 2px 12px rgba(41,56,141,.07)}
+.why-feat-icon{width:2.25rem;height:2.25rem;border-radius:3px;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.why-feat-icon svg{color:#fff;width:1.1rem;height:1.1rem}
+.why-feat-title{font-family:'Oswald',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:.2rem}
+.why-feat-body{font-size:.8rem;color:var(--neutral);line-height:1.55}
+.why-photo{width:100%;height:500px;object-fit:cover;border-radius:4px;box-shadow:0 12px 48px rgba(15,23,42,.15)}
+
+/* ── GALLERY CAROUSEL ── */
+.gallery-section{background:#fff}
+.carousel{position:relative;overflow:hidden}
+.carousel-track{display:flex;transition:transform .45s ease;gap:1.25rem;padding-bottom:.25rem}
+.carousel-slide{flex:0 0 calc(50% - .625rem);min-width:0}
+@media(max-width:767px){.carousel-slide{flex:0 0 100%}}
+.carousel-slide img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;box-shadow:0 4px 24px rgba(15,23,42,.1)}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:2.75rem;height:2.75rem;border-radius:50%;background:var(--primary);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:5}
+.carousel-btn:hover{background:var(--accent);color:var(--ink)}
+.carousel-btn.prev{left:-.5rem}
+.carousel-btn.next{right:-.5rem}
+.carousel-dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.25rem}
+.carousel-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--silver);border:none;cursor:pointer;padding:0;transition:background .2s}
+.carousel-dot.active{background:var(--accent);width:.875rem;border-radius:999px}
+
+/* ── PROCESS ── */
+.process-section{background:#f5f7fa}
+.process-split{display:grid;gap:3.5rem;align-items:start}
+@media(min-width:1024px){.process-split{grid-template-columns:1fr 1fr}}
+.process-step{display:flex;gap:1rem;padding:1.25rem 0;border-bottom:1px solid rgba(41,56,141,.1)}
+.process-step:last-child{border-bottom:none}
+.process-num{width:2.25rem;height:2.25rem;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0}
+.process-title{font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:.3rem}
+.process-body{font-size:.875rem;color:var(--neutral);line-height:1.65}
+.process-photo{width:100%;height:100%;min-height:420px;object-fit:cover;border-radius:4px;box-shadow:0 8px 32px rgba(15,23,42,.12);position:sticky;top:5.5rem}
+.control-badge{background:rgba(41,56,141,.06);border:1px solid rgba(41,56,141,.15);border-left:3px solid var(--accent);border-radius:0 3px 3px 0;padding:.75rem 1rem;margin-top:1.5rem;font-size:.85rem;color:var(--neutral)}
+
+/* ── FREE INSPECTIONS / OFFERS ── */
+.offers-section{background:#fff;position:relative;overflow:hidden}
+.offers-shapes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.offers-shapes::before{content:'';position:absolute;right:-10%;top:-20%;width:60%;height:140%;background:linear-gradient(135deg,#f5f7fa 0%,#edf1f7 100%);transform:skewX(-12deg);border-left:3px solid rgba(41,56,141,.08)}
+.offers-split{display:grid;gap:3rem;align-items:center}
+@media(min-width:1024px){.offers-split{grid-template-columns:1fr 1fr}}
+.mil-badge{display:inline-flex;align-items:center;gap:.75rem;border:1px solid rgba(41,56,141,.15);border-radius:3px;padding:.875rem 1.25rem;background:rgba(41,56,141,.04);margin-top:1.5rem}
+.mil-badge-text-title{font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary)}
+.mil-badge-text-sub{font-size:.78rem;color:var(--neutral);margin-top:.125rem}
+.offers-photo{width:100%;height:420px;object-fit:cover;border-radius:4px;box-shadow:0 8px 32px rgba(15,23,42,.12)}
+
+/* ── BLOG ── */
+.blog-section{background:#f5f7fa;position:relative;overflow:hidden}
+.poly-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.poly-bg::before{content:'';position:absolute;left:-5%;bottom:-10%;width:45%;height:70%;background:#edf1f7;transform:skewY(-8deg) skewX(-5deg);opacity:.7}
+.poly-bg::after{content:'';position:absolute;right:-5%;top:-10%;width:35%;height:60%;background:#edf1f7;transform:skewY(8deg) skewX(4deg);opacity:.5}
+.blog-grid{display:grid;gap:1.5rem;position:relative;z-index:1}
+@media(min-width:768px){.blog-grid{grid-template-columns:repeat(3,1fr)}}
+.blog-card{background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 2px 16px rgba(15,23,42,.07);transition:transform .22s,box-shadow .22s}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(15,23,42,.12)}
+.blog-img{width:100%;height:200px;object-fit:cover;display:block;transition:transform .4s}
+.blog-card:hover .blog-img{transform:scale(1.04)}
+.blog-overflow{overflow:hidden}
+.blog-body{padding:1.375rem}
+.blog-tag{font-family:'Oswald',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+.blog-title{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:700;text-transform:uppercase;color:var(--primary);line-height:1.3;margin-bottom:.625rem}
+.blog-excerpt{font-size:.83rem;color:var(--neutral);line-height:1.65;margin-bottom:1rem}
+.blog-read-more{display:inline-flex;align-items:center;gap:.35rem;font-family:'Oswald',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);transition:gap .2s}
+.blog-card:hover .blog-read-more{gap:.625rem}
+
+/* ── FAQ ── */
+.faq-section{background:#edf1f7;position:relative;overflow:hidden}
+.faq-section .poly-bg::before{background:#dde3ec}
+.faq-section .poly-bg::after{background:#dde3ec}
+.faq-logo-badge{display:flex;justify-content:center;margin-bottom:2rem}
+.faq-logo-box{border:1px solid rgba(41,56,141,.15);background:#fff;border-radius:4px;padding:.875rem 1.5rem;display:flex;align-items:center;gap:.625rem;box-shadow:0 2px 12px rgba(15,23,42,.07)}
+.faq-center{text-align:center;margin-bottom:2.5rem;position:relative;z-index:1}
+.faq-center h2{color:var(--primary)}
+.faq-list{max-width:52rem;margin:0 auto;position:relative;z-index:1}
+.faq-item{background:#fff;border-radius:3px;margin-bottom:.625rem;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.06)}
+.faq-q{width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 1.25rem;font-family:'Oswald',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);transition:color .15s}
+.faq-q:hover{color:var(--accent)}
+.faq-plus{width:1.625rem;height:1.625rem;border-radius:3px;background:rgba(41,56,141,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s,transform .25s}
+.faq-item.open .faq-plus{background:var(--accent);transform:rotate(45deg)}
+.faq-plus svg{color:var(--primary);width:.875rem;height:.875rem}
+.faq-item.open .faq-plus svg{color:var(--ink)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-a{max-height:400px}
+.faq-a-inner{padding:.125rem 1.25rem 1.1rem;font-size:.875rem;color:var(--neutral);line-height:1.75;border-top:1px solid rgba(41,56,141,.08)}
+
+/* ── SERVICE AREAS ── */
+.areas-section{background:#fff}
+.areas-split{display:grid;gap:3rem}
+@media(min-width:1024px){.areas-split{grid-template-columns:1fr 1fr;align-items:start}}
+.cities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.5rem}
+@media(max-width:480px){.cities-grid{grid-template-columns:repeat(2,1fr)}}
+.city-item{display:flex;align-items:center;gap:.5rem;font-family:'Oswald',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--primary);padding:.55rem .75rem;border:1px solid rgba(41,56,141,.15);border-radius:3px;background:#f9fafb;transition:all .15s}
+.city-item:hover{border-color:var(--accent);background:rgba(250,204,21,.05);color:var(--primary)}
+.city-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.map-frame{width:100%;height:400px;border-radius:4px;overflow:hidden;border:1px solid rgba(41,56,141,.12);box-shadow:0 4px 20px rgba(15,23,42,.08)}
+.map-frame iframe{width:100%;height:100%;border:none}
+
+/* ── CTA FORM SECTION (dark) ── */
+.cta-section{background:var(--primary-dark);position:relative;overflow:hidden}
+.cta-section .bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.cta-split{display:grid;gap:3.5rem;align-items:start;position:relative;z-index:1}
+@media(min-width:1024px){.cta-split{grid-template-columns:1fr 1fr}}
+.cta-h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;text-transform:uppercase;color:#fff;margin-top:.5rem}
+.contact-row{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem}
+.contact-icon-wrap{width:2.5rem;height:2.5rem;border-radius:50%;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-icon-wrap svg{color:var(--accent);width:1rem;height:1rem}
+.contact-label{font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.contact-val{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:600;color:#fff;letter-spacing:.03em}
+
+/* ── FOOTER ── */
+footer{background:#0a0f1e;border-top:1px solid rgba(192,198,207,.08)}
+.footer-inner{max-width:80rem;margin:0 auto;padding:4rem 2rem 0}
+.footer-grid{display:grid;gap:2.5rem;margin-bottom:3rem}
+@media(min-width:768px){.footer-grid{grid-template-columns:1.5fr 1fr 1fr 1.25fr}}
+.footer-logo-text{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.05rem;color:#fff;letter-spacing:.04em}
+.footer-tagline{font-size:.85rem;color:rgba(255,255,255,.4);margin:.625rem 0 1.25rem;line-height:1.65}
+.footer-h{font-family:'Oswald',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.875rem}
+.footer-link{display:block;font-size:.85rem;color:rgba(255,255,255,.45);padding:.2rem 0;transition:color .15s}
+.footer-link:hover{color:rgba(255,255,255,.85)}
+.footer-contact-row{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.625rem}
+.footer-contact-icon{width:.875rem;height:.875rem;color:var(--accent);flex-shrink:0;margin-top:.15rem}
+.footer-contact-text{font-size:.83rem;color:rgba(255,255,255,.45);line-height:1.5}
+.social-row{display:flex;gap:.5rem;margin-top:1rem}
+.social-btn{width:2rem;height:2rem;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(192,198,207,.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);transition:all .15s}
+.social-btn:hover{color:var(--accent);background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.3)}
+.social-btn svg{width:1rem;height:1rem}
+.footer-bottom{border-top:1px solid rgba(192,198,207,.08);padding:1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-copy{font-size:.75rem;color:rgba(255,255,255,.28)}
+.footer-badges{display:flex;gap:.75rem;flex-wrap:wrap}
+.footer-badge{font-family:'Oswald',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);border-radius:2px;padding:.25rem .5rem}
+
+/* ── MOBILE STICKY BAR ── */
+.sticky-bar{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--primary-dark);border-top:2px solid var(--accent);padding:.75rem 1.25rem;display:flex;gap:.75rem}
+@media(min-width:768px){.sticky-bar{display:none}}
+.sticky-bar .btn-gold,.sticky-bar .btn-outline-white{flex:1;font-size:.78rem;padding:.625rem .875rem;justify-content:center}
+
+/* ── UTILS ── */
+@media(max-width:767px){
+  .section{padding:3.5rem 1.25rem}
+  .hero-inner{padding:5.5rem 1.25rem 3.5rem}
+  body{padding-bottom:4rem}
+}
+select.finput,select.finput-dark{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
+</style>
+</head>
+<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 9000</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" style="font-size:17px !important;line-height:1.14 !important">
+      <img src="https://lirp.cdn-website.com/dcfadf00/dms3rep/multi/opt/Logo+for+Austin+Roofing+and+Construction-1920w.png" alt="logo" class="nav-logo-img" onerror="this.style.display='none'"/>
+      <div class="nav-logo-text" id="nav-logo-text" style="color:#fff">
+        Austin
+        <span class="nav-logo-sub">Roofing &amp; Exteriors</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link active">Home</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#service-areas" class="nav-link">Service Areas</a>
+      <a href="#" class="nav-link">Financing</a>
+      <a href="#" class="nav-link">Blog</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="tel:+14709180516" class="nav-phone" id="nav-phone" style="color:rgba(255,255,255,.9)">
+        <span class="nav-phone-dot"></span>(470) 918-0516
+      </a>
+      <a href="#contact" class="btn-gold" style="margin-left:.75rem;font-size:.78rem;padding:.55rem 1.25rem">Get My Free Estimate</a>
+    </div>
+    <button class="hamburger" id="ham" aria-label="Menu" onclick="document.getElementById('mob-menu').classList.toggle('open')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <div id="mob-menu">
+    <a href="/" class="mob-link">Home</a>
+    <a href="#about" class="mob-link" onclick="closeMob()">About</a>
+    <a href="#services" class="mob-link" onclick="closeMob()">Services</a>
+    <a href="#gallery" class="mob-link" onclick="closeMob()">Gallery</a>
+    <a href="#service-areas" class="mob-link" onclick="closeMob()">Service Areas</a>
+    <a href="#contact" class="mob-link" onclick="closeMob()">Financing</a>
+    <a href="#contact" class="mob-link" onclick="closeMob()">Blog</a>
+    <a href="#contact" class="mob-link" onclick="closeMob()">Contact</a>
+    <div style="padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.625rem">
+      <a href="#contact" class="btn-gold" style="justify-content:center" onclick="closeMob()">Get My Free Estimate</a>
+      <a href="tel:+14709180516" class="btn-outline-dark" style="justify-content:center">(470) 918-0516</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow"><span>Austin Roofing &amp; Exteriors</span></div>
+      <h1 class="hero-h1">Austin's Trusted Roofing &amp; Storm Damage Team</h1>
+      <p class="hero-sub">Free photo-documented inspections, insurance claim help, and manufacturer-backed roofs - installed by local crews who answer the phone long after the storm passes.</p>
+      <div style="margin-bottom:1rem">
+        <div class="rating-row">
+          <div class="rating-badge">
+            <div class="g-circle" style="width:1.1rem;height:1.1rem;font-size:.55rem">G</div>
+            <span class="stars">★★★★★</span>
+            <span class="rating-badge-text">4.8 Google (265)</span>
+          </div>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip"><svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Local Crews. Never Storm Chasers.</div>
+        <div class="chip"><svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Insurance Claim Experts</div>
+        <div class="chip"><svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Free Photo-Documented Inspections</div>
+        <div class="chip"><svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>4.8★ on Google (265 Reviews)</div>
+      </div>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn-gold" style="font-size:.9rem;padding:.875rem 2rem">Get Free Estimate →</a>
+        <a href="tel:+14709180516" class="btn-outline-white" style="font-size:.9rem;padding:.875rem 2rem">(470) 918-0516</a>
+      </div>
+    </div>
+    <!-- WHITE form card -->
+    <div class="form-card">
+      <div class="hero-form-title" style="font-size:1.15rem;color:var(--primary)">WE CALL YOU BACK IN 5 MINUTES!</div>
+      <p class="hero-form-sub" style="color:var(--neutral)">Free estimate — no pressure, no obligation.</p>
+      <form onsubmit="handleForm(event,this)">
+        <div class="form-row" style="margin-bottom:.75rem">
+          <div class="fgroup" style="margin-bottom:0"><label class="flabel">Your Name</label><input class="finput" type="text" placeholder="John Smith"/></div>
+          <div class="fgroup" style="margin-bottom:0"><label class="flabel">Phone Number</label><input class="finput" type="tel" placeholder="(555) 000-0000"/></div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">How Can We Help?</label>
+          <select class="finput">
+            <option value="">Select a service...</option>
+            <option>Storm Damage Inspection</option>
+            <option>Roof Replacement</option>
+            <option>Roof Repair / Leak</option>
+            <option>Insurance Claim Help</option>
+            <option>Gutters / Siding / Exterior</option>
+            <option>Not Sure — Just Inspect</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Property Address</label>
+          <input class="finput" type="text" placeholder="123 Main St, Austin"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Message (optional)</label>
+          <textarea class="finput" rows="2" placeholder="Any details about your roof..."></textarea>
+        </div>
+        <button type="submit" class="btn-gold" style="width:100%;font-size:.88rem;padding:.875rem">GET FREE ESTIMATE →</button>
+        <p class="form-disclaimer">We respond within 5 minutes during business hours. Info never shared.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <span class="tb-item">Local Austin Crews. Never Storm Chasers.</span>
+    <span class="tb-sep"></span>
+    <span class="tb-item">Free Inspections. Honest Answers. No Pressure.</span>
+    <span class="tb-sep"></span>
+    <span class="tb-item">Licensed &amp; Insured</span>
+    <span class="tb-sep"></span>
+    <span class="tb-item">Family-Owned in Austin Since 2018</span>
+    <span class="tb-sep"></span>
+    <span class="tb-item">Military &amp; Veteran Discount</span>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker1"></div></div>
+
+<!-- CREDENTIAL STRIP -->
+<div class="cred-strip">
+  <div class="cred-strip-inner">
+    <div class="cred-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px;flex-shrink:0;opacity:.9"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Free Photo-Documented Inspections</div>
+    <div class="cred-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px;flex-shrink:0;opacity:.9"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Insurance Claim Specialists</div>
+    <div class="cred-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px;flex-shrink:0;opacity:.9"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Licensed &amp; Insured</div>
+    <div class="cred-item"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px;flex-shrink:0;opacity:.9"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Family-Owned &amp; Locally Operated</div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<section id="reviews" class="section review-section">
+  <div class="inner">
+    <div style="display:grid;gap:3rem">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem">
+        <div>
+          <div class="eyebrow">What Neighbors Say</div>
+          <div class="review-score-big">4.8★ ON GOOGLE</div>
+          <p style="color:var(--neutral);margin-top:.5rem;font-size:.95rem">Trusted by Austin families since 2018.</p>
+        </div>
+        <div class="review-cta-row" style="margin-top:0">
+          <a href="#" class="btn-review-g">
+            <div class="g-circle" style="width:1.25rem;height:1.25rem;font-size:.6rem">G</div>
+            See All Google Reviews
+          </a>
+          <a href="#" class="btn-review-f">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            See All Facebook Reviews
+          </a>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="g-logo"><div class="g-circle">G</div><span class="stars" style="font-size:.9rem">★★★★★</span><span style="font-size:.8rem;color:var(--neutral)">4.9</span></div>
+          <p class="review-text">"Honest, prompt, and professional from start to finish. The owner walked our roof himself, documented everything, and had us a written report the same day. Never had a contractor that transparent."</p>
+          <div class="review-author-row"><div class="reviewer-avatar">JM</div><div><div class="reviewer-name">Jennifer M.</div><div class="reviewer-source">Google Reviews · Verified</div></div></div>
+        </div>
+        <div class="review-card">
+          <div class="g-logo"><div class="g-circle">G</div><span class="stars" style="font-size:.9rem">★★★★★</span><span style="font-size:.8rem;color:var(--neutral)">4.9</span></div>
+          <p class="review-text">"Filed a claim after the last hail storm. They handled the entire adjuster process. Met the adjuster on-site and we got approved for a full replacement. Would have been lost without them."</p>
+          <div class="review-author-row"><div class="reviewer-avatar">DW</div><div><div class="reviewer-name">David W.</div><div class="reviewer-source">Google Reviews · Verified</div></div></div>
+        </div>
+        <div class="review-card">
+          <div class="g-logo"><div class="g-circle">G</div><span class="stars" style="font-size:.9rem">★★★★★</span><span style="font-size:.8rem;color:var(--neutral)">4.9</span></div>
+          <p class="review-text">"Three storm chasers knocked on my door. Called them because they're local. Night and day difference. Owner on-site, local crew, and the warranty actually means something a year later."</p>
+          <div class="review-author-row"><div class="reviewer-avatar">MK</div><div><div class="reviewer-name">Mark K.</div><div class="reviewer-source">Google Reviews · Verified</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker2"></div></div>
+
+<!-- FOUNDER / ABOUT -->
+<section id="about" class="section" style="background:#fff">
+  <div class="inner">
+    <div class="founder-grid">
+      <div>
+        <div class="eyebrow">Who We Are</div>
+        <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:700;text-transform:uppercase;color:var(--primary);margin-top:.5rem;line-height:1.05">Built on Local Trust, One Roof at a Time</h2>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);font-size:1rem;line-height:1.8;margin-bottom:1.5rem;max-width:38rem">We built Austin Roofing and Construction on one belief: homeowners deserve a roofer who shows up, tells the truth, and stands behind the work long after the trucks leave. Every roof we touch we treat like our own - documented, warrantied, and installed by local crews who live in the same neighborhoods we serve.</p>
+        <a href="#contact" style="display:inline-flex;align-items:center;gap:.375rem;font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem">Learn More About Us →</a>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <div class="vm-card"><div class="vm-label">Our Vision</div><p class="vm-text">To be the roofer Austin homeowners call first - and recommend to their neighbors - because we do honest work and stand behind it.</p></div>
+          <div class="vm-card"><div class="vm-label">Our Mission</div><p class="vm-text">Protect every home we work on with quality materials, documented workmanship, and a warranty that actually means something.</p></div>
+        </div>
+      </div>
+      <div style="position:relative">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop" alt="Austin Roofing and Construction" class="founder-photo" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop'"/>
+        <div style="position:absolute;top:1.5rem;left:-1.25rem">
+          <div class="founder-badge">
+            <div class="founder-badge-num">8</div>
+            <div class="founder-badge-lbl">Years Experience</div>
+          </div>
+        </div>
+        <div style="background:var(--primary);padding:1rem 1.25rem;border-radius:0 0 4px 4px;text-align:center">
+          <div style="font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em">Austin Roofing and Construction</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-top:.2rem">Owner &amp; Founder</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker3"></div></div>
+
+<!-- SERVICES (TABS) -->
+<section id="services" class="section services-section">
+  <div class="inner">
+    <div class="section-head">
+      <div class="eyebrow">What We Do</div>
+      <h2>Roofing + Exteriors,<br>One Accountable Team</h2>
+      <span class="line-gold"></span>
+      <p style="color:var(--neutral);max-width:38rem">Roof, gutter, siding, and paint under one roof. Fewer trips. Fewer contractors. One warranty.</p>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="showTab('residential',this)">Residential Roofing</button>
+      <button class="tab-btn" onclick="showTab('commercial',this)">Commercial Roofing</button>
+      <button class="tab-btn" onclick="showTab('exterior',this)">Exterior Services</button>
+    </div>
+    <div id="tab-residential" class="tab-panel active">
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem">Residential Roofing</div>
+        <h3 style="font-size:1.6rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin-bottom:.75rem">The Complete Solution for Austin Homes</h3>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);line-height:1.75;margin-bottom:1.5rem">When repair is no longer viable, a full roof replacement gives your home decades of renewed protection. We handle everything from tear-off and decking inspection to underlayment, shingles, flashing, and clean-up in as little as one day for most homes.</p>
+        <ul style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:2rem">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Free photo-documented inspection</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Insurance claims assistance included</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Impact-resistant shingles available</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Manufacturer warranty backed</li>
+        </ul>
+        <a href="#contact" class="btn-gold">Get Free Inspection →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop" alt="Residential Roofing" class="tab-panel-img"/>
+    </div>
+    <div id="tab-commercial" class="tab-panel">
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem">Commercial Roofing</div>
+        <h3 style="font-size:1.6rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin-bottom:.75rem">Flat, Metal &amp; Commercial Systems</h3>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);line-height:1.75;margin-bottom:1.5rem">Flat roofs, metal systems, TPO membranes, and modified bitumen. Commercial storm claims are documentation-heavy — we handle the entire process from initial inspection through adjuster coordination to final install.</p>
+        <ul style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:2rem">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>TPO, EPDM, modified bitumen</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Commercial insurance claims</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Metal roofing systems</li>
+        </ul>
+        <a href="#contact" class="btn-gold">Get Free Inspection →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop" alt="Commercial Roofing" class="tab-panel-img"/>
+    </div>
+    <div id="tab-exterior" class="tab-panel">
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem">Exterior Services</div>
+        <h3 style="font-size:1.6rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin-bottom:.75rem">Single Source for All Exteriors</h3>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);line-height:1.75;margin-bottom:1.5rem">Gutters, siding, fascia, and exterior paint — all under one roof. One contractor. One warranty. No coordination headaches between trades.</p>
+        <ul style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:2rem">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Gutters &amp; gutter guards</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Siding replacement &amp; repair</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--neutral)"><svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Exterior painting</li>
+        </ul>
+        <a href="#contact" class="btn-gold">Get Free Inspection →</a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop" alt="Exterior Services" class="tab-panel-img"/>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE (split) -->
+<section class="section why-section">
+  <div class="inner">
+    <div class="why-split">
+      <div>
+        <div class="eyebrow">Why Homeowners Pick Us</div>
+        <h2 style="font-size:clamp(2rem,4vw,2.75rem);font-weight:700;text-transform:uppercase;color:var(--primary);margin-top:.5rem">Built for Your Neighborhood</h2>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);font-size:1rem;line-height:1.75;margin-bottom:2rem">8 years of Austin roofs, gutters, siding, and paint. We live here. Your warranty is good with someone who is not leaving town after the next storm.</p>
+        <div class="why-features">
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div><div class="why-feat-title">Local Crews, Never Storm Chasers</div><div class="why-feat-body">We live here year-round.</div></div></div>
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><div><div class="why-feat-title">Insurance Claim Experts</div><div class="why-feat-body">No fee. No retainer.</div></div></div>
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div><div class="why-feat-title">Free Photo-Documented Inspections</div><div class="why-feat-body">Written report same week.</div></div></div>
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></div><div><div class="why-feat-title">Single Source</div><div class="why-feat-body">Roof + gutter + siding + paint.</div></div></div>
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg></div><div><div class="why-feat-title">Licensed &amp; Insured</div><div class="why-feat-body">Licensed &amp; Insured</div></div></div>
+          <div class="why-feat"><div class="why-feat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><div><div class="why-feat-title">Owner Walks Every Roof</div><div class="why-feat-body">Before it ships.</div></div></div>
+        </div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop" alt="Local roofing work" class="why-photo"/>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker4"></div></div>
+
+<!-- GALLERY (CAROUSEL) -->
+<section id="gallery" class="section gallery-section">
+  <div class="inner">
+    <div class="section-head">
+      <div class="eyebrow">Our Work</div>
+      <h2>Roofs We Have Built</h2>
+      <span class="line-gold"></span>
+      <p style="color:var(--neutral)">A small sample of Austin projects.</p>
+    </div>
+    <div class="carousel" style="padding:0 2.25rem">
+      <button class="carousel-btn prev" onclick="moveCarousel(-1)" aria-label="Previous">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1200&q=80" alt="Project 1" onerror="this.src='https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&auto=format&fit=crop'"/></div>
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80" alt="Project 2" onerror="this.src='https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop'"/></div>
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=80" alt="Project 3" onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop'"/></div>
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=80" alt="Project 4" onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop'"/></div>
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="Project 5" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop'"/></div>
+        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80" alt="Project 6" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop'"/></div>
+      </div>
+      <button class="carousel-btn next" onclick="moveCarousel(1)" aria-label="Next">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="carousel-dots" id="carousel-dots">
+      <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+      <button class="carousel-dot" onclick="goToSlide(1)"></button>
+      <button class="carousel-dot" onclick="goToSlide(2)"></button>
+      <button class="carousel-dot" onclick="goToSlide(3)"></button>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="section process-section">
+  <div class="inner">
+    <div class="section-head">
+      <div class="eyebrow">How It Works</div>
+      <h2>Four Steps, No Surprises</h2>
+      <span class="line-gold"></span>
+      <p style="color:var(--neutral)">Inspection. Documentation. Insurance navigation. Build. Each step photographed and explained.</p>
+    </div>
+    <div class="process-split">
+      <div>
+        <div class="process-step">
+          <div class="process-num">1</div>
+          <div><div class="process-title">Free Inspection</div><p class="process-body">We come out, walk the roof, and photograph every detail. You get a written report the same week.</p></div>
+        </div>
+        <div class="process-step">
+          <div class="process-num">2</div>
+          <div><div class="process-title">Documentation</div><p class="process-body">Every measurement, every finding, every photo — organized for your records and your insurance file.</p></div>
+        </div>
+        <div class="process-step">
+          <div class="process-num">3</div>
+          <div><div class="process-title">Insurance Navigation</div><p class="process-body">We meet with your adjuster on-site and advocate for the full scope your policy covers.</p></div>
+        </div>
+        <div class="process-step">
+          <div class="process-num">4</div>
+          <div><div class="process-title">Build + Warranty</div><p class="process-body">Local crews. Manufacturer-spec install. We stand behind the warranty after the trucks leave the driveway.</p></div>
+        </div>
+        <div class="control-badge">You're in control at every step. No pressure, no obligation, no surprises.</div>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop" alt="Roofing process" class="process-photo"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FREE INSPECTIONS / OFFERS -->
+<section class="section offers-section">
+  <div class="offers-shapes"></div>
+  <div class="inner" style="position:relative;z-index:1">
+    <div class="offers-split">
+      <div>
+        <div class="eyebrow">Offers</div>
+        <h2 style="font-size:clamp(2rem,4vw,2.75rem);font-weight:700;text-transform:uppercase;color:var(--primary);margin-top:.5rem">Free Inspections, Always</h2>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);font-size:1rem;line-height:1.75;margin-bottom:.75rem">Every roof inspection is free, photographed, and on your timeline. We will tell you what we would do if it were our own home.</p>
+        <p style="color:var(--neutral);font-size:.9rem">No obligation. No pressure. Honest answers, every visit.</p>
+        <div class="mil-badge">
+          <svg width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.4 7 22l5-3 5 3-1.5-9.6"/></svg>
+          <div>
+            <div class="mil-badge-text-title">Military &amp; Veterans</div>
+            <div class="mil-badge-text-sub">Special discount for active duty and veterans.</div>
+          </div>
+        </div>
+        <div style="margin-top:2rem"><a href="#contact" class="btn-gold" style="font-size:.9rem;padding:.875rem 2rem">Schedule My Free Inspection →</a></div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop" alt="Home exterior" class="offers-photo"/>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker5"></div></div>
+
+<!-- BLOG -->
+<section class="section blog-section">
+  <div class="poly-bg"></div>
+  <div class="inner">
+    <div class="section-head" style="position:relative;z-index:1">
+      <div class="eyebrow">Knowledge &amp; Advice</div>
+      <h2 style="color:var(--primary)">Roofing Tips for Austin Homeowners</h2>
+      <span class="line-gold"></span>
+      <p style="color:var(--neutral)">Plain-spoken guidance from local crews who walk these roofs every week.</p>
+    </div>
+    <div class="blog-grid">
+      <div class="blog-card"><div class="blog-overflow"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop" alt="" class="blog-img"/></div><div class="blog-body"><div class="blog-tag">Storm Damage</div><div class="blog-title">How to Spot Hail Damage on Your Roof</div><p class="blog-excerpt">Most hail damage is invisible from the driveway. Forty-eight hours later your ceiling has a stain. Learn where to look.</p><a href="#" class="blog-read-more">Read More <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a></div></div>
+      <div class="blog-card"><div class="blog-overflow"><img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&auto=format&fit=crop" alt="" class="blog-img"/></div><div class="blog-body"><div class="blog-tag">Insurance</div><div class="blog-title">When (and When Not) to File a Roofing Insurance Claim</div><p class="blog-excerpt">Filing the wrong claim raises your premium. Filing the right one costs you only a deductible. Here is how to think about it.</p><a href="#" class="blog-read-more">Read More <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a></div></div>
+      <div class="blog-card"><div class="blog-overflow"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop" alt="" class="blog-img"/></div><div class="blog-body"><div class="blog-tag">Buyers Guide</div><div class="blog-title">Storm Chasers vs Local Roofers: How to Tell the Difference</div><p class="blog-excerpt">After every major storm, out-of-state contractors flood the neighborhood. Out-of-state plates. Magnet signs. Here is how to spot them.</p><a href="#" class="blog-read-more">Read More <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></a></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section faq-section">
+  <div class="poly-bg"></div>
+  <div class="inner">
+    <div class="faq-logo-badge">
+      <div class="faq-logo-box">
+        <img src="https://lirp.cdn-website.com/dcfadf00/dms3rep/multi/opt/Logo+for+Austin+Roofing+and+Construction-1920w.png" alt="logo" style="height:1.75rem;width:auto" onerror="this.style.display='none'"/>
+        <span style="font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;color:var(--primary);letter-spacing:.06em;text-transform:uppercase">Austin</span>
+      </div>
+    </div>
+    <div class="faq-center">
+      <div class="eyebrow">Questions</div>
+      <h2 style="font-size:clamp(2.25rem,5vw,3.25rem);font-weight:700;text-transform:uppercase;margin-top:.375rem">Frequently Asked</h2>
+    </div>
+    <div class="faq-list" id="faq-list">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How fast can you inspect my roof?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">We schedule inspections within 24–48 hours across our entire service area. Emergency calls with active leaks get a same-day response.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do you handle my insurance claim?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">Yes. We document the damage, build the claim file, and meet your adjuster on-site. We charge no fee or retainer for claims assistance — it's part of every project.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Are you licensed and insured?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">Yes. Licensed &amp; Insured. Fully insured with general liability and workers' compensation. We can provide certificates on request.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is your warranty?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">We offer a workmanship warranty on every installation plus the manufacturer's material warranty on shingles and roofing systems. Details are written into every contract.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Will my homeowner insurance cover a new roof?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">It depends on whether the damage is from a covered peril — hail or wind. General wear and age are not covered. We can tell you within 20 minutes of the inspection whether you have a legitimate claim.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do you remove the old roof or install over it?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">We always strip to the deck. Layovers hide rot, shorten shingle life, and most manufacturers void the warranty on layover installs.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What if my insurance company denies the claim?<div class="faq-plus"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div></button><div class="faq-a"><div class="faq-a-inner">We help you file a reinspection request and meet the second adjuster on-site. About half the time that reverses the denial.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE AREAS -->
+<section id="service-areas" class="section areas-section">
+  <div class="inner">
+    <div class="areas-split">
+      <div>
+        <div class="eyebrow">Where We Work</div>
+        <h2 style="font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;text-transform:uppercase;color:var(--primary);margin-top:.5rem">Serving Austin</h2>
+        <span class="line-gold"></span>
+        <p style="color:var(--neutral);margin-bottom:1.75rem">Local crews across Austin. We live here. We work here. We do not chase storms to other cities.</p>
+        <div class="cities-grid"><div class="city-item"><div class="city-dot"></div>Austin</div><div class="city-item"><div class="city-dot"></div>North Austin</div><div class="city-item"><div class="city-dot"></div>South Austin</div><div class="city-item"><div class="city-dot"></div>East Austin</div><div class="city-item"><div class="city-dot"></div>West Austin</div><div class="city-item"><div class="city-dot"></div>Greater Austin</div><div class="city-item"><div class="city-dot"></div>Austin Metro</div><div class="city-item"><div class="city-dot"></div>Austin Suburbs</div><div class="city-item"><div class="city-dot"></div>TX</div></div>
+        <div style="margin-top:1.5rem;background:#f5f7fa;border:1px solid rgba(41,56,141,.1);border-left:3px solid var(--accent);padding:.875rem 1rem;border-radius:0 3px 3px 0">
+          <p style="font-size:.875rem;color:var(--neutral)">Same-day call-backs in every city we serve. Don't see your city? Call us — if we can drive there, we'll work there.</p>
+        </div>
+      </div>
+      <div class="map-frame">
+        <iframe src="https://maps.google.com/maps?q=Austin%20Roofing%20and%20Construction%20Austin%20TX&output=embed" loading="lazy" title="Service Area Map"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FORM (DARK) -->
+<section id="contact" class="section cta-section">
+  <div class="bg-grid"></div>
+  <div class="inner">
+    <div class="cta-split">
+      <div>
+        <div class="eyebrow">Ready to Start?</div>
+        <h2 class="cta-h2">Get Your Free<br>Inspection Today</h2>
+        <span style="display:block;height:2.5px;background:var(--accent);width:3rem;margin:.875rem 0 1.5rem"></span>
+        <p style="color:rgba(255,255,255,.65);font-size:1rem;line-height:1.75;margin-bottom:2rem">Tell us about your roof. We will document it, walk you through the options, and give you a written estimate the same week.</p>
+        <div class="contact-row"><div class="contact-icon-wrap"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg></div><div><div class="contact-label">Phone</div><a href="tel:+14709180516" class="contact-val">(470) 918-0516</a></div></div>
+        <div class="contact-row"><div class="contact-icon-wrap"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg></div><div><div class="contact-label">Email</div><a href="mailto:Info@AustinRoofingAndConstruction.com" class="contact-val">Info@AustinRoofingAndConstruction.com</a></div></div>
+        <div class="contact-row"><div class="contact-icon-wrap"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg></div><div><div class="contact-label">Address</div><div class="contact-val" style="font-size:.875rem">1301 W Ben White Blvd 200A</div></div></div>
+        <div class="contact-row"><div class="contact-icon-wrap"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg></div><div><div class="contact-label">Hours</div><div class="contact-val">Mon–Fri, 8:00 AM – 5:00 PM</div></div></div>
+      </div>
+      <!-- mirrors hero form - WHITE card -->
+      <div class="form-card">
+        <div class="hero-form-title" style="font-size:1.15rem;color:var(--primary)">WE CALL YOU BACK IN 5 MINUTES!</div>
+        <p class="hero-form-sub" style="color:var(--neutral)">Tell us about your roof and we'll schedule your free inspection.</p>
+        <form onsubmit="handleForm(event,this)">
+          <div class="form-row" style="margin-bottom:.75rem">
+            <div class="fgroup" style="margin-bottom:0"><label class="flabel">First Name</label><input class="finput" type="text" placeholder="John"/></div>
+            <div class="fgroup" style="margin-bottom:0"><label class="flabel">Last Name</label><input class="finput" type="text" placeholder="Smith"/></div>
+          </div>
+          <div class="fgroup"><label class="flabel">Phone Number</label><input class="finput" type="tel" placeholder="(555) 000-0000"/></div>
+          <div class="fgroup"><label class="flabel">Email Address</label><input class="finput" type="email" placeholder="john@email.com"/></div>
+          <div class="fgroup"><label class="flabel">Property Address</label><input class="finput" type="text" placeholder="123 Main St, Austin"/></div>
+          <div class="fgroup">
+            <label class="flabel">Service Needed</label>
+            <select class="finput"><option value="">Select...</option><option>Storm Damage Inspection</option><option>Roof Replacement</option><option>Repair / Leak</option><option>Insurance Claim Help</option><option>Gutters / Siding / Exterior</option><option>Not Sure</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Additional Notes</label><textarea class="finput" rows="3" placeholder="Describe the damage or concern..."></textarea></div>
+          <button type="submit" class="btn-gold" style="width:100%;font-size:.88rem;padding:.875rem">GET MY FREE ESTIMATE →</button>
+          <p class="form-disclaimer">We respond within 5 minutes during business hours. Your information is never shared.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="ticker6"></div></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-text">Austin Roofing and Construction</div>
+        <p class="footer-tagline">Local roofing and exterior specialists. Free inspections, honest answers, and manufacturer-backed warranties - from a team that lives where you live.</p>
+        <span style="display:block;height:2px;background:var(--accent);width:2.5rem;margin-bottom:1.25rem"></span>
+        <div class="social-row">
+          <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="Location"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg></a>
+        </div>
+        <div style="margin-top:1.5rem">
+          <div class="footer-contact-row"><svg class="footer-contact-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg><span class="footer-contact-text"><a href="tel:+14709180516" style="color:inherit;transition:color .15s" onmouseover="this.style.color='rgba(255,255,255,.85)'" onmouseout="this.style.color=''">(470) 918-0516</a></span></div>
+          <div class="footer-contact-row"><svg class="footer-contact-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg><span class="footer-contact-text">Info@AustinRoofingAndConstruction.com</span></div>
+          <div class="footer-contact-row"><svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg><span class="footer-contact-text">1301 W Ben White Blvd 200A</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-h">Services</div>
+        <a href="#services" class="footer-link">Residential Roofing</a>
+        <a href="#services" class="footer-link">Commercial Roofing</a>
+        <a href="#services" class="footer-link">Exterior Services</a>
+        <a href="#services" class="footer-link">Storm Damage Restoration</a>
+        <a href="#services" class="footer-link">Insurance Claims</a>
+        <a href="#services" class="footer-link">Gutters &amp; Siding</a>
+      </div>
+      <div>
+        <div class="footer-h">Service Areas</div>
+        <a href="#service-areas" class="footer-link">Austin</a><a href="#service-areas" class="footer-link">North Austin</a><a href="#service-areas" class="footer-link">South Austin</a><a href="#service-areas" class="footer-link">East Austin</a><a href="#service-areas" class="footer-link">West Austin</a><a href="#service-areas" class="footer-link">Greater Austin</a><a href="#service-areas" class="footer-link">Austin Metro</a><a href="#service-areas" class="footer-link">Austin Suburbs</a><a href="#service-areas" class="footer-link">TX</a>
+      </div>
+      <div>
+        <div class="footer-h">Company</div>
+        <a href="#about" class="footer-link">About Us</a>
+        <a href="#" class="footer-link">Our Blog</a>
+        <a href="#contact" class="footer-link">Contact</a>
+        <a href="#" class="footer-link">Financing</a>
+        <div style="margin-top:1.5rem">
+          <div class="footer-h">Get in Touch</div>
+          <p style="font-size:.83rem;color:rgba(255,255,255,.4);margin-bottom:1rem;line-height:1.6">Now taking new clients in Austin</p>
+          <a href="#contact" class="btn-gold" style="font-size:.75rem;padding:.55rem 1.25rem">Get Free Estimate</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2018–2026 Austin Roofing and Construction. All rights reserved.</div>
+      <div class="footer-badges">
+        <span class="footer-badge">Google 4.8 ★ 265</span>
+        <span class="footer-badge">Licensed &amp; Insured</span>
+        <span class="footer-badge">Family-Owned Since 2018</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE STICKY BAR -->
+<div class="sticky-bar">
+  <a href="#contact" class="btn-gold">Get Free Estimate</a>
+  <a href="tel:+14709180516" class="btn-outline-white">(470) 918-0516</a>
+</div>
+
+<script>
+// ── NAV scroll behavior
+const nav = document.getElementById('nav');
+const navLogoText = document.getElementById('nav-logo-text');
+const navPhone = document.getElementById('nav-phone');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 80;
+  nav.classList.toggle('scrolled', scrolled);
+  navLogoText.style.color = scrolled ? 'var(--primary)' : '#fff';
+  navPhone.style.color = scrolled ? 'var(--primary)' : 'rgba(255,255,255,.9)';
+  document.getElementById('ham').querySelector('svg').style.stroke = scrolled ? 'var(--primary)' : '#fff';
+});
+
+// ── Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); window.scrollTo({ top: t.offsetTop - 72, behavior: 'smooth' }); }
+  });
+});
+function closeMob() { document.getElementById('mob-menu').classList.remove('open'); }
+
+// ── Ticker: build 3 repeats of items
+function buildTicker(id) {
+  const t = document.getElementById(id);
+  if (!t) return;
+  const item = `<span class="ticker-item"><img src="https://lirp.cdn-website.com/dcfadf00/dms3rep/multi/opt/Logo+for+Austin+Roofing+and+Construction-1920w.png" class="ticker-logo" onerror="this.style.display='none'" alt=""/> Austin </span>`;
+  t.innerHTML = Array(20).fill(item).join('');
+}
+['ticker1','ticker2','ticker3','ticker4','ticker5','ticker6'].forEach(buildTicker);
+
+// ── Tabs
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Carousel
+let carouselIdx = 0;
+const carouselSlides = document.querySelectorAll('.carousel-slide');
+const carouselDots = document.querySelectorAll('.carousel-dot');
+const slidesPerView = window.innerWidth < 768 ? 1 : 2;
+function updateCarousel() {
+  const slideW = document.querySelector('.carousel-slide').offsetWidth + 20;
+  document.getElementById('carousel-track').style.transform = `translateX(-${carouselIdx * slideW}px)`;
+  carouselDots.forEach((d,i) => d.classList.toggle('active', i === carouselIdx));
+}
+function moveCarousel(dir) {
+  const max = Math.ceil(carouselSlides.length / (window.innerWidth < 768 ? 1 : 2)) - 1;
+  carouselIdx = Math.max(0, Math.min(carouselIdx + dir, max));
+  updateCarousel();
+}
+function goToSlide(i) { carouselIdx = i; updateCarousel(); }
+
+// ── FAQ accordion
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+
+// ── Form submit
+function handleForm(e, form) {
+  e.preventDefault();
+  const btn = form.querySelector('[type=submit]');
+  btn.textContent = '✓ Sent — We\'ll Call You Back Shortly!';
+  btn.style.cssText += 'background:#16a34a;box-shadow:none';
+  btn.disabled = true;
+}
+</script>
+</body>
+</html>
