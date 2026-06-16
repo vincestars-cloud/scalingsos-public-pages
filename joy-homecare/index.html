@@ -1432,15 +1432,15 @@ function createFunnel(els,opts){
       h+='</div><button class="btn btn-primary btn-block" data-act="next" style="margin-top:18px">Continue</button>'+navBtn(true);
     }else if(step===3){
       h+='<div class="bk-h">Where is care needed?</div><div class="bk-sub">So we can match you with a caregiver nearby.</div>';
-      h+='<div class="bk-field"><label>ZIP / Postal code</label><input data-f="zip" type="text" inputmode="numeric" placeholder="ZIP code" value="'+esc(data.zip)+'"></div>';
-      h+='<div class="bk-field"><label>Best time for us to call</label><select data-f="time"><option value="">Select a time\u2026</option>'+TIME_OPTS.map(o=>'<option'+(data.time===o?' selected':'')+'>'+o+'</option>').join('')+'</select></div>';
+      h+='<div class="bk-field"><label>ZIP / Postal code</label><input data-f="zip" type="text" inputmode="numeric" placeholder="ZIP code" required value="'+esc(data.zip)+'"></div>';
+      h+='<div class="bk-field"><label>Best time for us to call</label><select data-f="time" required><option value="">Select a time\u2026</option>'+TIME_OPTS.map(o=>'<option'+(data.time===o?' selected':'')+'>'+o+'</option>').join('')+'</select></div>';
       h+='<button class="btn btn-primary btn-block" data-act="next">Continue</button>'+navBtn(true);
     }else if(step===4){
       if(els.quote)els.quote.style.display='none';
       h+='<div class="bk-h">Almost done!</div><div class="bk-sub">Add your details and a Care Coordinator will reach out at your preferred time.</div>';
-      h+='<div class="bk-field"><label>Full name</label><input data-f="name" type="text" autocomplete="name" placeholder="Jane Doe" value="'+esc(data.name)+'"></div>';
-      h+='<div class="bk-field"><label>Email address</label><input data-f="email" type="email" autocomplete="email" placeholder="jane@email.com" value="'+esc(data.email)+'"></div>';
-      h+='<div class="bk-field"><label>Phone number</label>NOPE</div>';
+      h+='<div class="bk-field"><label>Full name</label><input data-f="name" type="text" autocomplete="name" placeholder="Jane Doe" required value="'+esc(data.name)+'"></div>';
+      h+='<div class="bk-field"><label>Email address</label><input data-f="email" type="email" autocomplete="email" placeholder="jane@email.com" required value="'+esc(data.email)+'"></div>';
+      h+='<div class="bk-field"><label>Phone number</label><input data-f="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(xxx) xxx-xxxx" maxlength="14" required value="'+esc(data.phone)+'"></div>';
       h+='<label class="bk-consent"><input type="checkbox" checked>By checking this box, I agree to receive calls and SMS messages from Joy Home Care Services at the number provided. Message &amp; data rates may apply. Reply STOP to opt out. See our Privacy Policy.</label>';
       h+='<button class="btn btn-primary btn-block" data-act="submit">Contact me with care options</button>'+navBtn(true);
     }
@@ -1448,15 +1448,34 @@ function createFunnel(els,opts){
     wire();
   }
   function save(){els.body.querySelectorAll('[data-f]').forEach(el=>{data[el.dataset.f]=(el.value||'').trim();});}
+  function validateBkStep(){
+    const fields=els.body.querySelectorAll('input[required],select[required]');
+    let ok=true;
+    fields.forEach(el=>{
+      const v=(el.value||'').trim();
+      const isTel=el.type==='tel'||el.dataset.f==='phone';
+      const invalid=!v||(isTel&&v.replace(/\D/g,'').length<10);
+      if(invalid){
+        el.style.borderColor='var(--clay)';
+        el.style.boxShadow='0 0 0 3px rgba(194,24,138,.18)';
+        if(ok)el.focus();
+        ok=false;
+      }else{
+        el.style.borderColor='';
+        el.style.boxShadow='';
+      }
+    });
+    return ok;
+  }
   function wire(){
     els.body.querySelectorAll('[data-act]').forEach(btn=>{
       const act=btn.dataset.act;
       btn.addEventListener('click',()=>{
         if(act==='who'){data.who=btn.dataset.v;step=2;render();}
         else if(act==='need'){const v=btn.dataset.v;const i=data.needs.indexOf(v);if(i>-1){data.needs.splice(i,1);btn.classList.remove('sel')}else{data.needs.push(v);btn.classList.add('sel')}}
-        else if(act==='next'){save();if(step<4){step++;render();}}
+        else if(act==='next'){save();if(!validateBkStep())return;if(step<4){step++;render();}}
         else if(act==='back'){save();if(step>1){step--;render();}}
-        else if(act==='submit'){submit();}
+        else if(act==='submit'){save();if(!validateBkStep())return;submit();}
       });
     });
   }
@@ -1669,7 +1688,7 @@ function renderCapture(){
     '<div class="quiz-q serif">And who\'s taking this quiz today?</div>'+
     '<div class="quiz-hint">So we can send your personalized result and next steps.</div>'+
     '<div class="quiz-field"><label>First name</label><input id="qName" type="text" placeholder="Jane" autocomplete="given-name"></div>'+
-    '<div class="quiz-field"><label>Phone number <span style="color:var(--muted);font-weight:500">(we\'ll text your result)</span></label><input id="qPhone" type="tel" inputmode="tel" maxlength="14" placeholder="(404) 555-0123" autocomplete="tel"></div>'+
+    '<div class="quiz-field"><label>Phone number <span style="color:var(--muted);font-weight:500">(we\'ll text your result)</span></label><input id="qPhone" type="tel" required inputmode="tel" maxlength="14" placeholder="(404) 555-0123" autocomplete="tel"></div>'+
     '<button class="btn btn-primary btn-block" onclick="finishQuiz()">See My Result →</button>'+
     '<div class="quiz-social" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Private &amp; secure. We never share your info.</div>'+
     '<div class="quiz-nav"><button class="quiz-back" onclick="renderQ()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back</button></div>';
