@@ -1209,15 +1209,15 @@ async function fetchBusinesses() {
 
 async function loadAllData() {
   showLoading(true);
-  const [businesses, leads, events, sms, conversations, calls] = await Promise.all([
+  const [businesses, leads, events, sms, calls] = await Promise.all([
     fetchBusinesses(),
     fetchSheet(GIDS.leads),
     fetchSheet(GIDS.events),
     fetchSheet(GIDS.sms),
-    fetchInbox().catch(() => []),
     fetch(N8N_BASE + '/scalingsos-calls').then(r => r.json()).catch(() => [])
   ]);
-  data = { businesses, leads, events, sms, conversations, calls };
+  data = { businesses, leads, events, sms, conversations: (data&&data.conversations)||[], calls };
+  fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){});
   bumpPerfRev();
   document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
   showLoading(false);
@@ -1404,10 +1404,6 @@ function _dashboardMetricRows(){ return window._scrapeRows || window._prospectsR
 function _dashboardInRange(ts){ var r=String(window._dashboardDateRange||'today'); if(r==='all') return true; if(typeof _tsInRangeOf==='function') return _tsInRangeOf(ts,r); var t=new Date(ts||'').getTime(); return !isNaN(t); }
 function renderDashboard() {
   if(window._msgLogRows==null && !window._msgLogLoading){ window._msgLogLoading=true; if(typeof loadMsgLog==='function') loadMsgLog(); }
-  if((!data.conversations || !data.conversations.length) && !window._dashboardInboxLoading && typeof fetchInbox==='function'){
-    window._dashboardInboxLoading=true;
-    fetchInbox().then(function(rows){ if(rows&&rows.length) data.conversations=rows; window._dashboardInboxLoading=false; renderDashboard(); }).catch(function(){ window._dashboardInboxLoading=false; });
-  }
   if(!window._scrapeRows && !window._scrapeRowsLoading){ window._scrapeRowsLoading=true; fetchSheetByName('Prospects',{singleTokenHeaders:true}).then(function(rows){ window._scrapeRows=rows||[]; window._scrapeRowsAt=Date.now(); window._scrapeRowsLoading=false; renderDashboard(); }).catch(function(){ window._scrapeRowsLoading=false; }); }
   var range=String(window._dashboardDateRange||'today');
   var rows=_dashboardMetricRows();
@@ -1454,7 +1450,7 @@ function renderDashboard() {
   /* dbSmsSentSub written by applyTelnyxMessageMetrics (single Telnyx source) */
   /* dbDeliveredSub written by applyTelnyxMessageMetrics */
   /* dbContactsMessagedSub written by applyTelnyxMessageMetrics */
-  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(range,{sent:'dbSmsSent',sentSub:'dbSmsSentSub',delivered:'dbDelivered',deliveredSub:'dbDeliveredSub',contacts:'dbContactsMessaged',contactsSub:'dbContactsMessagedSub',reply2:'dbReply2',reply2Sub:'dbReply2Sub',offer:'dbOfferSent',offerSub:'dbOfferSentSub',client:'dbClients',clientSub:'dbClientsSub'});
+  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(range,{sent:'dbSmsSent',sentSub:'dbSmsSentSub',delivered:'dbDelivered',deliveredSub:'dbDeliveredSub',contacts:'dbContactsMessaged',contactsSub:'dbContactsMessagedSub',reply2:'dbReply2',reply2Sub:'dbReply2Sub',offer:'dbOfferSent',offerSub:'dbOfferSentSub',client:'dbClients',clientSub:'dbClientsSub',overview:true});
 	  var chart=document.getElementById('buildsChart');
 	  if(chart){
     var days=[]; for(let i=6;i>=0;i--){ let d=new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0); days.push(d); }
@@ -3216,6 +3212,16 @@ function applyTelnyxMessageMetrics(range, ids){
       var clients=num(ids.client);
       var clientSub=document.getElementById(ids.clientSub);
       if(clientSub) clientSub.textContent=clients?'Cost/client: '+money(cost/clients):'Cost/client: --';
+    }
+    if(ids.overview){
+      function _ovSet(id,v){ var el=document.getElementById(id); if(el!=null) el.textContent=(typeof v==='number'?v.toLocaleString():v); }
+      if(typeof tm.reply1==='number'){ _ovSet('dbReply1',tm.reply1); var m1c=Number(tm.msg1_contacts||0); var r1s=document.getElementById('dbReply1Sub'); if(r1s) r1s.textContent=m1c?((tm.reply1*100/m1c).toFixed(1)+'% of '+m1c.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts'; }
+      if(typeof tm.reply2==='number'){ _ovSet('dbReply2',tm.reply2); var m2c=Number(tm.msg2_contacts||0); var r2s=document.getElementById('dbReply2Sub'); if(r2s) r2s.textContent=m2c?((tm.reply2*100/m2c).toFixed(2)+'% of '+m2c.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts'; }
+      if(tm.outcomes){ _ovSet('dbNotInterested',Number(tm.outcomes.not_interested||0)); _ovSet('dbConsidering',Number(tm.outcomes.interested||0)); _ovSet('dbOfferSent',Number(tm.outcomes.offers||0)); _ovSet('dbClients',Number(tm.outcomes.clients||0)); }
+      if(typeof renderBarChart==='function'){
+        if(Array.isArray(tm.top_industries)){ var _ti={}; tm.top_industries.forEach(function(x){ _ti[x.industry]=x.count; }); renderBarChart('dbTopIndustries',_ti,'var(--green)'); }
+        if(Array.isArray(tm.replies_per_industry)){ var _rpi={}; tm.replies_per_industry.forEach(function(x){ _rpi[x.industry]=x.replies; }); renderBarChart('dbReplyIndustries',_rpi,'var(--blue)'); }
+      }
     }
   });
 }
