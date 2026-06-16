@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mr. Electric of Austin | Austin Electrical</title>
+<meta name="description" content="Austin's #1 rated electrical company. Licensed, insured. Serving Austin and surrounding areas."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{serif:['"Playfair Display"','serif'],sans:['"Plus Jakarta Sans"','sans-serif']},colors:{brand:{dark:'#0a0f0a',gold:'#d4af37',goldHover:'#b59021'}}}}}</script>
+<style>
+html{scroll-behavior:smooth;}body{font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;}::selection{background:#d4af37;color:#fff;}
+.hero-img{animation:zoom 20s alternate infinite;}
+@keyframes zoom{0%{transform:scale(1)}100%{transform:scale(1.12)}}
+@keyframes marquee{0%{transform:translateX(0%)}100%{transform:translateX(-50%)}}
+.mq{animation:marquee 55s linear infinite;display:flex;min-width:100%;}
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+.fade-in.vis{opacity:1;transform:none;}
+.star{color:#F4B400;fill:#F4B400;}
+.no-sb::-webkit-scrollbar{display:none;}.no-sb{-ms-overflow-style:none;scrollbar-width:none;}
+/* Multi-step form */
+.fstep{display:none;}.fstep.active{display:block;animation:stepIn .3s ease forwards;}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+.svc-btn{display:flex;align-items:center;gap:10px;width:100%;padding:13px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:12px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:left;}
+.svc-btn:hover,.svc-btn.sel{background:rgba(212,175,55,.15);border-color:#d4af37;color:#d4af37;}
+.sz-btn{padding:11px 18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.sz-btn:hover,.sz-btn.sel{background:rgba(212,175,55,.18);border-color:#d4af37;color:#d4af37;}
+.pdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);transition:background .3s;}
+.pdot.on{background:#d4af37;}
+.finput{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 16px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s;}
+.finput:focus{border-color:#d4af37;}
+/* Services */
+.svc-card{position:relative;overflow:hidden;border-radius:1rem;cursor:pointer;}
+.svc-card img{width:100%;height:220px;object-fit:cover;transition:transform .6s cubic-bezier(.2,1,.3,1);display:block;}
+.svc-card:hover img{transform:scale(1.06);}
+.svc-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 55%);transition:background .4s;}
+.svc-card:hover .svc-ov{background:linear-gradient(to top,rgba(10,15,10,.88) 0%,rgba(10,15,10,.2) 60%);}
+/* Before/After */
+#ba-wrap{position:relative;overflow:hidden;border-radius:1.25rem;cursor:ew-resize;user-select:none;touch-action:none;}
+#ba-after{position:absolute;inset:0;background-size:cover;background-position:center;}
+#ba-before-clip{position:absolute;inset:0;overflow:hidden;}
+#ba-before-img{position:absolute;inset:0;background-size:cover;background-position:center;}
+#ba-bar{position:absolute;top:0;bottom:0;width:3px;background:#d4af37;transform:translateX(-50%);pointer-events:none;}
+#ba-circle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:#d4af37;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+/* Chat */
+#chat-panel{position:fixed;bottom:84px;right:20px;width:310px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.25);z-index:9999;display:none;flex-direction:column;max-height:400px;overflow:hidden;}
+#chat-panel.open{display:flex;}
+.qr{padding:7px 14px;background:#f0fdf4;border:1px solid #86efac;border-radius:20px;color:#15803d;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;}
+.qr:hover{background:#dcfce7;}
+/* FAQ */
+.faq-ans{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.faq-ans.open{max-height:280px;}
+</style>
+<style>.callbar{display:none!important}</style></head>
+<body class="bg-white text-gray-900 antialiased"><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 9000</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+<header id="hdr" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 md:h-20">
+<a href="#home" class="flex flex-col leading-none">
+<span class="font-serif font-bold text-white text-lg"><img src="https://www.mrelectric.com/us/en-us/_assets/images/brand-img/brand-logo-white.svg" alt="Mr. Electric of Austin" style="max-height:40px;max-width:160px;object-fit:contain"></span>
+<span class="font-serif font-bold text-brand-gold text-lg"></span>
+</a>
+<nav class="hidden md:flex items-center gap-7">
+<a href="#services" class="text-white text-xs font-bold uppercase tracking-widest hover:text-brand-gold transition-colors">Services</a>
+<a href="#portfolio" class="text-white text-xs font-bold uppercase tracking-widest hover:text-brand-gold transition-colors">Portfolio</a>
+<a href="#testimonials" class="text-white text-xs font-bold uppercase tracking-widest hover:text-brand-gold transition-colors">Reviews</a>
+<a href="#faq" class="text-white text-xs font-bold uppercase tracking-widest hover:text-brand-gold transition-colors">FAQ</a>
+<a href="#contact" class="text-white text-xs font-bold uppercase tracking-widest hover:text-brand-gold transition-colors">Contact</a>
+</nav>
+<a href="#home" class="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-green-600 hover:text-white text-gray-900 font-bold text-xs uppercase tracking-widest rounded-sm transition-all shadow-lg">
+<span class="relative flex h-2 w-2 mr-0.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
+Free Estimate
+</a>
+</div>
+</div>
+</header>
+<section id="home" class="relative min-h-[100svh] flex flex-col bg-brand-dark overflow-hidden">
+<div class="absolute inset-0 z-0 overflow-hidden">
+<img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b1?q=80&w=1600&auto=format&fit=crop" alt="Electrical in Austin" class="hero-img w-full h-full object-cover"/>
+<div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent md:to-black/10 pointer-events-none"></div>
+</div>
+<div class="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow flex items-center pt-20 pb-24 md:pt-24 md:pb-32 lg:pb-24">
+<div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center w-full">
+<div class="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
+<div class="inline-flex items-center gap-3 mb-3 px-4 py-2 border border-white/20 rounded-full bg-white/10 backdrop-blur-md">
+<div class="flex gap-0.5"><svg class="w-3 h-3 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-3 h-3 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-3 h-3 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-3 h-3 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-3 h-3 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+<span class="text-white/80 text-xs font-medium">4.9 Stars &middot; 41 Reviews</span>
+<div class="w-px h-3 bg-white/30"></div>
+<span class="text-brand-gold text-xs font-bold">#1 Austin</span>
+</div>
+<h1 class="font-serif text-4xl sm:text-5xl lg:text-7xl xl:text-[5.5rem] font-bold text-white leading-[1.05] mb-3">
+Your Power.<br/><em class="not-italic text-brand-gold">Reimagined.</em>
+</h1>
+<p class="text-gray-300 text-sm md:text-lg max-w-xl leading-relaxed mb-4 font-light hidden sm:block">Austin's premier electrical company. From routine maintenance to full transformations - we make your property the best on the block.</p>
+<div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mb-4">
+<a href="#home" class="flex items-center justify-center gap-2 px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-widest rounded-sm transition-all shadow-lg hover:-translate-y-1">
+<span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-300"></span></span>
+Get Free Estimate</a>
+<a href="tel:14709180516" class="flex items-center justify-center px-8 py-4 bg-black/40 border border-white/30 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-widest rounded-sm transition-all">(470) 918-0516</a>
+</div>
+<div class="hidden sm:flex flex-wrap gap-3">
+<div class="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-3 py-2 rounded-full"><svg class="w-3.5 h-3.5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg><span class="text-white text-xs font-bold">LICENSED &amp; INSURED</span></div>
+<div class="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-3 py-2 rounded-full"><svg class="w-3.5 h-3.5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-white text-xs font-bold">15+ YEARS EXP.</span></div>
+<div class="flex items-center gap-2 bg-white px-3 py-2 rounded-full shadow"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg><span class="text-gray-800 text-xs font-bold">4.9 &#9733; Google</span></div>
+</div>
+</div>
+<div class="lg:col-span-5">
+<div class="bg-black/55 backdrop-blur-xl border border-white/10 rounded-3xl p-4 md:p-6 shadow-[0_40px_80px_-20px_rgba(0,0,0,.8)]">
+<div class="flex items-center gap-2 mb-5">
+<div class="pdot on" id="d1"></div><div class="pdot" id="d2"></div><div class="pdot" id="d3"></div><div class="pdot" id="d4"></div><div class="pdot" id="d5"></div>
+<span class="text-white/40 text-xs ml-auto" id="slbl">Step 1 of 5</span>
+</div>
+<div class="fstep active" id="s1">
+<h3 class="font-serif text-xl font-bold text-white mb-1">What do you need?</h3>
+<p class="text-gray-400 text-sm mb-4">Select a service to get started.</p>
+<div class="grid grid-cols-2 gap-2">
+<button class="svc-btn" onclick="pickSvc(this,'Installations','svc1')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>Installations</button><button class="svc-btn" onclick="pickSvc(this,'Lighting','svc2')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg>Lighting</button><button class="svc-btn" onclick="pickSvc(this,'Electrical Safety','svc3')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>Electrical Safety</button><button class="svc-btn" onclick="pickSvc(this,'Repairs','svc4')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>Repairs</button></div>
+</div>
+<div class="fstep" id="s2">
+<h3 class="font-serif text-xl font-bold text-white mb-1">Your zip code?</h3>
+<p class="text-gray-400 text-sm mb-4">We verify your area before sending an estimator.</p>
+<div class="relative mb-3">
+<input id="zinput" type="text" inputmode="numeric" maxlength="5" placeholder="e.g. 30305" class="finput text-lg font-semibold tracking-widest pr-12" oninput="onZipKey('zinput','znxt')"/>
+<div id="zicon" class="absolute right-4 top-1/2 -translate-y-1/2 hidden"></div>
+</div>
+<div id="zmsg" class="hidden text-sm rounded-xl px-4 py-3 mb-3"></div>
+<div class="flex items-center justify-between mt-2">
+<button onclick="goS(1)" class="text-white/50 text-sm hover:text-white transition-colors">&larr; Back</button>
+<button id="znxt" onclick="nextFromZip()" class="px-6 py-2.5 bg-brand-gold text-white font-bold text-xs uppercase tracking-widest rounded-lg transition-all" style="opacity:0.35;pointer-events:none;">Confirm &rarr;</button>
+</div>
+</div>
+<div class="fstep" id="s3">
+<h3 class="font-serif text-xl font-bold text-white mb-1" id="sq">Tell us about your project</h3>
+<p class="text-gray-400 text-sm mb-4">Help us send the right team and equipment.</p>
+<div class="flex flex-wrap gap-2" id="sbtns"></div>
+<div class="mt-4">
+<textarea id="projDetails" rows="2" placeholder="Any project details you want to share? (optional)" class="finput resize-none text-sm" style="height:64px;padding-top:10px;"></textarea>
+</div>
+<div class="flex items-center justify-between mt-4">
+<button onclick="goS(2)" class="text-white/50 text-sm hover:text-white transition-colors">&larr; Back</button>
+<button id="s3next" onclick="goS(4)" class="px-6 py-2.5 bg-brand-gold text-white font-bold text-xs uppercase tracking-widest rounded-lg transition-all" style="opacity:0.35;pointer-events:none;">Continue &rarr;</button>
+</div>
+</div>
+<div class="fstep" id="s4">
+<h3 class="font-serif text-xl font-bold text-white mb-1">When do you need this?</h3>
+<p class="text-gray-400 text-sm mb-4">We accommodate most schedules.</p>
+<div class="flex flex-col gap-2">
+<button class="svc-btn" onclick="pickTime(this,'ASAP')"><svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>ASAP - as soon as possible</button>
+<button class="svc-btn" onclick="pickTime(this,'Within 2 weeks')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5"/></svg>Within 2 weeks</button>
+<button class="svc-btn" onclick="pickTime(this,'Next month')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Next month</button>
+<button class="svc-btn" onclick="pickTime(this,'Just getting quotes')"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Just getting quotes</button>
+</div>
+<button onclick="goS(3)" class="mt-4 text-white/50 text-sm hover:text-white transition-colors">&larr; Back</button>
+</div>
+<div class="fstep" id="s5">
+<h3 class="font-serif text-xl font-bold text-white mb-1">Almost done!</h3>
+<p class="text-gray-400 text-sm mb-4">Where should we send your free estimate?</p>
+<div class="space-y-3">
+<input id="fn" type="text" placeholder="Full Name *" class="finput" oninput="onContactKey()"/>
+<input id="fp" type="tel" placeholder="Phone Number *" class="finput" oninput="onContactKey()"/>
+<input id="fe" type="email" placeholder="Email Address (optional)" class="finput"/>
+<button id="submitBtn" onclick="submitForm()" class="w-full py-4 bg-green-600 text-white font-bold text-sm uppercase tracking-widest rounded-xl transition-all shadow-lg" style="opacity:0.4;pointer-events:none;">Get My Free Estimate &rarr;</button>
+</div>
+<button onclick="goS(4)" class="mt-3 text-white/50 text-sm hover:text-white transition-colors">&larr; Back</button>
+</div>
+<div class="fstep" id="s6">
+<div class="text-center py-4">
+<div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+<h3 class="font-serif text-2xl font-bold text-white mb-2">You're all set!</h3>
+<p class="text-gray-400 text-sm">We'll reach out within 24 hours - usually much sooner.</p>
+<div class="mt-5 pt-4 border-t border-white/10"><p class="text-gray-500 text-xs mb-2">Need it faster?</p><a href="tel:14709180516" class="text-brand-gold font-bold text-sm hover:underline">(470) 918-0516</a></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 z-20 bg-black/60 backdrop-blur-sm border-t border-white/10 py-3 overflow-hidden">
+<div class="flex overflow-hidden"><div class="mq shrink-0">
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>Licensed &amp; Insured</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>4.9 Star Rating</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>15+ Years Experience</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>Owner On Every Job</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>Background Verified</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>Residential &amp; Commercial</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>Licensed &amp; Insured</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>4.9 Star Rating</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+<span class="flex items-center gap-2.5 mx-8 min-w-max text-white text-xs font-bold uppercase tracking-widest"><svg class="w-3.5 h-3.5 text-brand-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>15+ Years Experience</span>
+<span class="text-brand-gold/40 mx-6">&#9670;</span>
+</div></div>
+</div>
+</section>
+<section id="services" class="pt-24 pb-16 relative z-20 overflow-hidden">
+<div class="absolute inset-0 bg-[#f8f9fa]"></div>
+<div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-green-100/50 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-gold/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="text-center mb-14 fade-in">
+<div class="inline-flex items-center gap-2 border border-brand-gold/30 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-md mb-5"><span class="w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span><span class="text-brand-dark font-bold uppercase tracking-[.2em] text-xs">Metro Austin Electrical</span></div>
+<h2 class="font-serif text-5xl md:text-6xl font-bold text-brand-dark leading-none">Services Near You</h2>
+<p class="mt-5 text-gray-500 max-w-xl mx-auto text-lg font-light">One team, every electrical service - so you never have to coordinate multiple contractors.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="svc-card fade-in group"><div style="width:100%;height:220px;background:#d1d5db;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;"><svg width="36" height="36" fill="none" stroke="#9ca3af" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg><span style="color:#9ca3af;font-size:11px;font-weight:600;">Photo Coming Soon</span></div><div class="svc-ov"></div><div class="absolute top-4 left-4"><span class="bg-brand-gold text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span></div><div class="absolute bottom-0 left-0 right-0 p-5"><h3 class="font-serif text-xl font-bold text-white mb-1">Installations</h3><p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">Professional installations services - reliable, efficient, and backed by our satisfaction guarantee.</p></div></div><div class="svc-card fade-in group"><div style="width:100%;height:220px;background:#d1d5db;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;"><svg width="36" height="36" fill="none" stroke="#9ca3af" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg><span style="color:#9ca3af;font-size:11px;font-weight:600;">Photo Coming Soon</span></div><div class="svc-ov"></div><div class="absolute top-4 left-4"><span class="bg-brand-gold text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Custom Design</span></div><div class="absolute bottom-0 left-0 right-0 p-5"><h3 class="font-serif text-xl font-bold text-white mb-1">Lighting</h3><p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">Professional lighting services - reliable, efficient, and backed by our satisfaction guarantee.</p></div></div><div class="svc-card fade-in group"><div style="width:100%;height:220px;background:#d1d5db;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;"><svg width="36" height="36" fill="none" stroke="#9ca3af" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg><span style="color:#9ca3af;font-size:11px;font-weight:600;">Photo Coming Soon</span></div><div class="svc-ov"></div><div class="absolute top-4 left-4"><span class="bg-brand-gold text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Same-Day Avail.</span></div><div class="absolute bottom-0 left-0 right-0 p-5"><h3 class="font-serif text-xl font-bold text-white mb-1">Electrical Safety</h3><p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">Professional electrical safety services - reliable, efficient, and backed by our satisfaction guarantee.</p></div></div><div class="svc-card fade-in group"><div style="width:100%;height:220px;background:#d1d5db;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;"><svg width="36" height="36" fill="none" stroke="#9ca3af" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg><span style="color:#9ca3af;font-size:11px;font-weight:600;">Photo Coming Soon</span></div><div class="svc-ov"></div><div class="absolute top-4 left-4"><span class="bg-brand-gold text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Safe & Insured</span></div><div class="absolute bottom-0 left-0 right-0 p-5"><h3 class="font-serif text-xl font-bold text-white mb-1">Repairs</h3><p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">Professional repairs services - reliable, efficient, and backed by our satisfaction guarantee.</p></div></div></div>
+<div class="text-center mt-10 fade-in">
+<a href="#home" class="inline-flex items-center gap-2 px-8 py-4 bg-brand-dark hover:bg-brand-gold text-white font-bold text-xs uppercase tracking-widest rounded-sm transition-all shadow-lg hover:-translate-y-1">Get a Free Quote &rarr;</a>
+</div>
+</div>
+</section>
+<section id="testimonials" class="py-20 bg-white overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 fade-in">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="inline-block px-4 py-1 border border-brand-gold/30 rounded-full text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">Client Stories</div>
+<h2 class="font-serif text-4xl md:text-5xl font-bold text-brand-dark">Loved by Austin Locals</h2>
+</div>
+<div class="flex items-center gap-2"><div class="flex gap-0.5"><svg class="w-5 h-5 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-5 h-5 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-5 h-5 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-5 h-5 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-5 h-5 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><span class="font-bold text-brand-dark">4.9/5</span><span class="text-gray-400 text-sm">Average Rating</span></div>
+</div>
+</div>
+<div class="flex overflow-hidden"><div class="mq shrink-0 gap-0">
+<div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Michael%20Torres&background=1a3a1a&color=d4af37&size=48&bold=true&rounded=true" alt="Michael Torres" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Michael Torres</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>North District</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Absolutely professional from start to finish. They showed up on time, did exactly what they promised, and the results are outstanding."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Jennifer%20Walsh&background=2d5016&color=ffffff&size=48&bold=true&rounded=true" alt="Jennifer Walsh" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Jennifer Walsh</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>South Side</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Best experience we've had with a local contractor. Transparent pricing, quality work, and they cleaned up everything when done."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=David%20Chen&background=b59021&color=ffffff&size=48&bold=true&rounded=true" alt="David Chen" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">David Chen</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>East End</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"I got three quotes and they weren't the cheapest - but they were the best. Worth every penny. Will use again without hesitation."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Sophia%20Anderson&background=0a3d62&color=ffffff&size=48&bold=true&rounded=true" alt="Sophia Anderson" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Sophia Anderson</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>West Village</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"They went above and beyond. My neighbors have already asked for their number. Could not be happier with the result."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Marcus%20Johnson&background=4a1942&color=ffffff&size=48&bold=true&rounded=true" alt="Marcus Johnson" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Marcus Johnson</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Midtown</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Called on Monday, they were here Tuesday. Fast, clean, professional. Exactly what I needed."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Rachel%20Kim&background=1a3a1a&color=d4af37&size=48&bold=true&rounded=true" alt="Rachel Kim" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Rachel Kim</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Downtown</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Five stars is not enough. The team was courteous, meticulous, and delivered exactly what they promised."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Michael%20Torres&background=1a3a1a&color=d4af37&size=48&bold=true&rounded=true" alt="Michael Torres" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Michael Torres</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>North District</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Absolutely professional from start to finish. They showed up on time, did exactly what they promised, and the results are outstanding."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Jennifer%20Walsh&background=2d5016&color=ffffff&size=48&bold=true&rounded=true" alt="Jennifer Walsh" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Jennifer Walsh</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>South Side</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Best experience we've had with a local contractor. Transparent pricing, quality work, and they cleaned up everything when done."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=David%20Chen&background=b59021&color=ffffff&size=48&bold=true&rounded=true" alt="David Chen" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">David Chen</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>East End</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"I got three quotes and they weren't the cheapest - but they were the best. Worth every penny. Will use again without hesitation."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Sophia%20Anderson&background=0a3d62&color=ffffff&size=48&bold=true&rounded=true" alt="Sophia Anderson" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Sophia Anderson</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>West Village</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"They went above and beyond. My neighbors have already asked for their number. Could not be happier with the result."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Marcus%20Johnson&background=4a1942&color=ffffff&size=48&bold=true&rounded=true" alt="Marcus Johnson" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Marcus Johnson</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Midtown</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Called on Monday, they were here Tuesday. Fast, clean, professional. Exactly what I needed."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div><div class="mx-3 min-w-[320px] md:min-w-[380px] bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex-shrink-0"><div class="flex items-center gap-3 mb-4"><img src="https://ui-avatars.com/api/?name=Rachel%20Kim&background=1a3a1a&color=d4af37&size=48&bold=true&rounded=true" alt="Rachel Kim" class="w-12 h-12 rounded-full object-cover"/><div><h3 class="font-bold text-brand-dark text-sm">Rachel Kim</h3><div class="flex items-center gap-1 text-gray-400 text-xs"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Downtown</div></div><svg class="w-8 h-8 ml-auto flex-shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></div><div class="flex gap-0.5 mb-3"><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg class="w-4 h-4 star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><p class="text-gray-600 text-sm italic leading-relaxed mb-4">"Five stars is not enough. The team was courteous, meticulous, and delivered exactly what they promised."</p><div class="flex items-center gap-1.5 text-green-600 text-xs font-bold"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>VERIFIED CUSTOMER</div></div></div></div>
+</section>
+<section class="py-16 bg-white">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 fade-in">
+<div class="relative rounded-3xl overflow-hidden bg-brand-dark shadow-2xl border border-white/10 group">
+<div class="absolute inset-0"><div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-gold/10 rounded-full blur-[100px] group-hover:bg-brand-gold/20 transition-all duration-1000"></div><div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-green-900/20 rounded-full blur-[80px]"></div></div>
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between p-8 md:p-12 gap-8">
+<div class="text-center md:text-left flex-1">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest mb-4"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>Limited Availability: Booking Now</div>
+<h3 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">Ready to Start <br class="hidden md:block"/><span class="text-brand-gold">Your Project?</span></h3>
+<p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg mx-auto md:mx-0">Don't wait until the season is over. Secure your spot on our calendar today and let's get your electrical done right.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+<a href="#home" class="flex items-center justify-center gap-2 px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-all uppercase tracking-wide text-xs">Get Free Estimate &rarr;</a>
+<a href="tel:14709180516" class="flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all uppercase tracking-wide text-xs">(470) 918-0516</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="artisan" class="py-24 bg-brand-dark relative overflow-hidden">
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-gold/5 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 right-1/4 w-96 h-96 bg-green-900/20 rounded-full blur-3xl"></div>
+</div>
+<div class="max-w-7xl mx-auto px-4 relative z-10">
+<div class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<div class="inline-flex items-center gap-2 bg-brand-gold/10 border border-brand-gold/30 rounded-full px-4 py-2 mb-6">
+<span class="w-2 h-2 bg-brand-gold rounded-full"></span>
+<span class="text-brand-gold text-xs font-bold uppercase tracking-widest">Our Philosophy</span>
+</div>
+<h2 class="text-4xl md:text-5xl font-serif font-bold leading-tight mb-8 text-white">
+Not Just Contractors.<br/><span class="bg-gradient-to-r from-brand-gold to-yellow-300 bg-clip-text text-transparent">Trusted Experts.</span>
+</h2>
+<blockquote class="border-l-4 border-brand-gold pl-6 mb-10">
+<p class="text-gray-300 text-lg italic leading-relaxed">"We don't chase the next job. We protect the reputation of the last one. Every property we touch is a portfolio piece - and a neighbor will notice."</p>
+<cite class="text-brand-gold text-sm font-bold mt-3 block">-- Mr. Electric of Austin Team</cite>
+</blockquote>
+<div class="grid grid-cols-2 gap-6">
+<div class="text-center p-4 bg-white/5 rounded-2xl border border-white/10"><div class="text-3xl font-bold text-brand-gold">500+</div><div class="text-gray-400 text-sm mt-1">Austin Jobs Done</div></div><div class="text-center p-4 bg-white/5 rounded-2xl border border-white/10"><div class="text-3xl font-bold text-brand-gold">4.9*</div><div class="text-gray-400 text-sm mt-1">Google Rating</div></div><div class="text-center p-4 bg-white/5 rounded-2xl border border-white/10"><div class="text-3xl font-bold text-brand-gold">5yr+</div><div class="text-gray-400 text-sm mt-1">Serving Austin</div></div><div class="text-center p-4 bg-white/5 rounded-2xl border border-white/10"><div class="text-3xl font-bold text-brand-gold">95%</div><div class="text-gray-400 text-sm mt-1">Return Rate</div></div>
+</div>
+</div>
+<div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-brand-gold/40 transition-all duration-300 group">
+<div class="w-12 h-12 bg-brand-gold/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-brand-gold/20 transition-colors">
+<svg class="w-6 h-6 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Price-Lock Guarantee</h3>
+<p class="text-gray-400 text-sm leading-relaxed">Quote you a price, we honor it. No surprise fees at the end of the job - ever.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-brand-gold/40 transition-all duration-300 group">
+<div class="w-12 h-12 bg-brand-gold/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-brand-gold/20 transition-colors">
+<svg class="w-6 h-6 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Licensed &amp; Insured</h3>
+<p class="text-gray-400 text-sm leading-relaxed">Fully licensed in Texas. $2M liability coverage on every crew. Your property is always protected.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-brand-gold/40 transition-all duration-300 group">
+<div class="w-12 h-12 bg-brand-gold/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-brand-gold/20 transition-colors">
+<svg class="w-6 h-6 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Free Site Walkthrough</h3>
+<p class="text-gray-400 text-sm leading-relaxed">We come to you. Walk the property together, talk through the plan, and get a detailed quote - no charge.</p>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-brand-gold/40 transition-all duration-300 group">
+<div class="w-12 h-12 bg-brand-gold/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-brand-gold/20 transition-colors">
+<svg class="w-6 h-6 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Owner On Every Job</h3>
+<p class="text-gray-400 text-sm leading-relaxed">Not a subcontractor. Not a crew you've never met. The owner personally oversees every project start to finish.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="local-projects" class="py-24 bg-white">
+<div class="max-w-7xl mx-auto px-4">
+<div class="text-center mb-16">
+<div class="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 mb-4">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-green-700 text-xs font-bold uppercase tracking-widest">Recently Completed</span>
+</div>
+<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Our Work in Your Neighborhood</h2>
+<p class="text-gray-500 text-lg max-w-2xl mx-auto">Real results from real Austin customers - completed in the last 90 days.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="rounded-3xl overflow-hidden border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 group"><div class="relative flex items-center justify-center bg-gray-100" style="height:220px;"><div class="text-center"><svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="text-gray-400 text-xs font-medium">Project Photo</span></div><div style="position:absolute;top:12px;left:12px;display:flex;gap:8px;flex-wrap:wrap;"><span style="background:rgba(0,0,0,0.55);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">Buckhead</span><span style="background:rgba(22,163,74,0.9);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">INSTALLATIONS</span></div><div style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);color:#d4af37;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;">May 2026</div></div><div class="p-6"><h3 class="font-serif font-bold text-gray-900 text-xl mb-3">Buckhead Installations</h3><div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">2,800 sqft</div><div class="text-gray-400 text-xs">Area Covered</div></div><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">2 days</div><div class="text-gray-400 text-xs">Completion</div></div></div><p class="text-gray-500 text-sm leading-relaxed mb-4">Full installations project. We came in, assessed everything, handled it start to finish. Owner was thrilled with the results.</p><div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#Installations</span><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#Buckhead</span></div><a href="#contact" class="block w-full text-center bg-brand-dark text-brand-gold font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors">REPLICATE THIS PROJECT</a></div></div><div class="rounded-3xl overflow-hidden border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 group"><div class="relative flex items-center justify-center bg-gray-100" style="height:220px;"><div class="text-center"><svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="text-gray-400 text-xs font-medium">Project Photo</span></div><div style="position:absolute;top:12px;left:12px;display:flex;gap:8px;flex-wrap:wrap;"><span style="background:rgba(0,0,0,0.55);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">Sandy Springs</span><span style="background:rgba(22,163,74,0.9);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">LIGHTING</span></div><div style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);color:#d4af37;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;">Apr 2026</div></div><div class="p-6"><h3 class="font-serif font-bold text-gray-900 text-xl mb-3">Sandy Springs Lighting</h3><div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">14 fixtures</div><div class="text-gray-400 text-xs">Parts Replaced</div></div><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">3 days</div><div class="text-gray-400 text-xs">Completion</div></div></div><p class="text-gray-500 text-sm leading-relaxed mb-4">Complete lighting job. Full walkthrough, transparent pricing, professional crew. Neighbors already asking for our number.</p><div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#Lighting</span><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#SandySprings</span></div><a href="#contact" class="block w-full text-center bg-brand-dark text-brand-gold font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors">REPLICATE THIS PROJECT</a></div></div><div class="rounded-3xl overflow-hidden border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 group"><div class="relative flex items-center justify-center bg-gray-100" style="height:220px;"><div class="text-center"><svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span class="text-gray-400 text-xs font-medium">Project Photo</span></div><div style="position:absolute;top:12px;left:12px;display:flex;gap:8px;flex-wrap:wrap;"><span style="background:rgba(0,0,0,0.55);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">Marietta</span><span style="background:rgba(22,163,74,0.9);color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;">ELECTRICAL SAFETY</span></div><div style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);color:#d4af37;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;">Mar 2026</div></div><div class="p-6"><h3 class="font-serif font-bold text-gray-900 text-xl mb-3">Marietta Electrical Safety</h3><div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">Full system</div><div class="text-gray-400 text-xs">Overhaul</div></div><div class="bg-gray-50 rounded-xl p-3 text-center"><div class="text-green-600 font-bold text-lg">1 day</div><div class="text-gray-400 text-xs">In & Out</div></div></div><p class="text-gray-500 text-sm leading-relaxed mb-4">Emergency electrical safety call. We were there next day, handled everything safely and efficiently. Property left better than we found it.</p><div class="flex flex-wrap gap-2 mb-5"><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#ElectricalSafe</span><span class="text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">#Marietta</span></div><a href="#contact" class="block w-full text-center bg-brand-dark text-brand-gold font-bold text-sm py-3 rounded-xl hover:bg-gray-800 transition-colors">REPLICATE THIS PROJECT</a></div></div></div>
+</div>
+</section>
+<section id="faq" class="py-24 bg-gray-50">
+<div class="max-w-3xl mx-auto px-4">
+<div class="text-center mb-16">
+<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Common Questions</h2>
+<p class="text-gray-500 text-lg">Fast answers before you reach out.</p>
+</div>
+<div class="space-y-3">
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">What areas do you serve?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">We serve the entire metro Austin area and surrounding communities. Enter your zip above to confirm coverage.</div></div></div><div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">How do I get an estimate?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">Fill out the form above or call us directly. We will schedule a free walkthrough and provide a detailed, no-obligation quote within 24 hours.</div></div></div><div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">Are you licensed and insured?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">Yes - fully licensed in Texas and carrying $2M liability coverage on every crew. Your property is always protected.</div></div></div><div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">Do you offer recurring service plans?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">Absolutely. We offer weekly, bi-weekly, and monthly maintenance plans tailored to your electrical needs. Ask about our seasonal packages.</div></div></div><div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">How far in advance should I book?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">For routine work, 3-5 business days is typical. Emergency service is often available same-day or next-day depending on availability.</div></div></div><div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"><button class="faq-btn w-full flex items-center justify-between p-6 text-left" onclick="toggleFaq(this)"><span class="font-semibold text-gray-900 text-lg pr-4">What if I am not satisfied?</span><svg class="faq-icon w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></button><div class="faq-ans" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;"><div class="px-6 pb-6 text-gray-500 leading-relaxed">We stand behind every job. If something is not right, we will come back and fix it at no additional cost. Your satisfaction is guaranteed.</div></div></div>
+</div>
+</div>
+</section>
+<section id="contact" class="py-24 bg-white">
+<div class="max-w-5xl mx-auto px-4">
+<div class="grid md:grid-cols-2 gap-16 items-start">
+<div>
+<div class="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 mb-6">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-green-700 text-xs font-bold uppercase tracking-widest">Limited Availability</span>
+</div>
+<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">Get Your Free Estimate</h2>
+<p class="text-gray-500 text-lg leading-relaxed mb-8">No commitment. We'll reach out to confirm details and walk your property for free.</p>
+<div class="space-y-5">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+</div>
+<div>
+<div class="font-bold text-gray-900">Call or text anytime</div>
+<div class="text-gray-500">(470) 918-0516</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+</div>
+<div>
+<div class="font-bold text-gray-900">Serving all of Metro Austin</div>
+<div class="text-gray-500">North District * South Side * East End * West Village * Midtown * Downtown</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-gray-50 border border-gray-100 rounded-3xl p-8 shadow-sm">
+<div class="flex justify-center gap-2 mb-6">
+<div class="bpdot bon" id="bd1"></div>
+<div class="bpdot" id="bd2"></div>
+<div class="bpdot" id="bd3"></div>
+<div class="bpdot" id="bd4"></div>
+<div class="bpdot" id="bd5"></div>
+</div>
+<div class="bfstep active" id="bstep1">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Step 1 of 5</p>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-5">What do you need?</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="bsvc-btn" onclick="bPickSvc(this,'Installations','svc1')">Installations</button><button class="bsvc-btn" onclick="bPickSvc(this,'Lighting','svc2')">Lighting</button><button class="bsvc-btn" onclick="bPickSvc(this,'Electrical Safety','svc3')">Electrical Safety</button><button class="bsvc-btn" onclick="bPickSvc(this,'Repairs','svc4')">Repairs</button></div>
+</div>
+<div class="bfstep" id="bstep2">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Step 2 of 5</p>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-2">What's your zip code?</h3>
+<p class="text-gray-400 text-sm mb-5">We confirm we service your area before scheduling.</p>
+<input type="text" id="bzipInput" maxlength="5" inputmode="numeric" placeholder="e.g. 30305" class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-xl font-bold text-center focus:outline-none focus:border-green-500 transition-colors mb-3" oninput="onZipKey('bzipInput','bznxt')"/>
+<p id="bzipMsg" class="text-sm text-center mb-4" style="min-height:20px;"></p>
+<div class="flex gap-3">
+<button onclick="bGoS(1)" class="px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-500 font-bold text-sm hover:border-gray-400 transition-colors"><- Back</button>
+<button id="bznxt" onclick="bCheckZip()" class="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl transition-colors" style="opacity:0.35;pointer-events:none;">Check My Area</button>
+</div>
+</div>
+<div class="bfstep" id="bstep3">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Step 3 of 5</p>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-5" id="bsizeQ">Tell us about your project</h3>
+<div class="space-y-3" id="bsizeOpts"></div>
+<div class="mt-4">
+<textarea id="bProjDetails" rows="2" placeholder="Any project details you want to share? (optional)" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-green-500 transition-colors resize-none" style="height:68px;"></textarea>
+</div>
+<div class="flex items-center justify-between mt-4">
+<button onclick="bGoS(2)" class="text-gray-400 text-sm hover:text-gray-600 transition-colors"><- Back</button>
+<button id="bs3next" onclick="bGoS(4)" class="px-6 py-3 bg-green-600 text-white font-bold text-sm rounded-xl transition-all" style="opacity:0.35;pointer-events:none;">Continue -></button>
+</div>
+</div>
+<div class="bfstep" id="bstep4">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Step 4 of 5</p>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-5">When do you need it?</h3>
+<div class="space-y-3">
+<button class="btl-btn" onclick="bPickTime(this)">ASAP - as soon as possible</button>
+<button class="btl-btn" onclick="bPickTime(this)">Within 2 weeks</button>
+<button class="btl-btn" onclick="bPickTime(this)">Next month</button>
+<button class="btl-btn" onclick="bPickTime(this)">Just getting quotes</button>
+</div>
+<button onclick="bGoS(3)" class="mt-4 text-gray-400 text-sm hover:text-gray-600 transition-colors"><- Back</button>
+</div>
+<div class="bfstep" id="bstep5">
+<p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Step 5 of 5 - Almost there!</p>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-5">Where should we send your quote?</h3>
+<div class="space-y-3">
+<input id="bfn" type="text" placeholder="Full Name *" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-green-500 transition-colors" oninput="onBContactKey()"/>
+<input id="bfp" type="tel" placeholder="Phone Number *" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-green-500 transition-colors" oninput="onBContactKey()"/>
+<input id="bfe" type="email" placeholder="Email Address (optional)" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-green-500 transition-colors"/>
+<button id="bSubmitBtn" onclick="bSubmit()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl text-lg transition-colors" style="opacity:0.4;pointer-events:none;">Get My Free Estimate</button>
+<div id="bFormErr" class="text-red-500 text-sm text-center" style="display:none;">Please enter your name and phone number.</div>
+</div>
+<button onclick="bGoS(4)" class="mt-3 text-gray-400 text-sm hover:text-gray-600 transition-colors"><- Back</button>
+</div>
+<div class="bfstep text-center" id="bstepTy">
+<div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+<svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+</div>
+<h3 class="text-2xl font-serif font-bold text-gray-900 mb-3">You're on the list!</h3>
+<p class="text-gray-500">We'll be in touch soon. Check your phone - we usually text first.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div style="background:#0f1115;padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.08)"><span style="font-size:12px;color:rgba(255,255,255,.45)">Demo Access Code: <strong style="color:#d4af37;font-size:15px;letter-spacing:.08em">9000</strong></span><a href="https://demo.scalingsos.com/ex-electrical/dashboard/" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#d4af37;padding:7px 18px;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;text-transform:uppercase;letter-spacing:.08em">My Dashboard</a></div><footer class="bg-brand-dark border-t border-white/10 py-12">
+<div class="max-w-7xl mx-auto px-4">
+<div class="grid md:grid-cols-4 gap-8 mb-10">
+<div class="md:col-span-2">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8 2 4 5 4 9c0 5 8 13 8 13s8-8 8-13c0-4-4-7-8-7z"/></svg>
+</div>
+<span class="text-white font-serif font-bold text-lg">Mr. Electric of Austin</span>
+</div>
+<p class="text-gray-400 text-sm leading-relaxed mb-4 max-w-xs">Austin's most dedicated electrical team. We care too much to do average work.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Services</h4>
+<ul class="space-y-2 text-gray-400 text-sm">
+<li><a href="#services" class="hover:text-brand-gold transition-colors">Installations</a></li><li><a href="#services" class="hover:text-brand-gold transition-colors">Lighting</a></li><li><a href="#services" class="hover:text-brand-gold transition-colors">Electrical Safety</a></li><li><a href="#services" class="hover:text-brand-gold transition-colors">Repairs</a></li></ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Company</h4>
+<ul class="space-y-2 text-gray-400 text-sm">
+<li><a href="#artisan" class="hover:text-brand-gold transition-colors">About Us</a></li>
+<li><a href="#local-projects" class="hover:text-brand-gold transition-colors">Our Work</a></li>
+<li><a href="#faq" class="hover:text-brand-gold transition-colors">FAQ</a></li>
+<li><a href="#contact" class="hover:text-brand-gold transition-colors">Get an Estimate</a></li>
+<li><a href="tel:+114709180516" class="hover:text-brand-gold transition-colors">(470) 918-0516</a></li>
+</ul>
+</div>
+</div>
+<div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<p class="text-gray-500 text-sm">(c) 2026 Mr. Electric of Austin. All rights reserved. Serving Metro Austin, TX.</p>
+<div class="flex gap-4 text-gray-500 text-sm">
+<a href="#" class="hover:text-brand-gold transition-colors">Privacy Policy</a>
+</div>
+</div>
+</div>
+</footer>
+<div id="chatWidget" style="position:fixed;bottom:24px;right:24px;z-index:9999;">
+<button onclick="toggleChat()" style="width:56px;height:56px;background:#16a34a;border-radius:50%;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(22,163,74,0.5);display:flex;align-items:center;justify-content:center;">
+<svg id="chatOpenIcon" width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+<svg id="chatCloseIcon" width="24" height="24" fill="white" viewBox="0 0 24 24" style="display:none;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+</button>
+<div id="chatNotif" style="position:absolute;top:-8px;right:-4px;background:#ef4444;color:white;font-size:11px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;">1</div>
+<div id="chatWindow" style="display:none;position:absolute;bottom:68px;right:0;width:320px;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;border:1px solid #e5e7eb;">
+<div style="background:#16a34a;padding:16px 20px;display:flex;align-items:center;gap:12px;">
+<div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 2C8 2 4 5 4 9c0 5 8 13 8 13s8-8 8-13c0-4-4-7-8-7z"/></svg>
+</div>
+<div>
+<div style="color:white;font-weight:700;font-size:14px;">Mr. Electric of Austin</div>
+<div style="color:rgba(255,255,255,0.8);font-size:12px;">Online - reply in minutes</div>
+</div>
+</div>
+<div id="chatMessages" style="padding:16px;max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">
+<div style="background:#f3f4f6;border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:13px;color:#374151;max-width:85%;">Hey! What can we help you with today?</div>
+</div>
+<div id="chatQR" style="padding:0 12px 12px;display:flex;flex-wrap:wrap;gap:6px;">
+<button onclick="chatReply('Get a free estimate')" class="qr">Get a free estimate</button>
+<button onclick="chatReply('What areas do you serve?')" class="qr">Service areas</button>
+<button onclick="chatReply('Pricing')" class="qr">Pricing</button>
+</div>
+<div style="padding:0 12px 12px;display:flex;gap:8px;">
+<input id="chatInput" type="text" placeholder="Type a message..." style="flex:1;border:1px solid #e5e7eb;border-radius:12px;padding:8px 12px;font-size:13px;outline:none;" onkeydown="if(event.key==='Enter')sendChat()"/>
+<button onclick="sendChat()" style="background:#16a34a;color:white;border:none;border-radius:12px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;">Send</button>
+</div>
+</div>
+</div>
+<style>
+header.scrolled { background: rgba(10,15,10,0.97) !important; backdrop-filter: blur(16px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+/* bottom form */
+.bfstep { display: none; }
+.bfstep.active { display: block; animation: stepIn .3s ease forwards; }
+.bpdot { width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; transition: background .3s; }
+.bpdot.bon { background: #16a34a; }
+.bsvc-btn { width: 100%; padding: 13px 14px; border: 2px solid #e5e7eb; border-radius: 14px; background: white; font-size: 14px; font-weight: 600; color: #374151; cursor: pointer; text-align: left; transition: all .2s; }
+.bsvc-btn:hover, .bsvc-btn.selected { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+.bsz-btn { display: block; width: 100%; padding: 13px 14px; border: 2px solid #e5e7eb; border-radius: 14px; background: white; font-size: 14px; font-weight: 500; color: #374151; cursor: pointer; text-align: left; transition: all .2s; }
+.bsz-btn:hover, .bsz-btn.selected { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+.btl-btn { display: block; width: 100%; padding: 13px 14px; border: 2px solid #e5e7eb; border-radius: 14px; background: white; font-size: 14px; font-weight: 500; color: #374151; cursor: pointer; text-align: left; transition: all .2s; }
+.btl-btn:hover, .btl-btn.selected { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+@media(max-width:768px){.mq{animation-duration:25s !important}}</style>
+<script>
+// --- INPUT HELPERS --------------------------------------------
+function onZipKey(inputId, btnId) {
+var val = (document.getElementById(inputId) || {}).value || '';
+val = val.replace(/\D/g, '');
+var btn = document.getElementById(btnId);
+if (!btn) return;
+var ready = val.length === 5;
+btn.style.opacity = ready ? '1' : '0.35';
+btn.style.pointerEvents = ready ? 'auto' : 'none';
+}
+function onContactKey() {
+var fn = ((document.getElementById('fn') || {}).value || '').trim();
+var ph = ((document.getElementById('fp') || {}).value || '').trim();
+var btn = document.getElementById('submitBtn');
+if (!btn) return;
+var ready = fn.length > 0 && ph.length > 0;
+btn.style.opacity = ready ? '1' : '0.4';
+btn.style.pointerEvents = ready ? 'auto' : 'none';
+}
+function onBContactKey() {
+var fn = ((document.getElementById('bfn') || {}).value || '').trim();
+var ph = ((document.getElementById('bfp') || {}).value || '').trim();
+var btn = document.getElementById('bSubmitBtn');
+if (!btn) return;
+var ready = fn.length > 0 && ph.length > 0;
+btn.style.opacity = ready ? '1' : '0.4';
+btn.style.pointerEvents = ready ? 'auto' : 'none';
+}
+// --- SHARED ---------------------------------------------------
+var ATL_ZIPS = ['30301','30302','30303','30304','30305','30306','30307','30308','30309','30310','30311','30312','30313','30314','30315','30316','30317','30318','30319','30320','30321','30322','30324','30325','30326','30327','30328','30329','30330','30331','30332','30333','30334','30336','30337','30338','30339','30340','30341','30342','30343','30344','30345','30346','30349','30350','30354','30360','30363','30366','30369','30374','30376','30378','30380','30384','30385','30388','30392','30396','30398','31106','31107','31119','31120','31126','31131','31136','31139','31141','31145','31146','31150','31156','31192','31193','31195','31196','30060','30062','30064','30067','30068','30008','30009','30022','30023','30024','30076','30077','30097','30098','30004','30005','30040','30041','30042','30518','30519'];
+var SIZE_MAP = {lawn:{q:"How big is your yard?",opts:["Small (under 5k sqft)","Medium (5k-10k sqft)","Large (10k-20k sqft)","XL (20k+ sqft)"]},plumbing:{q:"What type of property?",opts:["Apartment/Condo","Small Home (1-2 bath)","Large Home (3+ bath)","Commercial"]},hvac:{q:"System size?",opts:["1 unit (small home)","2 units (large home)","3+ units","Commercial system"]},electrical:{q:"Scope of work?",opts:["Single fixture/outlet","Multiple rooms","Whole house","Commercial/panel"]},roofing:{q:"Roof size?",opts:["Small (under 1,500 sqft)","Medium (1,500-2,500 sqft)","Large (2,500-4,000 sqft)","XL (4,000+ sqft)"]},painting:{q:"How many rooms?",opts:["1-2 rooms","3-5 rooms","Whole interior","Exterior only"]},cleaning:{q:"Home size?",opts:["Studio/1BR","2-3 BR","4+ BR","Commercial space"]},general:{q:"Project scope?",opts:["Small job (1 day)","Medium (2-3 days)","Large (1 week+)","Need consultation"]},design:{q:"What scale?",opts:["Small touch-up","Medium redesign","Full transformation","Need consultation"]},sod:{q:"How much sod?",opts:["Under 500 sqft","500-2k sqft","2k-5k sqft","5k+ sqft"]},tree:{q:"How many trees?",opts:["1 tree","2-3 trees","4-6 trees","7+ trees"]},shrub:{q:"How many shrubs?",opts:["1-5","6-15","16-30","Full hedge row"]},gutter:{q:"How many stories?",opts:["1 story","2 stories","3+ stories","Commercial"]}};
+// --- HERO FORM (part1 uses: pickSvc, goS, nextFromZip, pickTime, submitForm) --
+var topSvcKey = 'general';
+var heroSize = '';
+function pickSvc(btn, label, key) {
+document.querySelectorAll('#s1 .svc-btn').forEach(function(b) { b.classList.remove('sel'); });
+btn.classList.add('sel');
+topSvcKey = key;
+heroSize = ''; // reset size when service changes
+goS(2);
+}
+function goS(n) {
+// hide all hero steps (id: s1-s6)
+for (var i = 1; i <= 6; i++) {
+var el = document.getElementById('s' + i);
+if (el) el.classList.remove('active');
+}
+var target = document.getElementById('s' + n);
+if (target) target.classList.add('active');
+// update dots (d1-d5) and label
+var lblEl = document.getElementById('slbl');
+for (var j = 1; j <= 5; j++) {
+var dot = document.getElementById('d' + j);
+if (dot) dot.classList.toggle('on', j <= n - 1 || j === 1);
+}
+if (lblEl && n <= 5) lblEl.textContent = 'Step ' + n + ' of 5';
+// if going to step 3, build size buttons
+if (n === 3) buildHeroSizeBtns();
+}
+function buildHeroSizeBtns() {
+var cb = document.getElementById('s3next');
+if (cb) { cb.style.opacity = '0.35'; cb.style.pointerEvents = 'none'; }
+var cfg = SIZE_MAP[topSvcKey] || SIZE_MAP[Object.keys(SIZE_MAP)[0]];
+var sq = document.getElementById('sq');
+var cont = document.getElementById('sbtns');
+var savedSize = heroSize;
+if (sq) sq.textContent = cfg.q;
+if (cont) {
+cont.innerHTML = '';
+cfg.opts.forEach(function(o) {
+var b = document.createElement('button');
+b.className = 'sz-btn';
+b.textContent = o;
+b.onclick = function() { pickSize(b); };
+cont.appendChild(b);
+});
+// restore previous selection if user navigated back
+if (savedSize) {
+cont.querySelectorAll('.sz-btn').forEach(function(b) {
+if (b.textContent === savedSize) {
+b.classList.add('sel');
+if (cb) { cb.style.opacity = '1'; cb.style.pointerEvents = 'auto'; }
+}
+});
+}
+}
+}
+function nextFromZip() {
+var z = (document.getElementById('zinput') || {}).value || '';
+z = z.trim();
+var msgEl = document.getElementById('zmsg');
+var iconEl = document.getElementById('zicon');
+var nxtBtn = document.getElementById('znxt');
+if (z.length !== 5 || isNaN(Number(z))) {
+if (msgEl) { msgEl.textContent = 'Please enter a valid 5-digit zip code.'; msgEl.className = 'text-sm rounded-xl px-4 py-3 mb-3 bg-red-500/10 text-red-400'; msgEl.classList.remove('hidden'); }
+return;
+}
+if (ATL_ZIPS.indexOf(z) >= 0) {
+if (msgEl) { msgEl.textContent = 'Great news - we service your area!'; msgEl.className = 'text-sm rounded-xl px-4 py-3 mb-3 bg-green-500/10 text-green-400'; msgEl.classList.remove('hidden'); }
+setTimeout(function() { goS(3); }, 600);
+} else {
+if (msgEl) { msgEl.textContent = 'Sorry - we do not cover that zip yet. We are expanding soon!'; msgEl.className = 'text-sm rounded-xl px-4 py-3 mb-3 bg-red-500/10 text-red-400'; msgEl.classList.remove('hidden'); }
+}
+}
+// Also validate on input keyup so Next button enables
+document.addEventListener('DOMContentLoaded', function() {
+var zinput = document.getElementById('zinput');
+if (zinput) {
+zinput.addEventListener('keyup', function(e) {
+if (e.key === 'Enter') nextFromZip();
+});
+}
+});
+function pickSize(btn) {
+document.querySelectorAll('#sbtns .sz-btn').forEach(function(b) { b.classList.remove('sel'); });
+btn.classList.add('sel');
+heroSize = btn.textContent;
+var cb = document.getElementById('s3next');
+if (cb) { cb.style.opacity = '1'; cb.style.pointerEvents = 'auto'; }
+}
+function pickTime(btn, label) {
+document.querySelectorAll('#s4 .svc-btn').forEach(function(b) { b.classList.remove('sel'); });
+btn.classList.add('sel');
+setTimeout(function() { goS(5); }, 280);
+}
+function submitForm() {
+var fn = (document.getElementById('fn') || {}).value || '';
+var ph = (document.getElementById('fp') || {}).value || '';
+if (!fn.trim() || !ph.trim()) return;
+goS(6);
+}
+// --- BOTTOM FORM ---------------------------------------------
+var botSvcKey = 'general';
+var botSize = '';
+function bGoS(n) {
+document.querySelectorAll('.bfstep').forEach(function(el) { el.classList.remove('active'); });
+var target = (n === 'ty') ? document.getElementById('bstepTy') : document.getElementById('bstep' + n);
+if (target) target.classList.add('active');
+if (n !== 'ty') {
+document.querySelectorAll('.bpdot').forEach(function(d, i) { d.classList.toggle('bon', i < n); });
+}
+}
+function bPickSvc(btn, label, key) {
+document.querySelectorAll('.bsvc-btn').forEach(function(b) { b.classList.remove('selected'); });
+btn.classList.add('selected');
+botSvcKey = key;
+botSize = ''; // reset size when service changes
+setTimeout(function() { bGoS(2); }, 280);
+}
+function bCheckZip() {
+var z = (document.getElementById('bzipInput') || {}).value || '';
+z = z.trim();
+var msg = document.getElementById('bzipMsg');
+if (z.length !== 5 || isNaN(Number(z))) {
+if (msg) { msg.textContent = 'Please enter a valid 5-digit zip.'; msg.style.color = '#dc2626'; }
+return;
+}
+if (ATL_ZIPS.indexOf(z) >= 0) {
+if (msg) { msg.textContent = 'Great news - we service your area!'; msg.style.color = '#16a34a'; }
+setTimeout(function() { bBuildSizeOpts(); }, 500);
+} else {
+if (msg) { msg.textContent = 'Sorry, we do not cover that zip yet.'; msg.style.color = '#dc2626'; }
+}
+}
+function bBuildSizeOpts() {
+var cb = document.getElementById('bs3next');
+if (cb) { cb.style.opacity = '0.35'; cb.style.pointerEvents = 'none'; }
+var cfg = SIZE_MAP[botSvcKey] || SIZE_MAP[Object.keys(SIZE_MAP)[0]];
+var qEl = document.getElementById('bsizeQ');
+var cont = document.getElementById('bsizeOpts');
+var savedBotSize = botSize;
+if (qEl) qEl.textContent = cfg.q;
+if (cont) {
+cont.innerHTML = '';
+cfg.opts.forEach(function(o) {
+var b = document.createElement('button');
+b.className = 'bsz-btn';
+b.textContent = o;
+b.onclick = function() { bPickSize(b); };
+cont.appendChild(b);
+});
+// restore previous selection if user navigated back
+if (savedBotSize) {
+cont.querySelectorAll('.bsz-btn').forEach(function(b) {
+if (b.textContent === savedBotSize) {
+b.classList.add('selected');
+if (cb) { cb.style.opacity = '1'; cb.style.pointerEvents = 'auto'; }
+}
+});
+}
+}
+bGoS(3);
+}
+function bPickSize(btn) {
+document.querySelectorAll('.bsz-btn').forEach(function(b) { b.classList.remove('selected'); });
+btn.classList.add('selected');
+botSize = btn.textContent;
+var cb = document.getElementById('bs3next');
+if (cb) { cb.style.opacity = '1'; cb.style.pointerEvents = 'auto'; }
+}
+function bPickTime(btn) {
+document.querySelectorAll('.btl-btn').forEach(function(b) { b.classList.remove('selected'); });
+btn.classList.add('selected');
+setTimeout(function() { bGoS(5); }, 280);
+}
+function bSubmit() {
+var fn = (document.getElementById('bfn') || {}).value || '';
+var ph = (document.getElementById('bfp') || {}).value || '';
+if (!fn.trim() || !ph.trim()) return;
+bGoS('ty');
+}
+// --- FAQ ACCORDION --------------------------------------------
+function toggleFaq(btn) {
+var ans = btn.nextElementSibling;
+var icon = btn.querySelector('.faq-icon');
+var isOpen = ans.style.maxHeight && ans.style.maxHeight !== '0px';
+document.querySelectorAll('.faq-ans').forEach(function(a) { a.style.maxHeight = '0px'; });
+document.querySelectorAll('.faq-icon').forEach(function(i) { i.style.transform = 'rotate(0deg)'; });
+if (!isOpen) {
+ans.style.maxHeight = ans.scrollHeight + 'px';
+icon.style.transform = 'rotate(180deg)';
+}
+}
+// --- HEADER SCROLL -------------------------------------------
+window.addEventListener('scroll', function() {
+var h = document.querySelector('header');
+if (h) h.classList.toggle('scrolled', window.scrollY > 50);
+});
+// --- SCROLL FADE ---------------------------------------------
+var io = new IntersectionObserver(function(entries) {
+entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(function(el) { io.observe(el); });
+// --- CHAT -----------------------------------------------------
+var chatReplies = {
+'get a free estimate': 'Fill out the quick form on this page. We will reach out same day.',
+'what areas do you serve?': 'We cover all of Metro Austin and surrounding areas. Enter your zip in the form to confirm! Enter your zip in the form to confirm!',
+'pricing': 'Pricing depends on the scope of work. Quotes are free - fill out the form and we will get you a number fast.'
+};
+function toggleChat() {
+var win = document.getElementById('chatWindow');
+var open = document.getElementById('chatOpenIcon');
+var close = document.getElementById('chatCloseIcon');
+var notif = document.getElementById('chatNotif');
+var isOpen = win.style.display !== 'none';
+win.style.display = isOpen ? 'none' : 'block';
+open.style.display = isOpen ? 'flex' : 'none';
+close.style.display = isOpen ? 'none' : 'flex';
+if (notif) notif.style.display = 'none';
+}
+function chatReply(msg) {
+addChatMsg(msg, 'user');
+var qr = document.getElementById('chatQR');
+if (qr) qr.style.display = 'none';
+var reply = chatReplies[msg.toLowerCase()] || 'Thanks for reaching out! Call or text us at (470) 918-0516 for the fastest response.';
+setTimeout(function() { addChatMsg(reply, 'bot'); }, 700);
+}
+function sendChat() {
+var inp = document.getElementById('chatInput');
+var msg = inp.value.trim();
+if (!msg) return;
+addChatMsg(msg, 'user');
+inp.value = '';
+var qr = document.getElementById('chatQR');
+if (qr) qr.style.display = 'none';
+setTimeout(function() { addChatMsg('Thanks! Call or text us at (470) 918-0516 for the fastest help.', 'bot'); }, 700);
+}
+function addChatMsg(text, role) {
+var msgs = document.getElementById('chatMessages');
+var div = document.createElement('div');
+div.textContent = text;
+div.style.cssText = role === 'user'
+? 'background:#16a34a;color:white;border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:13px;max-width:85%;align-self:flex-end;margin-left:auto;'
+: 'background:#f3f4f6;color:#374151;border-radius:14px 14px 14px 4px;padding:10px 14px;font-size:13px;max-width:85%;';
+msgs.appendChild(div);
+msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+<style>#sos-cta{display:none}@media(max-width:820px){#sos-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:99999;gap:10px;background:#fff;border-top:1px solid #e5e7eb;box-shadow:0 -4px 20px rgba(0,0,0,.10);padding:12px 16px;box-sizing:border-box}body{padding-bottom:86px}}#sos-cta a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;font:700 15px/1.15 system-ui,-apple-system,sans-serif;border-radius:12px;text-decoration:none;box-sizing:border-box}#sos-cta a small{font-size:10px;font-weight:600;opacity:.65}#sos-cta .sosc{background:#fff;color:#111827;border:1.5px solid #d1d5db}#sos-cta .sosb{background:#111827;color:#fff;border:1.5px solid #111827}</style><div id="sos-cta"><a class="sosc" href="tel:14709180516">Call (470) 918-0516<small>Demo Code: 9000</small></a><a class="sosb" href="#" onclick="var f=document.querySelector('form');if(f){f.scrollIntoView({behavior:'smooth',block:'center'});}return false;">Book Now</a></div></body>
+</html>
