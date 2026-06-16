@@ -4582,6 +4582,9 @@ function renderAuthoritativeMsg2VariantTallies(arr, range, source){
   var body=document.getElementById('msg2VariantTallyBody');
   var sub=document.getElementById('msg2VariantTallySub');
   if(!panel||!body||!Array.isArray(arr)) return;
+  var _sig=JSON.stringify(arr)+'|'+String(range);
+  if(window._msg2LastSig===_sig){ window._msg2Rendered=true; return; } // unchanged -> skip repaint (stops poll flicker)
+  window._msg2LastSig=_sig; window._msg2Rendered=true;
   function sortKey(label){
     var g=label.indexOf('Existing Website')===0?1:(label.indexOf('Unknown')===0?2:0);
     var v=/Version A/.test(label)?0:/Version B/.test(label)?1:/Version C/.test(label)?2:9;
@@ -4631,64 +4634,16 @@ function _conversationOutcomeBucket(s){
   return '';
 }
 function renderMsg2VariantTallies(sessions){
+  // AUTHORITATIVE-ONLY. The accurate numbers come from the Msg2 Variant Stats endpoint
+  // (full messages history, content-grouped). We intentionally do NOT compute/paint a local
+  // session+regex version first — that older path produced different numbers and made the
+  // table flicker between two datasets on every 10s poll.
   var panel=document.getElementById('msg2VariantTally');
   var body=document.getElementById('msg2VariantTallyBody');
-  var sub=document.getElementById('msg2VariantTallySub');
   if(!panel||!body) return;
-  var range=String(window._commsDateRange||'today');
-  var rows={};
-  ['No Website Version A','No Website Version B','No Website Version C','Existing Website Version A','Existing Website Version B','Existing Website Version C'].forEach(function(label){
-    rows[label]={label:label,sent:0,replied2:0,interested:0,offer_sent:0,client:0,not_interested:0,delivered:0};
-  });
-  (sessions||[]).forEach(function(s){
-    var msg=_sessionMsg2Message(s);
-    if(!msg) return;
-    if(range!=='all' && !_msgDateInRange(msg,range)) return;
-    var label=_msg2VariantLabel(msg,s);
-    if(!rows[label]) rows[label]={label:label,sent:0,replied2:0,interested:0,offer_sent:0,client:0,not_interested:0,delivered:0};
-    var r=rows[label];
-    r.sent++;
-    if(String(msg.status||msg.delivery_status||'').toLowerCase()==='delivered') r.delivered++;
-    if(range==='all'?_hasFollowupReply(s):_hasFollowupReplyIn(s,range)) r.replied2++;
-    var bucket=_msg2OutcomeBucket(s);
-    if(bucket) r[bucket]++;
-  });
-  var arr=Object.keys(rows).map(function(k){return rows[k];});
-  function sortKey(label){
-    var g=label.indexOf('Existing Website')===0?1:0;
-    var v=/Version A/.test(label)?0:/Version B/.test(label)?1:/Version C/.test(label)?2:9;
-    return g*10+v;
-  }
-  arr.sort(function(a,b){ return sortKey(a.label)-sortKey(b.label) || a.label.localeCompare(b.label); });
   panel.style.display='block';
-  if(sub) sub.textContent=(range==='all'?'All time':range.replace('7d','Last 7 days'))+' · Msg2 sent in period; outcomes use current manual status';
-  if(!arr.length){
-    body.innerHTML='<div style="color:var(--text-muted);font-size:.82rem;padding:4px 0">No Msg 2 variant data for this period yet.</div>';
-    return;
-  }
-  function pct(n,d){ return d?Math.round((Number(n)||0)*100/(Number(d)||0))+'%':'--'; }
-  body.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:760px">'
-    +'<thead><tr style="text-align:left;color:#64748b;border-bottom:1px solid var(--border)">'
-    +'<th style="padding:7px 8px">Variant</th><th style="padding:7px 8px;text-align:right">Msg 2 sent</th><th style="padding:7px 8px;text-align:right">Delivered</th><th style="padding:7px 8px;text-align:right">Replied</th><th style="padding:7px 8px;text-align:right">Interested</th><th style="padding:7px 8px;text-align:right">Offers</th><th style="padding:7px 8px;text-align:right">Clients</th><th style="padding:7px 8px;text-align:right">Not interested</th><th style="padding:7px 8px;text-align:right">Positive</th>'
-    +'</tr></thead><tbody>'
-    +arr.map(function(r){
-      var positive=r.interested+r.offer_sent+r.client;
-      return '<tr style="border-bottom:1px solid #eef2f7">'
-        +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(r.label)+'</td>'
-        +'<td style="padding:8px;text-align:right;font-weight:700">'+r.sent+'</td>'
-        +'<td style="padding:8px;text-align:right">'+r.delivered+'</td>'
-        +'<td style="padding:8px;text-align:right">'+r.replied2+' <span style="color:#94a3b8">('+pct(r.replied2,r.sent)+')</span></td>'
-        +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:700">'+r.interested+'</td>'
-        +'<td style="padding:8px;text-align:right;color:#b45309;font-weight:700">'+r.offer_sent+'</td>'
-        +'<td style="padding:8px;text-align:right;color:#16a34a;font-weight:700">'+r.client+'</td>'
-        +'<td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">'+r.not_interested+'</td>'
-        +'<td style="padding:8px;text-align:right;font-weight:800;color:#2563eb">'+pct(positive,r.sent)+'</td>'
-      +'</tr>';
-    }).join('')
-    +'</tbody></table>';
-  // Authoritative variant stats: messages (full history) grouped by edit-proof content fingerprint,
-  // matched to the 6 current templates from config. Recovers untagged sends, splits older copy out,
-  // auto-detects template edits. Replaces the old variant_key/text-regex reconstruction.
+  var range=String(window._commsDateRange||'today');
+  if(!window._msg2Rendered) body.innerHTML='<div style="color:var(--text-muted);font-size:.82rem;padding:4px 0">Loading variant stats…</div>';
   var req=Date.now()+':'+range;
   window._msg2VariantTallyReq=req;
   fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-msg2-variant-stats?period='+encodeURIComponent(range))
