@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<title>On Call Diesel Service — Same-Day Car Repair in Four Corners</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#FAF8F3;color:#1A1A1A;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+svg path,svg line,svg circle,svg rect,svg polyline,svg polygon,svg ellipse{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+:root{
+  --cream:#FAF8F3;--cream-d:#F0EBE0;--ink:#1A1A1A;--ink-l:#3D3A35;
+  --gold:#B8924A;--gold-l:#E8C97D;--green:#2D6A4F;--green-l:#D8F3DC;
+  --muted:#7A7265;--border:#E6DFD1;--pad:clamp(16px,4vw,56px);--mw:1160px;
+}
+.wrap{max-width:var(--mw);margin:0 auto;padding:0 var(--pad)}
+
+/* PREVIEW BAR — scrolls away, does not stay sticky */
+#preview-bar{background:#EA580C;color:#fff;text-align:center;padding:9px 16px;font-size:12px;font-weight:700;letter-spacing:.02em;line-height:1.4;position:sticky;top:0;z-index:202}
+#preview-bar a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+
+/* URGENCY BAR */
+#urg{background:var(--ink);color:rgba(255,255,255,.7);text-align:center;padding:9px 16px;font-size:12px;font-weight:500;letter-spacing:.06em;position:relative;z-index:1}
+#urg strong{color:var(--gold-l);font-weight:600}
+
+/* NAV */
+#nav{background:var(--cream);border-bottom:1px solid var(--border);position:sticky;top:36px;z-index:200;transition:box-shadow .3s}/* top overridden by JS to match preview-bar height */
+#nav.on{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-i{height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:nowrap}
+.nav-logo{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-mark{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:18px;height:18px;stroke:#fff;stroke-width:2}
+.logo-text{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);white-space:nowrap}
+.logo-text small{display:block;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+.nav-links{display:flex;gap:clamp(10px,2vw,24px);list-style:none;flex-shrink:1}
+.nav-links a{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;letter-spacing:.02em;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-r{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-ph{font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-ph svg{width:13px;height:13px;stroke:var(--gold)}
+.btn-nav{background:var(--ink);color:#fff;border-radius:6px;padding:10px 20px;font-size:13px;font-weight:600;white-space:nowrap;transition:background .2s}
+.btn-nav:hover{background:var(--ink-l)}
+@media(max-width:820px){.nav-links{display:none}}
+@media(max-width:560px){.nav-ph{display:none}}
+
+/* HERO — SPLIT LAYOUT */
+.hero{padding:64px 0 0;background:var(--cream)}
+.hero-inner{display:grid;grid-template-columns:1.15fr 1fr;gap:64px;align-items:center;padding-bottom:56px}
+.hero-overline{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.overline-line{width:28px;height:1.5px;background:var(--gold);flex-shrink:0}
+.overline-text{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.14em;text-transform:uppercase}
+.hero-h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,62px);line-height:1.08;color:var(--ink);margin-bottom:20px}
+.hero-h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.72;max-width:430px;margin-bottom:32px}
+.hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:36px}
+.btn-primary{background:var(--ink);color:#fff;border-radius:6px;padding:13px 30px;font-size:14.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;transition:background .2s}
+.btn-primary:hover{background:var(--ink-l)}
+.btn-phone{font-size:14.5px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.btn-phone svg{width:14px;height:14px;stroke:var(--gold)}
+.hero-proof-row{display:flex;gap:24px;padding-top:28px;border-top:1px solid var(--border);flex-wrap:wrap}
+.proof-item{display:flex;flex-direction:column;gap:2px}
+.proof-num{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1}
+.proof-lbl{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+
+/* HERO PHOTO GRID */
+.hero-photos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:190px 80px;gap:8px}
+.hero-photo{border-radius:12px;background-size:cover;background-position:center;background-color:var(--ink-l)}
+.hero-photo:first-child{grid-column:span 2;border-radius:14px}
+.hero-badge{grid-column:span 2;background:#fff;border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;border:1px solid var(--border)}
+.badge-icon{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge-icon svg{width:17px;height:17px;stroke:#fff}
+.badge-copy h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.badge-copy p{font-size:11px;color:var(--muted)}
+@media(max-width:820px){.hero-inner{grid-template-columns:1fr}.hero-photos{display:none}}
+
+/* SERVICES */
+.services{padding:72px 0;background:#fff}
+.sec-overline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sec-h2{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,42px);color:var(--ink);margin-bottom:28px;line-height:1.15}
+.tab-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:28px;background:var(--cream-d);border-radius:10px;padding:4px;width:fit-content;border:1px solid var(--border)}
+.tab-btn{border:none;background:none;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:7px;white-space:nowrap;transition:all .2s}
+.tab-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tab-panels .panel{display:none;animation:fadeP .3s ease}
+.tab-panels .panel.active{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@keyframes fadeP{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.svc-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.svc-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08);transform:translateY(-2px)}
+.svc-photo{height:140px;background-size:cover;background-position:center;background-color:var(--ink)}
+.svc-body{padding:18px}
+.svc-label{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.svc-card h3{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);margin-bottom:5px;line-height:1.25}
+.svc-card p{font-size:12.5px;color:var(--muted);line-height:1.6}
+@media(max-width:700px){.tab-panels .panel.active{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.tab-panels .panel.active{grid-template-columns:1fr 1fr;gap:10px}}
+
+/* PHOTO STRIP */
+.photo-strip{display:grid;grid-template-columns:2fr 1fr 1fr;height:240px;gap:8px;padding:0 var(--pad);max-width:var(--mw);margin:0 auto}
+.ps-item{border-radius:14px;background-size:cover;background-position:center;background-color:var(--ink-l)}
+@media(max-width:560px){.photo-strip{grid-template-columns:1fr 1fr;height:180px}.ps-item:last-child{display:none}}
+
+/* HOW IT WORKS */
+.how{padding:72px 0;background:var(--cream-d)}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.how-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:28px}
+.how-num{font-family:'DM Serif Display',serif;font-size:38px;color:var(--gold);margin-bottom:12px;line-height:1}
+.how-card h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:7px}
+.how-card p{font-size:13.5px;color:var(--muted);line-height:1.72}
+@media(max-width:640px){.how-grid{grid-template-columns:1fr}}
+
+/* COMPARISON TABLE */
+.compare{padding:72px 0;background:#fff}
+.compare-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:40px}
+.compare-table{width:100%;min-width:500px;border-collapse:collapse;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.compare-table th{padding:14px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:var(--cream)}
+.compare-table th:nth-child(2){background:var(--ink);color:#fff;text-align:center}
+.compare-table th:nth-child(3){text-align:center}
+.compare-table td{padding:13px 20px;border-bottom:1px solid var(--border);font-size:14px;color:var(--ink);font-weight:500}
+.compare-table td:nth-child(2){background:rgba(26,26,26,.03);text-align:center;font-weight:700;color:var(--green)}
+.compare-table td:nth-child(3){text-align:center;color:var(--muted)}
+.compare-table tbody tr:last-child td{border-bottom:none}
+.chk svg{width:16px;height:16px;stroke:var(--green);stroke-width:2.5;vertical-align:middle}
+.no svg{width:16px;height:16px;stroke:#C85250;stroke-width:2.5;vertical-align:middle}
+
+/* PULL QUOTE */
+.pullquote{background:var(--ink);padding:64px 0}
+.pq-inner{max-width:740px;margin:0 auto;text-align:center}
+.pq-stars{color:var(--gold-l);font-size:17px;letter-spacing:2px;margin-bottom:16px}
+.pq-mark{font-family:'DM Serif Display',serif;font-size:64px;line-height:.6;color:rgba(184,146,74,.3);margin-bottom:10px}
+.pq-text{font-family:'DM Serif Display',serif;font-size:clamp(19px,2.8vw,30px);font-style:italic;color:#fff;line-height:1.5;margin-bottom:20px}
+.pq-author{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase}
+
+/* REVIEWS */
+.reviews{padding:72px 0;background:var(--cream)}
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.rev-card{padding:24px;border:1px solid var(--border);border-radius:12px;background:#fff}
+.rev-stars{color:#C9A84C;font-size:13px;letter-spacing:1px;margin-bottom:12px}
+.rev-text{font-family:'DM Serif Display',serif;font-size:15px;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:14px}
+.rev-divider{height:1px;background:var(--border);margin-bottom:12px}
+.rev-author{font-size:12.5px;font-weight:700;color:var(--ink)}
+.rev-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+@media(max-width:680px){.rev-grid{grid-template-columns:1fr}}
+
+/* COUNTIES */
+.areas{padding:72px 0;background:#fff}
+.county-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:32px}
+.county-card{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:16px;transition:border-color .2s}
+.county-card:hover{border-color:var(--gold)}
+.county-name{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.county-cities{font-size:11px;color:var(--muted);line-height:1.45}
+@media(max-width:640px){.county-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.county-grid{grid-template-columns:1fr}}
+
+/* BOOKING */
+.booking{padding:72px 0;background:var(--cream-d);scroll-margin-top:110px}
+.booking-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.booking-copy h2{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,40px);color:var(--ink);margin-bottom:12px;line-height:1.2}
+.booking-copy h2 em{font-style:italic;color:var(--gold)}
+.booking-copy p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+.booking-perks{display:flex;flex-direction:column;gap:10px}
+.perk{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:500;color:var(--ink)}
+.perk svg{width:15px;height:15px;stroke:var(--green);stroke-width:2.5;flex-shrink:0}
+.form-wrap{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.05);transition:box-shadow .4s}
+.form-wrap.glow{box-shadow:0 0 0 2px var(--gold),0 4px 24px rgba(0,0,0,.08)}
+
+/* STEP INDICATOR */
+.step-indicator{display:flex;align-items:center;margin-bottom:22px}
+.step-dot{width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--muted);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+.step-dot.done{background:var(--green);color:#fff}
+.step-dot.active{background:var(--ink);color:#fff}
+.step-line{flex:1;height:1.5px;background:var(--border);transition:background .3s}
+.step-line.done{background:var(--green)}
+.form-step{display:none}
+.form-step.active{display:block;animation:fadeP .3s ease}
+.form-step-title{font-family:'DM Serif Display',serif;font-size:19px;color:var(--ink);margin-bottom:3px}
+.form-step-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+
+/* CHECKBOX SERVICES */
+.svc-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.svc-check{display:flex;align-items:center;gap:8px;border:1.5px solid var(--border);border-radius:8px;padding:9px 11px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--ink);transition:all .2s;user-select:none}
+.svc-check:has(input:checked){border-color:var(--ink);background:var(--cream);color:var(--ink)}
+.svc-check input{display:none}
+.cb{width:15px;height:15px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;transition:all .2s}
+.svc-check:has(input:checked) .cb{background:var(--ink);border-color:var(--ink)}
+.svc-check:has(input:checked) .cb::after{content:'';width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px);display:block}
+.svc-check.full{grid-column:span 2}
+.form-error{font-size:12px;color:#C85250;margin-top:4px;display:none}
+.form-error.show{display:block}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:11.5px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field label .req{color:#C85250}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--ink);background:#fff;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--ink)}
+.field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A7265' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-next,.btn-submit-form{width:100%;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:13px;font-family:'DM Sans',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:6px}
+.btn-next:hover,.btn-submit-form:hover{background:var(--ink-l)}
+.btn-back{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;padding:9px 0;display:block;margin-top:4px}
+.btn-back:hover{color:var(--ink)}
+.form-success{display:none;text-align:center;padding:16px 0}
+.form-success svg{width:48px;height:48px;stroke:var(--green);margin:0 auto 14px}
+.form-success h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);margin-bottom:7px}
+.form-success p{font-size:13.5px;color:var(--muted);line-height:1.65}
+@media(max-width:720px){.booking-inner{grid-template-columns:1fr}}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}.svc-check-grid{grid-template-columns:1fr}.svc-check.full{grid-column:span 1}}
+
+/* FAQ */
+.faq{padding:72px 0;background:var(--cream)}
+.faq-list{max-width:680px;margin-top:40px;display:flex;flex-direction:column}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{width:100%;background:none;border:none;padding:20px 0;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.faq-q svg{width:15px;height:15px;stroke:var(--muted);flex-shrink:0;transition:transform .3s}
+.faq-item.open .faq-q svg{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a-inner{padding:0 0 20px;font-size:14.5px;color:var(--muted);line-height:1.75}
+
+/* CTA */
+.cta-block{background:var(--ink);padding:72px 0;text-align:center}
+.cta-block h2{font-family:'DM Serif Display',serif;font-size:clamp(26px,5vw,52px);color:#fff;margin-bottom:10px;line-height:1.15}
+.cta-block h2 em{font-style:italic;color:var(--gold-l)}
+.cta-block p{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:32px}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-cta-gold{background:var(--gold);color:#fff;border-radius:6px;padding:14px 32px;font-size:15px;font-weight:600;transition:opacity .2s}
+.btn-cta-gold:hover{opacity:.9}
+.btn-cta-outline{border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);border-radius:6px;padding:14px 28px;font-size:15px;font-weight:500;transition:all .2s}
+.btn-cta-outline:hover{border-color:#fff;color:#fff}
+
+/* FOOTER */
+footer{background:#141210;padding:44px 0 26px;color:rgba(255,255,255,.35)}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:32px}
+.ft-brand h3{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;margin-bottom:8px}
+.ft-brand p{font-size:13px;line-height:1.7;max-width:260px}
+.ft-col h4{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.ft-col li a{font-size:13px;color:rgba(255,255,255,.35);transition:color .2s}
+.ft-col li a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:20px;display:flex;justify-content:space-between;font-size:11.5px;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.footer-top{grid-template-columns:1fr}}
+
+/* MOBILE STICKY BAR */
+.mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--cream);border-top:1px solid var(--border);padding:12px 16px;gap:10px}
+.mob-call{flex:1;background:#fff;color:var(--ink);border:1.5px solid var(--border);border-radius:6px;padding:11px 8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;text-decoration:none}
+.mob-call svg{width:13px;height:13px;stroke:var(--gold);flex-shrink:0}
+.mob-book{flex:1.6;background:var(--ink);color:#fff;border:none;border-radius:6px;padding:11px 8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+@media(max-width:768px){body{padding-bottom:84px}}
+
+.fade{transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+.fade.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+
+
+/* =========================================================
+   PREMIUM VISUAL PASS — ORIGINAL STRUCTURE/COPY PRESERVED
+   Keeps: services labels, tabs, 3-step process, comparison table,
+   booking form behavior, FAQ copy, and original sales copy style.
+   ========================================================= */
+:root{
+  --cream:#F6F8FB;
+  --cream-d:#EAF0F7;
+  --ink:#07111F;
+  --ink-l:#12233A;
+  --gold:#F97316;
+  --gold-l:#FDBA74;
+  --green:#1E6B73;
+  --green-l:#DDF7F2;
+  --muted:#64748B;
+  --border:#DCE5F0;
+  --pad:clamp(18px,4vw,62px);
+  --mw:1180px;
+  --blue:#1E3A5F;
+  --blue-l:#3B82A0;
+  --shadow:0 24px 70px rgba(7,17,31,.12);
+  --shadow-soft:0 14px 40px rgba(7,17,31,.09);
+}
+body{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(59,130,160,.13),transparent 34%),
+    radial-gradient(circle at 86% 12%,rgba(249,115,22,.11),transparent 28%),
+    var(--cream);
+  color:var(--ink);
+}
+.wrap{max-width:var(--mw)}
+#preview-bar{background:linear-gradient(90deg,#EA580C,#F97316);box-shadow:0 10px 30px rgba(249,115,22,.22)}
+#urg{background:#07111F;color:rgba(255,255,255,.72);border-bottom:1px solid rgba(255,255,255,.08)}
+#urg strong{color:#FDBA74}
+#nav{background:rgba(246,248,251,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(220,229,240,.86)}
+#nav.on{box-shadow:0 18px 55px rgba(7,17,31,.10)}
+.nav-i{height:74px}
+.logo-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#07111F,#1E3A5F);box-shadow:0 14px 35px rgba(7,17,31,.24)}
+.logo-text{font-family:'DM Sans',system-ui,sans-serif;font-size:18px;font-weight:800;letter-spacing:-.04em}
+.logo-text small{font-size:9px;color:#6B7D93;letter-spacing:.18em;margin-top:1px}
+.nav-links a{font-weight:700;color:#64748B}
+.nav-links a:hover{color:#07111F}
+.nav-ph{background:#fff;border:1px solid var(--border);padding:10px 14px;border-radius:999px;box-shadow:0 10px 28px rgba(7,17,31,.06)}
+.nav-ph svg{stroke:#F97316}
+.btn-nav,.btn-primary,.btn-next,.btn-submit-form{border-radius:999px;background:linear-gradient(135deg,#07111F,#1E3A5F);box-shadow:0 16px 32px rgba(7,17,31,.18)}
+.btn-nav:hover,.btn-primary:hover,.btn-next:hover,.btn-submit-form:hover{background:linear-gradient(135deg,#0B1828,#244568);transform:translateY(-1px)}
+.hero{position:relative;padding:84px 0 0;background:linear-gradient(135deg,#07111F 0%,#0D1C2E 50%,#14304B 100%);overflow:hidden}
+.hero::before{content:'';position:absolute;inset:auto -12% -34% -12%;height:54%;background:radial-gradient(ellipse at center,rgba(59,130,160,.28),transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.45),transparent 72%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;grid-template-columns:1.05fr .95fr;gap:72px;padding-bottom:78px}
+.overline-line{background:#F97316;width:42px;height:2px;border-radius:99px}
+.overline-text{color:#FDBA74;font-weight:800;letter-spacing:.18em}
+.hero-h1{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;letter-spacing:-.07em;font-size:clamp(44px,6.4vw,82px);line-height:.93;color:#fff;margin-bottom:24px}
+.hero-h1 em{font-family:'DM Serif Display',serif;font-weight:400;letter-spacing:-.03em;color:#FDBA74;text-shadow:0 14px 40px rgba(249,115,22,.25)}
+.hero-sub{color:rgba(255,255,255,.70);font-size:clamp(16px,1.6vw,19px);max-width:520px;line-height:1.72}
+.btn-primary{padding:15px 34px;font-size:15px;background:linear-gradient(135deg,#F97316,#EA580C);box-shadow:0 18px 42px rgba(249,115,22,.32)}
+.btn-primary:hover{background:linear-gradient(135deg,#FB923C,#F97316)}
+.btn-phone{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:14px 20px;border-radius:999px;backdrop-filter:blur(12px)}
+.btn-phone svg{stroke:#FDBA74}
+.hero-proof-row{border-top:1px solid rgba(255,255,255,.13);gap:14px}
+.proof-item{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px 16px;min-width:132px;backdrop-filter:blur(14px)}
+.proof-num{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;color:#fff;font-size:24px;letter-spacing:-.04em}
+.proof-lbl{color:rgba(255,255,255,.58);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.1em}
+.hero-photos{grid-template-rows:250px 118px;gap:14px;filter:drop-shadow(0 35px 70px rgba(0,0,0,.34))}
+.hero-photo{border-radius:26px;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+.hero-photo::after,.svc-photo::after,.ps-item::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(7,17,31,.18));pointer-events:none}
+.hero-photo:first-child{border-radius:34px}
+.hero-badge{border-radius:22px;padding:18px 20px;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.82);box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.badge-icon{border-radius:14px;background:linear-gradient(135deg,#1E6B73,#1E3A5F)}
+.badge-copy h4{font-size:14px}.badge-copy p{font-size:12px;color:#64748B}
+.services,.compare,.areas{background:#fff;position:relative}
+.services{padding-top:88px}.how,.booking{background:linear-gradient(180deg,#EAF0F7,#F6F8FB)}
+.sec-h2,.booking-copy h2,.cta-block h2{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;letter-spacing:-.055em;line-height:.98}
+.sec-h2 em,.booking-copy h2 em,.cta-block h2 em{font-family:'DM Serif Display',serif;font-weight:400;color:#F97316;letter-spacing:-.02em}
+.tab-nav{background:#EEF4FA;border:1px solid #DCE5F0;border-radius:999px;padding:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.tab-btn{border-radius:999px;padding:10px 18px;font-weight:800;color:#64748B}
+.tab-btn.active{background:#07111F;color:#fff;box-shadow:0 12px 28px rgba(7,17,31,.16)}
+.tab-panels .panel.active{gap:20px}
+.svc-card{background:#fff;border:1px solid #DCE5F0;border-radius:26px;box-shadow:0 10px 35px rgba(7,17,31,.06)}
+.svc-card:hover{box-shadow:var(--shadow-soft);transform:translateY(-4px)}
+.svc-photo{height:156px;position:relative;border-bottom:1px solid rgba(220,229,240,.8)}
+.svc-body{padding:22px}
+.svc-label{color:#F97316;font-weight:900;letter-spacing:.14em}
+.svc-card h3{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;font-size:17px;letter-spacing:-.025em}
+.svc-card p{font-size:13px;color:#64748B}
+.photo-strip{height:290px;gap:14px;margin-top:4px;margin-bottom:4px}
+.ps-item{border-radius:30px;position:relative;overflow:hidden;box-shadow:var(--shadow-soft)}
+.how{padding:88px 0}
+.how-grid{gap:20px}
+.how-card{background:rgba(255,255,255,.78);border:1px solid rgba(220,229,240,.94);border-radius:28px;padding:32px;box-shadow:0 18px 55px rgba(7,17,31,.07);backdrop-filter:blur(16px)}
+.how-num{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;color:#F97316;font-size:44px;letter-spacing:-.07em}
+.how-card h3{font-size:18px;letter-spacing:-.02em}.how-card p{color:#64748B}
+.compare{padding:88px 0}
+.compare-table{border:0;border-radius:28px;overflow:hidden;box-shadow:var(--shadow-soft);background:#fff}
+.compare-table th{padding:18px 22px;background:#EEF4FA;color:#64748B}
+.compare-table th:nth-child(2){background:linear-gradient(135deg,#07111F,#1E3A5F);color:#fff}
+.compare-table td{padding:17px 22px;border-bottom:1px solid #EAF0F7}
+.compare-table td:nth-child(2){background:#F0FDFA;color:#1E6B73}.compare-table td:nth-child(3){background:#FFF7ED;color:#7C2D12}
+.chk svg{stroke:#1E6B73}.no svg{stroke:#EA580C}
+.pullquote{background:linear-gradient(135deg,#07111F,#10233A);position:relative;overflow:hidden}
+.pullquote::before{content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(249,115,22,.14);filter:blur(20px);top:-300px;right:-190px}
+.pq-text{font-size:clamp(22px,3vw,36px)}.pq-mark{color:rgba(249,115,22,.28)}.pq-stars{color:#FDBA74}
+.reviews{background:#F6F8FB}.rev-card{border-radius:24px;border:1px solid #DCE5F0;box-shadow:0 12px 38px rgba(7,17,31,.06)}
+.rev-text{font-size:16px}.rev-stars{color:#F59E0B}
+.county-card{background:#F8FAFC;border-radius:20px;padding:18px}.county-card:hover{border-color:#F97316;box-shadow:0 12px 30px rgba(7,17,31,.06)}
+.booking{padding:94px 0}.booking-inner{gap:68px}.booking-copy p{font-size:16px;color:#64748B;max-width:470px}
+.perk{background:rgba(255,255,255,.65);border:1px solid rgba(220,229,240,.9);border-radius:16px;padding:12px 14px}.perk svg{stroke:#1E6B73}
+.form-wrap{border-radius:32px;padding:32px;border:1px solid rgba(220,229,240,.96);box-shadow:var(--shadow);background:rgba(255,255,255,.92);backdrop-filter:blur(18px)}
+.form-wrap.glow{box-shadow:0 0 0 3px rgba(249,115,22,.35),var(--shadow)}
+.step-dot{width:34px;height:34px;background:#EAF0F7}.step-dot.active{background:#07111F}.step-dot.done{background:#1E6B73}.step-line{height:3px;background:#EAF0F7;border-radius:999px}.step-line.done{background:#1E6B73}
+.form-step-title{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;font-size:22px;letter-spacing:-.04em}.form-step-sub{color:#64748B}
+.svc-check{border-radius:16px;padding:12px 13px;background:#F8FAFC;border-color:#DCE5F0;font-weight:800;color:#243548}
+.svc-check:hover{border-color:#9CB2CA;background:#fff}.svc-check:has(input:checked){border-color:#07111F;background:#EEF4FA}.cb{border-radius:6px}.svc-check:has(input:checked) .cb{background:#07111F;border-color:#07111F}
+.field label{font-weight:800}.field input,.field select,.field textarea{border-radius:14px;padding:13px 15px;border-color:#DCE5F0;background:#F8FAFC}.field input:focus,.field select:focus,.field textarea:focus{border-color:#1E3A5F;background:#fff;box-shadow:0 0 0 4px rgba(30,58,95,.08)}
+.faq{background:#fff}.faq-list{background:#F8FAFC;border:1px solid #DCE5F0;border-radius:28px;padding:4px 22px;max-width:800px;box-shadow:0 12px 38px rgba(7,17,31,.05)}.faq-q{font-weight:900;font-size:16px}.faq-a-inner{color:#64748B}
+.cta-block{background:linear-gradient(135deg,#07111F,#14304B);position:relative;overflow:hidden}.cta-block::after{content:'';position:absolute;inset:auto -10% -70% -10%;height:90%;background:radial-gradient(ellipse at center,rgba(249,115,22,.2),transparent 62%)}.cta-block .wrap{position:relative;z-index:1}.cta-block p{color:rgba(255,255,255,.68)}
+.btn-cta-gold{border-radius:999px;background:linear-gradient(135deg,#F97316,#EA580C);box-shadow:0 18px 42px rgba(249,115,22,.28)}.btn-cta-outline{border-radius:999px;background:rgba(255,255,255,.08);backdrop-filter:blur(12px)}
+footer{background:#050B13}.footer-top{padding-top:8px}.ft-brand h3{font-family:'DM Sans',system-ui,sans-serif;font-weight:900;letter-spacing:-.03em}
+.mob-bar{background:rgba(246,248,251,.9);backdrop-filter:blur(18px);box-shadow:0 -14px 40px rgba(7,17,31,.12)}.mob-call,.mob-book{border-radius:999px}.mob-book{background:linear-gradient(135deg,#07111F,#1E3A5F)}
+@media(max-width:820px){.hero{padding-top:60px}.hero-inner{gap:40px}.hero-h1{font-size:clamp(46px,12vw,68px)}.hero-actions{align-items:stretch}.btn-primary,.btn-phone{justify-content:center}.hero-photos{display:grid;grid-template-rows:220px 104px}.hero-proof-row{display:grid;grid-template-columns:1fr}.proof-item{min-width:0}.tab-nav{width:100%;justify-content:space-between}.tab-btn{flex:1;text-align:center}.photo-strip{height:220px}.compare-table{min-width:620px}}
+@media(max-width:560px){.hero-photos{display:none}.nav-i{height:68px}.services,.how,.compare,.areas,.booking,.faq{padding-top:68px;padding-bottom:68px}.form-wrap{padding:22px;border-radius:24px}.tab-nav{border-radius:22px}.tab-btn{font-size:12px;padding:10px 8px}.hero-sub{font-size:16px}.proof-item{padding:13px}}
+
+
+/* === MOBILE FIX PASS: preserve original functionality/copy while making the premium skin responsive === */
+:root{--preview-h:36px;--urg-h:36px;--sticky-top:72px}
+#preview-bar{display:block;position:sticky;top:0;z-index:260;min-height:36px}
+#urg{display:block;position:sticky;top:var(--preview-h);z-index:259;min-height:34px}
+#nav{top:var(--sticky-top)}
+
+/* Keep the mobile bottom bar closer to the original working version */
+.mob-bar{background:var(--cream)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-top:1px solid var(--border)!important;box-shadow:0 -8px 24px rgba(7,17,31,.10)!important;padding:10px 14px calc(10px + env(safe-area-inset-bottom))!important;gap:8px!important}
+.mob-call,.mob-book{border-radius:12px!important;min-height:52px!important;font-size:14px!important;font-weight:700!important;line-height:1.15!important;box-shadow:none!important;letter-spacing:-.01em}
+.mob-call{background:#fff!important;color:var(--ink)!important;border:1.5px solid var(--border)!important}
+.mob-book{background:var(--ink)!important;color:#fff!important;border:1.5px solid var(--ink)!important}
+
+/* Form containment + easier mobile tapping */
+.form-wrap{max-width:100%;overflow:hidden}
+.field input,.field select,.field textarea{max-width:100%;min-width:0}
+.field-row,.svc-check-grid{min-width:0}
+
+@media(max-width:820px){
+  :root{--pad:18px}
+  body{overflow-x:hidden}
+  .wrap{width:100%;max-width:100%;padding-left:var(--pad);padding-right:var(--pad)}
+  #preview-bar{font-size:11px;line-height:1.35;padding:8px 12px}
+  #urg{font-size:11px;line-height:1.35;padding:8px 12px;letter-spacing:.04em}
+  .nav-i{height:64px;gap:10px}
+  .logo-mark{width:36px;height:36px;border-radius:12px}
+  .logo-text{font-size:16px}
+  .btn-nav{padding:10px 14px;font-size:12px}
+  .hero{padding-top:44px}
+  .hero-inner{display:block;padding-bottom:44px}
+  .hero-h1{font-size:clamp(42px,13vw,64px);line-height:.95;letter-spacing:-.06em}
+  .hero-sub{max-width:100%;font-size:16px;line-height:1.65}
+  .hero-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:24px}
+  .btn-primary,.btn-phone{width:100%;justify-content:center;text-align:center;padding:14px 16px}
+  .hero-proof-row{grid-template-columns:1fr 1fr;gap:10px;padding-top:18px}
+  .proof-item{padding:12px;border-radius:14px;min-width:0}
+  .proof-num{font-size:20px}.proof-lbl{font-size:9px}
+  .hero-photos{display:grid;grid-template-rows:190px 82px;margin-top:28px;gap:10px}
+  .hero-photo:first-child{border-radius:22px}.hero-photo{border-radius:18px}.hero-badge{border-radius:18px;padding:14px}
+  .tab-panels .panel.active{grid-template-columns:1fr 1fr;gap:12px}
+  .svc-card{border-radius:20px}.svc-photo{height:132px}.svc-body{padding:16px}.svc-card h3{font-size:15px}.svc-card p{font-size:12px}
+  .how-grid,.rev-grid{grid-template-columns:1fr;gap:14px}
+  .how-card{border-radius:22px;padding:24px}
+  .booking-inner{display:block}
+  .booking-copy{margin-bottom:24px}
+  .booking-perks{gap:8px}.perk{padding:10px 12px;border-radius:14px;font-size:13px;align-items:flex-start}
+}
+
+@media(max-width:560px){
+  :root{--pad:16px}
+  #preview-bar{position:relative;top:auto;z-index:1;box-shadow:none}
+  #urg{position:relative;top:auto;z-index:1}
+  #nav{top:0!important}
+  .nav-i{height:62px}
+  .btn-nav{padding:9px 12px;max-width:132px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .logo-text small{font-size:8px}
+  .hero{padding-top:34px}
+  .hero-photos{display:none}
+  .hero-proof-row{grid-template-columns:1fr}
+  .services,.how,.compare,.areas,.booking,.faq{padding-top:56px!important;padding-bottom:56px!important}
+  .sec-h2,.booking-copy h2{font-size:clamp(28px,9vw,38px);line-height:1.02;letter-spacing:-.045em}
+  .tab-nav{width:100%;display:flex;gap:6px;border-radius:18px;padding:5px}
+  .tab-btn{flex:1;border-radius:14px;font-size:12.5px;padding:12px 6px;text-align:center;white-space:nowrap}
+  .tab-panels .panel.active{grid-template-columns:1fr 1fr;gap:12px}
+  .svc-photo{height:150px}
+  .photo-strip{display:none}
+
+  /* Prevent comparison clipping: keep the same table concept, but compress it to the viewport */
+  .compare-scroll{overflow:visible;margin-top:28px;width:100%}
+  .compare-table{min-width:0!important;width:100%!important;table-layout:fixed;border-radius:18px;box-shadow:0 10px 30px rgba(7,17,31,.08)}
+  .compare-table th,.compare-table td{padding:10px 6px!important;font-size:11px!important;line-height:1.25;white-space:normal;word-break:normal;overflow-wrap:anywhere;vertical-align:middle}
+  .compare-table th:first-child,.compare-table td:first-child{width:42%;text-align:left}
+  .compare-table th:nth-child(2),.compare-table td:nth-child(2),.compare-table th:nth-child(3),.compare-table td:nth-child(3){width:29%;text-align:center}
+  .compare-table svg{width:12px!important;height:12px!important;margin-right:2px;vertical-align:-2px}
+
+  /* Form mobile polish */
+  .booking{scroll-margin-top:80px}
+  .form-wrap{padding:18px!important;border-radius:20px!important;margin-left:auto;margin-right:auto;box-shadow:0 12px 34px rgba(7,17,31,.10)}
+  .step-indicator{margin-bottom:18px}
+  .step-dot{width:28px;height:28px;font-size:11px}.step-line{height:2px}
+  .form-step-title{font-size:20px;line-height:1.15}.form-step-sub{font-size:12px;margin-bottom:14px}
+  .svc-check-grid{grid-template-columns:1fr!important;gap:8px}
+  .svc-check,.svc-check.full{grid-column:auto!important;border-radius:12px!important;padding:11px 12px!important;font-size:13px!important;line-height:1.25;align-items:center}
+  .cb{width:16px;height:16px;flex:0 0 16px}
+  .field-row{grid-template-columns:1fr!important;gap:0!important}
+  .field{margin-bottom:10px}.field label{font-size:12px}
+  .field input,.field select,.field textarea{font-size:16px!important;line-height:1.2;padding:12px 13px!important;border-radius:12px!important;width:100%}
+  .btn-next,.btn-submit-form{border-radius:12px!important;padding:14px 12px!important;font-size:15px!important;margin-top:8px}
+  .btn-back{padding:12px 0;font-size:13px}
+  .faq-list{border-radius:20px;padding:0 14px}.faq-q{font-size:14px;line-height:1.3;padding:17px 0}.faq-a-inner{font-size:13.5px;line-height:1.6}
+  footer{padding-bottom:86px}
+  body{padding-bottom:76px!important}
+}
+
+
+/* image audit fix: every visual is mobile-mechanic / car repair / car part focused */
+.hero-photo,.svc-photo,.ps-item{background-repeat:no-repeat;background-size:cover;background-position:center}
+.svc-photo{position:relative;isolation:isolate}
+.svc-photo::after,.hero-photo::after,.ps-item::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,17,31,.02),rgba(7,17,31,.18));pointer-events:none}
+.hero-photo,.svc-photo,.ps-item{overflow:hidden}
+
+
+
+/* SERVICE DETAIL MODAL */
+.svc-card{cursor:pointer;position:relative}
+.svc-card:focus-visible{outline:3px solid rgba(249,115,22,.55);outline-offset:4px}
+.svc-card::before{content:'View details';position:absolute;top:12px;right:12px;z-index:2;background:rgba(255,255,255,.92);color:#0B1728;border:1px solid rgba(220,229,240,.85);border-radius:999px;padding:7px 10px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:0;transform:translateY(-4px);transition:opacity .22s ease,transform .22s ease;box-shadow:0 10px 22px rgba(7,17,31,.16)}
+.svc-card:hover::before,.svc-card:focus-visible::before{opacity:1;transform:translateY(0)}
+.service-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(7,17,31,.72);backdrop-filter:blur(10px)}
+.service-modal.open{display:flex}
+.service-modal-card{width:min(780px,100%);max-height:min(88vh,760px);overflow:auto;background:#fff;border:1px solid rgba(220,229,240,.95);border-radius:30px;box-shadow:0 40px 110px rgba(0,0,0,.38);position:relative;color:#0B1728}
+.service-modal-hero{height:230px;background-size:cover;background-position:center;border-radius:30px 30px 0 0;position:relative;overflow:hidden;background-color:#0B1728}
+.service-modal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,17,31,.04),rgba(7,17,31,.36))}
+.service-modal-close{position:absolute;top:16px;right:16px;z-index:3;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.44);background:rgba(7,17,31,.72);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(0,0,0,.24)}
+.service-modal-body{padding:28px 30px 30px}
+.service-modal-kicker{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#f97316;margin-bottom:9px}
+.service-modal-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,42px);line-height:1.05;margin-bottom:10px;color:#07111F}
+.service-modal-desc{font-size:15.5px;line-height:1.72;color:#5f6f82;margin-bottom:22px;max-width:660px}
+.service-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+.service-modal-box{border:1px solid rgba(220,229,240,.95);background:#F8FAFC;border-radius:20px;padding:18px}
+.service-modal-box h4{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#0B1728;margin-bottom:10px}
+.service-modal-box ul{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.service-modal-box li{font-size:13.5px;line-height:1.45;color:#5f6f82;position:relative;padding-left:18px}
+.service-modal-box li::before{content:'•';position:absolute;left:0;color:#f97316;font-weight:900}
+.service-modal-note{border-left:4px solid #f97316;background:#fff7ed;border-radius:16px;padding:14px 16px;color:#6b4a2d;font-size:13.5px;line-height:1.55;margin-bottom:22px}
+.service-modal-actions{display:flex;gap:12px;flex-wrap:wrap}
+.service-modal-actions a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap}
+.service-modal-book{background:#f97316;color:#fff;box-shadow:0 18px 32px rgba(249,115,22,.24)}
+.service-modal-call{background:#0B1728;color:#fff}
+.service-modal-secondary{color:#60738a;font-size:12.5px;margin-top:12px;line-height:1.5}
+body.modal-open{overflow:hidden}
+@media(max-width:640px){
+  .service-modal{align-items:flex-end;padding:12px;background:rgba(7,17,31,.76)}
+  .service-modal-card{max-height:92vh;border-radius:24px 24px 18px 18px}
+  .service-modal-hero{height:176px;border-radius:24px 24px 0 0}
+  .service-modal-body{padding:22px 18px 20px}
+  .service-modal-grid{grid-template-columns:1fr;gap:10px}
+  .service-modal-actions{display:grid;grid-template-columns:1fr;gap:9px}
+  .service-modal-actions a{width:100%;padding:14px 18px}
+  .service-modal-close{top:12px;right:12px;width:40px;height:40px}
+  .svc-card::before{opacity:1;transform:none;top:10px;right:10px;font-size:9px;padding:6px 9px}
+}
+
+
+/* === SCALINGSOS MOBILE OVERRIDES === */
+@media(max-width:820px){
+  /* Full-width sticky bottom bar */
+  .mob-bar{
+    display:flex!important;
+    position:fixed!important;
+    bottom:0!important;
+    left:0!important;
+    right:0!important;
+    z-index:9999!important;
+    background:#fff!important;
+    border-top:1px solid #e5e7eb!important;
+    box-shadow:0 -4px 20px rgba(0,0,0,.08)!important;
+    padding:12px 16px!important;
+    gap:10px!important;
+    flex-direction:row!important;
+  }
+  .mob-call,.mob-book{
+    flex:1!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px!important;
+    min-height:52px!important;
+    font-size:14px!important;
+    font-weight:700!important;
+    border-radius:12px!important;
+    text-decoration:none!important;
+    text-align:center!important;
+    padding:14px 12px!important;
+    box-sizing:border-box!important;
+    white-space:nowrap!important;
+  }
+  .mob-call{
+    background:#fff!important;
+    color:#111!important;
+    border:1.5px solid #d1d5db!important;
+  }
+  .mob-book{
+    background:#111827!important;
+    color:#fff!important;
+    border:none!important;
+  }
+  /* Hide nav book button on mobile — mob-bar handles it */
+  .btn-nav{display:none!important}
+  /* Body padding so content isn't hidden behind sticky bar */
+  body{padding-bottom:80px!important}
+}
+</style>
+<style id="brand-x">:root{--gold:#001c7e !important}.logo-img{height:38px;width:auto;max-width:160px;object-fit:contain}.svc-about{max-width:760px;color:var(--ink-l);font-size:16px;line-height:1.6;margin:-8px 0 26px}.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.svc-card2{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;transition:.2s}.svc-card2:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,.06);transform:translateY(-2px)}.svc-ic{display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;border-radius:10px;background:var(--gold-l);color:var(--ink);margin-bottom:14px}.svc-ic svg{width:22px;height:22px}.svc-card2 h3{font-size:18px;margin-bottom:8px;color:var(--ink)}.svc-card2 p{font-size:14px;color:var(--muted);line-height:1.55}@media(max-width:560px){.svc-grid{grid-template-columns:1fr 1fr;gap:10px}.svc-card2{padding:16px}}</style><style id="bp">:root{--purple-900:#010b2f;--purple-800:#03103e;--purple-700:#061756;--purple-500:#001c7e;--purple-300:#4264de;--lavender-200:#aeb9e0;--lavender-100:#c8cee4;--green-900:#010b2f;--green-800:#03103e;--green-700:#061756;--green-500:#001c7e;--green-300:#4264de;--sage-200:#aeb9e0;--sage-100:#c8cee4;--red:#001c7e;--orange:#001c7e;--cream:#e8e9ed;--cream-2:#eeeff1;--card:#f4f5f5;--clay:#001c7e;--clay-dark:#001767;--gold:#3959c6;--gold-soft:#95a0c8;--ink:#171921;--muted:#4d5a89;--line:#b9c1df;--gold:#001c7e;--green:#001c7e;--blue:#010b2f;}</style></head>
+<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 3023</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+<div id="preview-bar">Launch this site — Call or text Vince <a href="tel:7867676791">(786) 767-6791</a> — No monthly fees.</div>
+<div id="urg">Same-day availability — Same-Day Car Repair · <span id="urg-location">Four Corners, FL</span></div>
+<nav id="nav">
+<div class="wrap nav-i">
+<a class="nav-logo" href="#">
+<div class="logo-mark"><svg viewbox="0 0 24 24"><rect height="13" rx="2" width="15" x="1" y="3"></rect><path d="M16 8h4l3 5v3h-7V8z"></path><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+<div class="logo-text">On Call Diesel Service<small>Mobile Mechanics</small></div>
+</a>
+<ul class="nav-links">
+<li><a href="#services">Services</a></li>
+<li><a href="#how">How It Works</a></li>
+<li><a href="#reviews">Reviews</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+<div class="nav-r">
+<a class="nav-ph" href="tel:4709180516"><svg viewbox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>(470) 918-0516</a>
+<a class="btn-nav book-link" href="#booking">Book Service</a>
+</div>
+</div>
+</nav>
+<!-- HERO - images audited: no generic shop photos; visuals are mobile mechanic/on-site repair/car parts focused -->
+<section class="hero">
+<div class="wrap">
+<div class="hero-inner">
+<div>
+<div class="hero-overline"><div class="overline-line"></div><div class="overline-text">Same-Day Car Repair · Four Corners, FL</div></div>
+<h1 class="hero-h1">Expert Mobile Diesel Repairs On-Site</h1>
+<p class="hero-sub">On Call Diesel Service brings professional diesel repair directly to you, ensuring minimal downtime for your vehicle.</p>
+<div class="hero-actions">
+<a class="btn-primary book-link" href="#booking">Book Same-Day Service</a>
+<a class="btn-phone" href="tel:4709180516"><svg viewbox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>(470) 918-0516</a>
+</div>
+<div class="hero-proof-row">
+<div class="proof-item"><div class="proof-num">500+</div><div class="proof-lbl">Jobs Completed</div></div>
+<div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-lbl">127 Google Reviews</div></div>
+<div class="proof-item"><div class="proof-num">Same Day</div><div class="proof-lbl">Service Available</div></div>
+</div>
+</div>
+<div class="hero-photos">
+<div class="hero-photo" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-01-c2c0e872.webp');background-color:#2a2018"></div>
+<div class="hero-photo" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-02-6bd9e71d.webp');background-color:#1a1820"></div>
+<div class="hero-photo" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-03-51b3c5f8.webp');background-color:#201a18"></div>
+<div class="hero-badge">
+<div class="badge-icon"><svg viewbox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+<div class="badge-copy"><h4>ASE Certified Technicians</h4><p>3-Year / 36,000-Mile Warranty on All Repairs</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SERVICES: TABS + PHOTO CARDS -->
+<section class="services" id="services">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">What We Fix</div></div>
+<h2 class="sec-h2 fade d1">Every Service,<br/><em>At Your Location.</em></h2><p class="svc-about fade d1">On Call Diesel Service is a dedicated mobile mechanic business located in Four Corners, FL. We specialize in providing on-site diesel repair services to keep your vehicles running smoothly.</p>
+<div class="svc-grid"><div class="svc-card" role="button" tabindex="0"><div class="svc-photo" style="background-image:url('https://demo.scalingsos.com/assets/svc/inspection.jpg');background-color:#0d1f2d"></div><div class="svc-body"><div class="svc-label">Mobile Service</div><h3>Mobile Diesel Repair</h3><p>Comprehensive repair services for diesel engines at your location.</p></div></div><div class="svc-card" role="button" tabindex="0"><div class="svc-photo" style="background-image:url('https://demo.scalingsos.com/assets/svc/inspection.jpg');background-color:#0d1f2d"></div><div class="svc-body"><div class="svc-label">Mobile Service</div><h3>Preventative Maintenance</h3><p>Regular maintenance services to prevent breakdowns and extend vehicle life.</p></div></div><div class="svc-card" role="button" tabindex="0"><div class="svc-photo" style="background-image:url('https://demo.scalingsos.com/assets/svc/diagnostic.jpg');background-color:#0d1f2d"></div><div class="svc-body"><div class="svc-label">Diagnostics</div><h3>Engine Diagnostics</h3><p>Advanced diagnostic services to identify and troubleshoot engine issues.</p></div></div><div class="svc-card" role="button" tabindex="0"><div class="svc-photo" style="background-image:url('https://demo.scalingsos.com/assets/svc/brake.jpg');background-color:#0d1f2d"></div><div class="svc-body"><div class="svc-label">Safety Critical</div><h3>Brake Services</h3><p>Complete brake repair and maintenance services for safety and performance.</p></div></div><div class="svc-card" role="button" tabindex="0"><div class="svc-photo" style="background-image:url('https://demo.scalingsos.com/assets/svc/inspection.jpg');background-color:#0d1f2d"></div><div class="svc-body"><div class="svc-label">Mobile Service</div><h3>Fuel System Repair</h3><p>Expert repair services for fuel system components to ensure optimal performance.</p></div></div></div></div></section>
+<!-- PHOTO STRIP -->
+<div class="photo-strip">
+<div class="ps-item" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-04-b657e0e5.webp');background-color:#2a2018"></div>
+<div class="ps-item" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-05-1bc01b3b.webp');background-color:#201820"></div>
+<div class="ps-item" style="background-image:url('https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/mechanic/mechanic-img-06-a52ecd98.webp');background-color:#182018"></div>
+</div>
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">The Process</div></div>
+<h2 class="sec-h2 fade d1">Three Steps. Fixed Today.</h2>
+<div class="how-grid">
+<div class="how-card fade"><div class="how-num">I.</div><h3>Book in 60 Seconds</h3><p>Tell us your vehicle, the issue, and your address. We confirm — usually same day — and lock your slot.</p></div>
+<div class="how-card fade d1"><div class="how-num">II.</div><h3>We Come to You</h3><p>Your certified mechanic arrives on time with all tools and parts. No towing. No drop-off. You stay put.</p></div>
+<div class="how-card fade d2"><div class="how-num">III.</div><h3>Approve &amp; Pay When Done</h3><p>You approve the flat-rate quote before we start. When fixed, you pay exactly what was quoted. Zero surprises.</p></div>
+</div>
+</div>
+</section>
+<!-- COMPARISON TABLE -->
+<section class="compare" id="compare">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">Why On Call Diesel Service</div></div>
+<h2 class="sec-h2 fade d1">Mobile Versus the<br/><em>Traditional Shop.</em></h2>
+<div class="compare-scroll">
+<table class="compare-table">
+<thead>
+<tr><th>What You Get</th><th>On Call Diesel Service Mobile</th><th>Traditional Shop</th></tr>
+</thead>
+<tbody>
+<tr><td>Mechanic comes to you</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Always</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> Never</td></tr>
+<tr><td>Same-day availability</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Usually</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> Rarely</td></tr>
+<tr><td>Upfront flat-rate pricing</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Always</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> Often Not</td></tr>
+<tr><td>No waiting room</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Yes</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> No</td></tr>
+<tr><td>No tow truck needed</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Yes</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> Often Required</td></tr>
+<tr><td>3-Year / 36K Mile Warranty</td><td class="chk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Included</td><td class="no"><svg viewbox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg> Varies</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- PULL QUOTE -->
+<section class="pullquote">
+<div class="wrap">
+<div class="pq-inner">
+<div class="pq-stars">★★★★★</div>
+<div class="pq-mark">“</div>
+<p class="pq-text">I called at 9am. The mechanic was at my door by noon. Changed my brakes right in my parking garage. I cannot believe this service exists.</p>
+<div class="pq-author">Marcus T. — Verified Customer · Brake Service</div>
+</div>
+</div>
+</section>
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">Client Reviews</div></div>
+<h2 class="sec-h2 fade d1">200+ Five-Star Reviews.</h2>
+<div class="rev-grid">
+<div class="rev-card fade"><div class="rev-stars">★★★★★</div><p class="rev-text">“Same-day oil change and they caught that my brakes were dangerously low. Saved me from a serious situation.”</p><div class="rev-divider"></div><div class="rev-author">David K.</div><div class="rev-meta">Verified Customer</div></div>
+<div class="rev-card fade d1"><div class="rev-stars">★★★★★</div><p class="rev-text">“Finally a mechanic I can actually trust. He showed me exactly what was wrong before touching anything.”</p><div class="rev-divider"></div><div class="rev-author">Ashley R.</div><div class="rev-meta">Verified Customer</div></div>
+<div class="rev-card fade d2"><div class="rev-stars">★★★★★</div><p class="rev-text">“Worth every penny. No waiting room, no shuttle, no hassle. Fixed my car right in my driveway.”</p><div class="rev-divider"></div><div class="rev-author">Jennifer P.</div><div class="rev-meta">Verified Customer</div></div>
+</div>
+</div>
+</section>
+<!-- COUNTIES -->
+<section class="areas" id="areas">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">Service Area</div></div>
+<h2 class="sec-h2 fade d1">Serving Metro Four Corners Counties.</h2>
+<div class="county-grid">
+
+</div>
+</div>
+</section>
+<!-- BOOKING FORM -->
+<section class="booking" id="booking">
+<div class="wrap">
+<div class="booking-inner">
+<div class="booking-copy">
+<div class="sec-overline"><div class="overline-line"></div><div class="overline-text">Book Your Appointment</div></div>
+<h2>Same-Day Service,<br/><em>Your Driveway.</em></h2>
+<p>Takes about 60 seconds. We confirm your slot and call to go over details before coming out. No obligation.</p>
+<div class="booking-perks">
+<div class="perk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>We come to your home, office, or parking lot</div>
+<div class="perk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Flat-rate quote you approve before we start</div>
+<div class="perk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>ASE-certified, 3-year warranty on all repairs</div>
+<div class="perk"><svg viewbox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Not sure what’s wrong? We diagnose on the spot</div>
+</div>
+</div>
+<div class="form-wrap" id="formWrap">
+<div class="step-indicator">
+<div class="step-dot active" id="dot1">1</div>
+<div class="step-line" id="line1"></div>
+<div class="step-dot" id="dot2">2</div>
+<div class="step-line" id="line2"></div>
+<div class="step-dot" id="dot3">3</div>
+</div>
+<!-- STEP 1: Services (checkboxes) -->
+<div class="form-step active" id="step1">
+<div class="form-step-title">What do you need?</div>
+<div class="form-step-sub">Step 1 of 3 — Select all that apply</div>
+<div class="svc-check-grid">
+<label class="svc-check"><input name="svc" type="checkbox" value="oil"/><span class="cb"></span>Oil &amp; Filter Change</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="brakes"/><span class="cb"></span>Brake &amp; Rotor Inspection &amp; Replacement</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="battery"/><span class="cb"></span>Battery Test &amp; Replace</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="engine"/><span class="cb"></span>Check Engine Light</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="ac"/><span class="cb"></span>AC Recharge &amp; Repair</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="inspect"/><span class="cb"></span>Pre-Purchase Inspection</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="alt"/><span class="cb"></span>Alternator</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="spark"/><span class="cb"></span>Spark Plugs</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="coolant"/><span class="cb"></span>Coolant / Radiator</label>
+<label class="svc-check"><input name="svc" type="checkbox" value="belt"/><span class="cb"></span>Serpentine Belt</label>
+<label class="svc-check full"><input id="svc-notsure" name="svc" type="checkbox" value="notsure"/><span class="cb"></span>Not Sure — Need a Diagnosis</label>
+</div>
+<div class="field" id="other-wrap" style="display:none">
+<label>Describe what’s happening</label>
+<textarea placeholder="e.g. Car won't start, strange noise when braking..." rows="2"></textarea>
+</div>
+<div class="form-error" id="svc-error">Please select at least one service to continue.</div>
+<button class="btn-next" onclick="goNext(1)">Continue →</button>
+</div>
+<!-- STEP 2: Vehicle -->
+<div class="form-step" id="step2">
+<div class="form-step-title">Your vehicle</div>
+<div class="form-step-sub">Step 2 of 3 — Vehicle information</div>
+<div class="field-row">
+<div class="field"><label>Year <span class="req">*</span></label><input id="f-year" max="2026" min="1990" placeholder="2019" required="" type="number"/></div>
+<div class="field">
+<label>Make <span class="req">*</span></label>
+<select id="f-make" required="">
+<option value="">Select make...</option>
+<option>Acura</option><option>Audi</option><option>BMW</option><option>Buick</option>
+<option>Cadillac</option><option>Chevrolet</option><option>Chrysler</option><option>Dodge</option>
+<option>Ford</option><option>GMC</option><option>Honda</option><option>Hyundai</option>
+<option>Infiniti</option><option>Jeep</option><option>Kia</option><option>Lexus</option>
+<option>Lincoln</option><option>Mazda</option><option>Mercedes-Benz</option><option>Mini</option>
+<option>Mitsubishi</option><option>Nissan</option><option>Ram</option><option>Subaru</option>
+<option>Tesla</option><option>Toyota</option><option>Volkswagen</option><option>Volvo</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<div class="field"><label>Model <span class="req">*</span></label><input id="f-model" placeholder="e.g. Camry, F-150, Accord" required="" type="text"/></div>
+<div class="field">
+<label>Where will the car be? <span class="req">*</span></label>
+<select id="f-location" required="">
+<option value="">Select location type...</option>
+<option>Home / Driveway</option>
+<option>Office / Work Parking Lot</option>
+<option>Apartment Complex Parking</option>
+<option>Street Parking</option>
+<option>Other Location</option>
+</select>
+</div>
+<div class="form-error" id="veh-error">Please fill in all vehicle fields to continue.</div>
+<button class="btn-next" onclick="goNext(2)">Continue →</button>
+<button class="btn-back" onclick="goBack(2)">← Back</button>
+</div>
+<!-- STEP 3: Contact -->
+<div class="form-step" id="step3">
+<div class="form-step-title">How do we reach you?</div>
+<div class="form-step-sub">Step 3 of 3 — Contact &amp; scheduling</div>
+<div class="field"><label>Full Name <span class="req">*</span></label><input id="f-fname" placeholder="Marcus Thompson" required="" type="text"/></div>
+<div class="field"><label>Phone Number <span class="req">*</span></label><input id="f-phone" placeholder="(404) 555-0000" required="" type="tel"/></div>
+<div class="field"><label>Street Address or Zip Code <span class="req">*</span></label><input id="f-address" placeholder="123 Peachtree St or 30305" required="" type="text"/></div>
+<div class="field">
+<label>Preferred Date &amp; Time</label>
+<select>
+<option>Today — As Soon As Possible</option>
+<option>Tomorrow Morning (8am–12pm)</option>
+<option>Tomorrow Afternoon (12pm–5pm)</option>
+<option>Another Day — Call Me to Schedule</option>
+</select>
+</div>
+<div class="form-error" id="contact-error">Please fill in your name, phone, and address.</div>
+<button class="btn-submit-form" onclick="submitForm()">Request My Appointment →</button>
+<button class="btn-back" onclick="goBack(3)">← Back</button>
+</div>
+<!-- SUCCESS -->
+<div class="form-success" id="form-success">
+<svg viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>
+<h3>You’re all set!</h3>
+<p>We’ll call you within 15 minutes to confirm your slot and go over any details. Same-day service is usually available.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ -->
+<section class="faq" id="faq">
+<div class="wrap">
+<div class="sec-overline fade"><div class="overline-line"></div><div class="overline-text">Common Questions</div></div>
+<h2 class="sec-h2 fade d1">What You Should Know.</h2>
+<div class="faq-list"><div class="faq-item"><button class="faq-q">What areas do you service? <svg viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></button><div class="faq-a"><div class="faq-a-inner">We provide mobile diesel repair services throughout Four Corners, FL, and surrounding areas.</div></div></div><div class="faq-item"><button class="faq-q">How do I schedule a service? <svg viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></button><div class="faq-a"><div class="faq-a-inner">You can schedule a service by calling our primary phone number.</div></div></div><div class="faq-item"><button class="faq-q">What types of vehicles do you service? <svg viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></button><div class="faq-a"><div class="faq-a-inner">We specialize in diesel engines for trucks, vans, and other heavy-duty vehicles.</div></div></div><div class="faq-item"><button class="faq-q">Do you offer emergency services? <svg viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></button><div class="faq-a"><div class="faq-a-inner">Yes, we offer emergency mobile repair services for urgent issues.</div></div></div><div class="faq-item"><button class="faq-q">What payment methods do you accept? <svg viewbox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"></line><line x1="5" x2="19" y1="12" y2="12"></line></svg></button><div class="faq-a"><div class="faq-a-inner">We accept various payment methods, including credit cards and cash.</div></div></div></div>
+</div>
+</section>
+<!-- CTA -->
+<section class="cta-block">
+<div class="wrap">
+<h2>Same-Day Service,<br/><em>Your Driveway.</em></h2>
+<p>No shop visit. No waiting room. No tow truck. Just a fixed car.</p>
+<div class="cta-btns">
+<a class="btn-cta-gold" href="tel:4709180516">Call (470) 918-0516</a>
+<a class="btn-cta-outline book-link" href="#booking">Book Service Online</a>
+</div>
+</div>
+</section>
+<footer>
+<div class="wrap">
+<div class="footer-top">
+<div class="ft-brand"><h3>On Call Diesel Service </h3><p>ASE-certified mechanics serving Metro Four Corners. We come to your home, office, or wherever your car is parked.</p></div>
+<div class="ft-col"><h4>Services</h4><ul><li><a href="#">Oil Change</a></li><li><a href="#">Brake Service</a></li><li><a href="#">Battery</a></li><li><a href="#">Diagnostics</a></li><li><a href="#">AC Service</a></li></ul></div>
+<div class="ft-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Service Areas</a></li><li><a href="#">Reviews</a></li><li><a href="#">Contact</a></li></ul></div>
+</div>
+<div class="footer-bottom"><span>© 2025 On Call Diesel Service </span><span>Licensed · Insured · ASE Certified</span></div>
+</div>
+</footer>
+<!-- MOBILE STICKY BAR -->
+<div aria-hidden="true" class="service-modal" id="serviceModal">
+<div aria-labelledby="serviceModalTitle" aria-modal="true" class="service-modal-card" role="dialog">
+<button aria-label="Close service details" class="service-modal-close" id="serviceModalClose">×</button>
+<div class="service-modal-hero" id="serviceModalHero"></div>
+<div class="service-modal-body">
+<div class="service-modal-kicker" id="serviceModalKicker">Mobile Service</div>
+<h3 class="service-modal-title" id="serviceModalTitle">Service Details</h3>
+<p class="service-modal-desc" id="serviceModalDesc"></p>
+<div class="service-modal-grid">
+<div class="service-modal-box">
+<h4>How to know it may be time</h4>
+<ul id="serviceModalSigns"></ul>
+</div>
+<div class="service-modal-box">
+<h4>What to expect</h4>
+<ul id="serviceModalExpect"></ul>
+</div>
+</div>
+<div class="service-modal-note" id="serviceModalNote"></div>
+<div class="service-modal-actions">
+<a class="service-modal-book book-link" href="#booking" id="serviceModalBook">Book This Service</a>
+<a class="service-modal-call" href="tel:4709180516">Call (470) 918-0516</a>
+</div>
+<div class="service-modal-secondary">Not sure what you need? Choose “Not Sure — Need a Diagnosis” in the booking form and we’ll help confirm the right service before any work starts.</div>
+</div>
+</div>
+</div>
+<style id="sos-sticky-style">
+#sos-sticky-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#fff;border-top:1px solid #e5e7eb;box-shadow:0 -4px 20px rgba(0,0,0,.10);padding:12px 16px;gap:10px;flex-direction:row;box-sizing:border-box}
+#sos-sticky-bar a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-height:52px;font-size:15px;font-weight:700;border-radius:12px;text-decoration:none;text-align:center;padding:14px 10px;font-family:'DM Sans',system-ui,-apple-system,sans-serif;white-space:nowrap;box-sizing:border-box;letter-spacing:-.01em}
+#sos-sticky-bar a svg{width:16px;height:16px;flex-shrink:0}
+#sos-sticky-call{background:#fff;color:#111827;border:1.5px solid #d1d5db}
+#sos-sticky-book{background:#111827;color:#fff;border:1.5px solid #111827}
+@media(max-width:820px){#sos-sticky-bar{display:flex}body{padding-bottom:84px}.mob-bar{display:none!important}}
+</style>
+<div id="sos-sticky-bar">
+<a id="sos-sticky-call" href="tel:4709180516"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>Call (470) 918-0516</a>
+<a id="sos-sticky-book" href="#booking">Book Online</a>
+</div>
+<script>
+const fIO=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');fIO.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.fade').forEach(f=>fIO.observe(f));
+
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('on',scrollY>10));
+
+// Keep nav pinned directly beneath the sticky orange preview bar (handles mobile wrap)
+function syncNavTop(){
+  const pv=document.getElementById('preview-bar');
+  const urg=document.getElementById('urg');
+  const isPhone=window.matchMedia('(max-width:560px)').matches;
+  const pvH=pv?pv.offsetHeight:0;
+  const urgH=urg?urg.offsetHeight:0;
+  document.documentElement.style.setProperty('--preview-h',pvH+'px');
+  document.documentElement.style.setProperty('--urg-h',urgH+'px');
+  document.documentElement.style.setProperty('--sticky-top',(isPhone?0:(pvH+urgH))+'px');
+  if(nav)nav.style.top=(isPhone?0:(pvH+urgH))+'px';
+}
+syncNavTop();
+window.addEventListener('resize',syncNavTop);
+window.addEventListener('load',syncNavTop);
+
+document.querySelectorAll('.faq-q').forEach(btn=>{btn.addEventListener('click',()=>{const item=btn.closest('.faq-item');const open=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').style.maxHeight='0';});if(!open){item.classList.add('open');item.querySelector('.faq-a').style.maxHeight=item.querySelector('.faq-a').scrollHeight+'px';}});});
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+btn.dataset.tab).classList.add('active');});});
+
+document.getElementById('svc-notsure').addEventListener('change',function(){
+  document.getElementById('other-wrap').style.display=this.checked?'block':'none';
+});
+
+function goNext(from){
+  if(from===1){
+    const checked=document.querySelectorAll('.svc-check-grid input:checked');
+    const err=document.getElementById('svc-error');
+    if(checked.length===0){err.classList.add('show');return;}
+    err.classList.remove('show');
+  }
+  if(from===2){
+    const y=document.getElementById('f-year').value;
+    const m=document.getElementById('f-make').value;
+    const mo=document.getElementById('f-model').value;
+    const l=document.getElementById('f-location').value;
+    const err=document.getElementById('veh-error');
+    if(!y||!m||!mo||!l){err.classList.add('show');return;}
+    err.classList.remove('show');
+  }
+  document.getElementById('step'+from).classList.remove('active');
+  document.getElementById('dot'+from).classList.remove('active');
+  document.getElementById('dot'+from).classList.add('done');
+  document.getElementById('line'+from).classList.add('done');
+  const next=from+1;
+  document.getElementById('step'+next).classList.add('active');
+  document.getElementById('dot'+next).classList.add('active');
+}
+function goBack(from){
+  document.getElementById('step'+from).classList.remove('active');
+  document.getElementById('dot'+from).classList.remove('active');
+  const prev=from-1;
+  document.getElementById('step'+prev).classList.add('active');
+  document.getElementById('dot'+prev).classList.remove('done');
+  document.getElementById('dot'+prev).classList.add('active');
+  document.getElementById('line'+prev).classList.remove('done');
+}
+function submitForm(){
+  const fn=document.getElementById('f-fname').value;
+  const ph=document.getElementById('f-phone').value;
+  const ad=document.getElementById('f-address').value;
+  const err=document.getElementById('contact-error');
+  if(!fn||!ph||!ad){err.classList.add('show');return;}
+  err.classList.remove('show');
+  document.getElementById('step3').classList.remove('active');
+  document.getElementById('dot3').classList.remove('active');
+  document.getElementById('dot3').classList.add('done');
+  document.getElementById('form-success').style.display='block';
+}
+
+// Book links: smooth scroll + glow highlight
+document.querySelectorAll('a[href="#booking"]').forEach(function(link){
+  link.addEventListener('click',function(e){
+    e.preventDefault();
+    var fw=document.getElementById('formWrap');
+    if(!fw)return;
+    var navEl=document.getElementById('nav');
+    var navH=navEl?navEl.offsetHeight:64;
+    var y=fw.getBoundingClientRect().top+window.scrollY-navH-12;
+    window.scrollTo({top:y,behavior:'smooth'});
+    fw.classList.add('glow');
+    setTimeout(function(){fw.classList.remove('glow');},1600);
+  });
+});
+
+
+// Phone field formatter: keeps contact number in (xxx) xxx-xxxx as the visitor types
+const phoneInput=document.getElementById('f-phone');
+if(phoneInput){
+  phoneInput.addEventListener('input',()=>{
+    const digits=phoneInput.value.replace(/\D/g,'').slice(0,10);
+    let formatted=digits;
+    if(digits.length>6){formatted=`(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;}
+    else if(digits.length>3){formatted=`(${digits.slice(0,3)}) ${digits.slice(3)}`;}
+    else if(digits.length>0){formatted=`(${digits}`;}
+    phoneInput.value=formatted;
+  });
+}
+
+// Geolocation: detect city and update announcement bar
+(function detectCity(){
+  fetch('https://ipapi.co/json/')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||!d.city||!d.region_code)return;
+      var el=document.getElementById('urg-location');
+      if(el)el.textContent=d.city+', '+d.region_code;
+    })
+    .catch(function(){});
+})();
+
+
+// Service detail modal
+const serviceModalData = {"Brake & Rotor Inspection & Replacement":{"kicker":"Safety Critical","desc":"We inspect brake pads, rotors, calipers, and braking feel, then replace the parts needed so the car stops smoothly and safely.","signs":["Grinding, squeaking, or scraping when braking","Steering wheel shakes when stopping","Brake pedal feels soft or spongy","Car takes longer to stop than usual"],"expect":["Visual brake and rotor inspection","Clear explanation before replacement","Pads and rotors replaced when needed","Brake feel checked before we leave"],"note":"Brake noise usually gets more expensive the longer it waits. If you hear grinding, it is time to stop guessing and get it checked."},"Oil & Filter Change":{"kicker":"Most Booked","desc":"Fresh oil and a clean filter help protect the engine, improve lubrication, and keep your car running smoothly without a shop visit.","signs":["Oil change reminder is on","Oil looks dark or gritty","Engine sounds louder than usual","It has been 5,000–7,500 miles since your last service"],"expect":["We bring the oil, filter, tools, and drain pan","Old oil is captured and disposed of properly","We check basic fluid levels while we are there","Usually completed quickly at your driveway or parking spot"],"note":"Easy to book, easy to understand, and one of the best ways to prevent expensive engine problems."},"Brake Inspection & Repair":{"kicker":"Safety Critical","desc":"We inspect pads, rotors, calipers, and braking feel on-site, then explain what actually needs attention before any repair starts.","signs":["Squeaking, grinding, or scraping noises","Steering wheel shakes when braking","Brake pedal feels soft or low","Car takes longer to stop than normal"],"expect":["Wheel and brake assembly inspection","Clear explanation before parts are replaced","Pad and rotor service when appropriate","Safety-first recommendation without pressure"],"note":"Brakes are not the place to gamble. If you hear grinding, book service quickly before rotor damage gets worse."},"Brake Repair":{"kicker":"Safety Critical","desc":"Mobile brake repair for pads, rotors, and common brake issues — handled where the vehicle is parked when the work can be done safely on-site.","signs":["Squealing or grinding when stopping","Vibration when braking","Brake warning light","Burning smell near the wheels"],"expect":["On-site inspection first","Repair quote before work begins","Pads/rotors addressed when needed","Road-safe explanation after repair"],"note":"If the car still stops but sounds rough, that is usually the best time to handle it before it becomes more expensive."},"Battery Test & Replace":{"kicker":"Quick Fix","desc":"We test the battery and charging system, confirm the issue, and replace the battery on-site when needed.","signs":["Slow crank when starting","Clicking sound but no start","Lights dim when starting","Battery is over 3–5 years old"],"expect":["Battery test under load","Terminal and connection check","Replacement battery when needed","Quick start confirmation before we leave"],"note":"Many no-start calls are battery-related, but we test first so you are not paying for the wrong fix."},"Battery Replacement":{"kicker":"Quick Fix","desc":"Dead or weak battery? We can bring a replacement battery and install it where the car sits.","signs":["Car will not start","Clicking when turning the key","Dashboard lights flicker","Battery warning light appears"],"expect":["We confirm battery health first","Correct battery matched to your vehicle","Old battery removed","New battery tested after install"],"note":"This is one of the cleanest mobile repairs because it usually does not require towing or shop equipment."},"Check Engine Diagnostics":{"kicker":"Diagnostics","desc":"If the check engine light is on — or the car just feels off and you are not sure why — we come to the vehicle, scan it, inspect the likely causes, and explain the issue in plain English before any repair starts.","signs":["Check engine light is on or flashing","Car feels rough, weak, or unsafe","Strange noise, smell, shake, or hesitation","You know something is wrong but not what"],"expect":["OBD scan and code review when needed","Visual inspection of likely problem areas","Plain-English explanation of what we found","Repair quote before any work begins"],"note":"This is the right choice when you do not want to guess. We diagnose first so you are not replacing random parts. If the check engine light is flashing, call before driving it further."},"Check Engine Light":{"kicker":"Diagnostics","desc":"If the check engine light is on — or the car just feels off and you are not sure why — we come to the vehicle, scan it, inspect the likely causes, and explain the issue in plain English before any repair starts.","signs":["Check engine light is on or flashing","Car feels rough, weak, or unsafe","Strange noise, smell, shake, or hesitation","You know something is wrong but not what"],"expect":["OBD scan and code review when needed","Visual inspection of likely problem areas","Plain-English explanation of what we found","Repair quote before any work begins"],"note":"This is the right choice when you do not want to guess. We diagnose first so you are not replacing random parts. If the check engine light is flashing, call before driving it further."},"AC Recharge & Repair":{"kicker":"Comfort","desc":"We inspect the AC system, connect gauges, and handle common AC service needs so the car can cool properly again.","signs":["Air blows warm","AC cools then stops","Weak airflow from vents","Strange clicking or hissing with AC on"],"expect":["AC pressure check","Recharge when appropriate","Basic leak or component review","Recommendation if a deeper repair is needed"],"note":"A recharge can help, but if refrigerant is leaking, we will tell you instead of pretending it is fixed."},"Pre-Purchase Inspection":{"kicker":"Buyer Protection","desc":"We meet at the seller’s location and inspect the vehicle before you buy, so you have a clearer picture before handing over money.","signs":["You are buying from a private seller","The car has limited service history","The price seems too good","You want a second opinion before committing"],"expect":["Visual and mechanical inspection","Test of key systems where possible","Notes on red flags","Plain-language summary before you decide"],"note":"This can save you from buying someone else’s problem. It is one of the highest-ROI services before a used car purchase."},"Alternator Replacement":{"kicker":"Electrical","desc":"The alternator keeps your battery charged while the vehicle runs. We diagnose the charging system and replace the alternator on-site when appropriate.","signs":["Battery light comes on while driving","Car dies after jump-starting","Headlights dim or flicker","Electrical accessories act strange"],"expect":["Battery and charging system test","Alternator output check","Replacement when confirmed","Post-repair charging test"],"note":"A weak alternator can look like a battery issue. We test both before recommending the repair."},"Spark Plug Replacement":{"kicker":"Tune-Up","desc":"Spark plugs help ignite the fuel-air mixture in your engine. Replacing worn plugs can improve starting, idle, and performance.","signs":["Rough idle","Poor fuel economy","Engine misfires","Sluggish acceleration"],"expect":["Correct plugs matched to your vehicle","Ignition coil area inspected","Old plugs removed carefully","Engine performance checked after service"],"note":"This is a common tune-up item, especially when the car starts running rough without an obvious reason."},"Spark Plugs":{"kicker":"Tune-Up","desc":"Worn spark plugs can cause misfires, rough idle, poor mileage, and weaker acceleration. We replace them on-site when accessible.","signs":["Rough idle","Misfire codes","Hard starting","Poor acceleration"],"expect":["Correct plug type confirmed","Careful removal and install","Ignition components checked visually","Engine checked after replacement"],"note":"A simple spark plug service can make the car feel noticeably smoother when plugs are the true issue."},"Coolant Flush & Radiator":{"kicker":"Cooling","desc":"Cooling system service helps prevent overheating and protects the engine from heat-related damage.","signs":["Temperature gauge runs hot","Coolant warning light","Sweet smell or visible leak","Low coolant or rusty coolant"],"expect":["Cooling system inspection","Coolant service when appropriate","Radiator and hose review","Clear next steps if a leak is found"],"note":"Overheating can turn a small repair into an engine replacement. Do not ignore heat warnings."},"Starter Replacement":{"kicker":"Electrical","desc":"The starter turns the engine over. If it fails, the car may not start even when the battery is good.","signs":["Single click when starting","No crank but lights work","Intermittent starting","Grinding sound during start"],"expect":["Battery checked first","Starter signal and connections reviewed","Starter replaced if confirmed","Start test before we leave"],"note":"No-start problems can be battery, starter, alternator, or wiring. Diagnosis keeps you from replacing the wrong part."},"Serpentine Belt":{"kicker":"Preventive","desc":"The serpentine belt drives important accessories like the alternator, power steering, and AC. If it breaks, the car can quickly become unsafe to drive.","signs":["Squealing from the engine bay","Visible cracking on belt","Battery or power steering issues","AC stops working suddenly"],"expect":["Belt condition inspection","Pulley area reviewed","Correct belt installed","Noise/function check after replacement"],"note":"This is a smart preventive repair because a broken belt can leave you stranded without warning."},"Air & Cabin Filter":{"kicker":"Preventive","desc":"Engine air filters help your engine breathe. Cabin filters help the air inside your car stay cleaner and flow better.","signs":["Weak airflow from vents","Musty smell inside the car","Dusty cabin air","Filter has not been changed in a year"],"expect":["Filter access checked","Old filter inspected","New filter installed","Quick airflow check"],"note":"This is simple, affordable maintenance that improves comfort and can support better engine efficiency."},"No-Start Diagnosis":{"kicker":"Electrical","desc":"If your car will not start, we come to the vehicle and diagnose the most common causes before recommending a fix.","signs":["Clicking but no start","Cranks but does not fire","No sound when turning key","Car starts after jump but dies again"],"expect":["Battery, starter, and alternator checks","Connection and basic electrical review","Clear answer on likely cause","Repair quote if it can be fixed on-site"],"note":"This is the right choice when you are not sure whether it is the battery, starter, alternator, or something else."},"Check Engine Light or Not Sure & Need Diagnostics":{"kicker":"Diagnostics","desc":"If the check engine light is on — or the car just feels off and you are not sure why — we come to the vehicle, scan it, inspect the likely causes, and explain the issue in plain English before any repair starts.","signs":["Check engine light is on or flashing","Car feels rough, weak, or unsafe","Strange noise, smell, shake, or hesitation","You know something is wrong but not what"],"expect":["OBD scan and code review when needed","Visual inspection of likely problem areas","Plain-English explanation of what we found","Repair quote before any work begins"],"note":"This is the right choice when you do not want to guess. We diagnose first so you are not replacing random parts. If the check engine light is flashing, call before driving it further."}};
+const serviceModal=document.getElementById('serviceModal');
+const serviceModalHero=document.getElementById('serviceModalHero');
+const serviceModalKicker=document.getElementById('serviceModalKicker');
+const serviceModalTitle=document.getElementById('serviceModalTitle');
+const serviceModalDesc=document.getElementById('serviceModalDesc');
+const serviceModalSigns=document.getElementById('serviceModalSigns');
+const serviceModalExpect=document.getElementById('serviceModalExpect');
+const serviceModalNote=document.getElementById('serviceModalNote');
+const serviceModalClose=document.getElementById('serviceModalClose');
+function serviceList(items){return (items||[]).map(item=>`<li>${item}</li>`).join('');}
+function openServiceModal(card){
+  const name=card.dataset.service;
+  const data=serviceModalData[name];
+  if(!data || !serviceModal)return;
+  const img=card.querySelector('.svc-photo');
+  serviceModalHero.style.backgroundImage=img ? getComputedStyle(img).backgroundImage : '';
+  serviceModalKicker.textContent=data.kicker || 'Mobile Service';
+  serviceModalTitle.textContent=name;
+  serviceModalDesc.textContent=data.desc || '';
+  serviceModalSigns.innerHTML=serviceList(data.signs);
+  serviceModalExpect.innerHTML=serviceList(data.expect);
+  serviceModalNote.textContent=data.note || '';
+  serviceModal.classList.add('open');
+  serviceModal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  serviceModalClose?.focus();
+}
+function closeServiceModal(){
+  if(!serviceModal)return;
+  serviceModal.classList.remove('open');
+  serviceModal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('modal-open');
+}
+document.querySelectorAll('.svc-card').forEach(card=>{
+  card.addEventListener('click',e=>{
+    if(e.target.closest('a,button,input,label,select,textarea'))return;
+    openServiceModal(card);
+  });
+  card.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();openServiceModal(card);}
+  });
+});
+serviceModalClose?.addEventListener('click',closeServiceModal);
+serviceModal?.addEventListener('click',e=>{if(e.target===serviceModal)closeServiceModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeServiceModal();});
+document.getElementById('serviceModalBook')?.addEventListener('click',()=>closeServiceModal());
+</script>
+
+
+</body>
+</html>
