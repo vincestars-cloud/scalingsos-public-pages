@@ -475,7 +475,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
       </div>
       <div class="control-panel">
         <h3>Places Discovery</h3>
-        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">Runs Google Places once for the selected states and industries. It will warn before re-running the same state + industry within 7 days.</p>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">Runs Google Places once for the selected states and industries. Uses the 40k+ city map and Google search budget; SMS rate and daily cap do not apply.</p>
         <button class="btn btn-primary" onclick="startPlacesDiscovery(false)">Run Places Discovery</button>
         <div class="prospector-status paused" id="placesDiscoveryStatus" style="margin-top:10px">Manual run only</div>
       </div>
@@ -3885,9 +3885,8 @@ async function startPlacesDiscovery(force) {
     return;
   }
   const status = document.getElementById('placesDiscoveryStatus');
-  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Checking recent searches...'; }
+  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Checking recent searches for up to ' + maxSearches.toLocaleString() + ' Places queries...'; }
   try {
-    await saveProspectorConfig();
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -3905,8 +3904,8 @@ async function startPlacesDiscovery(force) {
       return;
     }
     if (json && json.ok === false) throw new Error(json.error || json.warning || 'discovery rejected');
-    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Places discovery started'; }
-    showToast('Places discovery started for ' + states.length + ' states and ' + industries.length + ' industries');
+    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Places discovery started: up to ' + maxSearches.toLocaleString() + ' Google queries'; }
+    showToast('Places discovery started: ' + states.length + ' states, ' + industries.length + ' industries, up to ' + maxSearches.toLocaleString() + ' Google queries');
     refreshProspectorConfigCache();
   } catch(e) {
     if (status) { status.className = 'prospector-status paused'; status.textContent = 'Discovery not started'; }
