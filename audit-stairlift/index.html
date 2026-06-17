@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<meta name="theme-color" content="#ffffff" />
+<title>Greater Metropolitan Professional Services Group LLC | Austin</title>
+<meta name="description" content="" />
+
+<!--
+  ===================================================================
+  EVERSTEP — Austin stair lifts.  REDESIGN v2.
+  Identity: clean trust-blue (Bruno) × minimal white/icon (101 Mobility).
+  Font: Figtree.  NOT editorial. NOT navy/coral. NOT a wellness brand.
+  -------------------------------------------------------------------
+  THE FORM IS THE PRODUCT.  Rules baked in:
+    • Mobile-first. Each step fits ONE screen — no scroll-to-tap.
+    • Nothing gets cut off (label = fixed header, visual fills the rest).
+    • Tap-to-advance on single-select. Minimal reading. "300 lb", not a paragraph.
+  -------------------------------------------------------------------
+  REPLACE BEFORE LAUNCH:
+    Greater Metropolitan Professional Services Group · (470) 918-0516 → tel: · 
+    Austin · 4.9 / 127 reviews ·  installs (illustrative).
+  PHOTOS — production trust depends on real photos. The form already
+    points at these files; just drop them into an /img folder and they
+    replace the placeholder illustrations automatically (no code edits):
+      img/q-indoor.jpg  img/q-outdoor.jpg
+      img/q-straight.jpg  img/q-landing.jpg  img/q-curved.jpg
+      img/q-300.jpg  img/q-400.jpg        (hero: img/hero-lift.jpg)
+    Until a file exists, a clean built-in illustration shows in its place.
+    If this is a Bruno dealer site, use Bruno's official product/lifestyle
+    photography (same shots as the reference funnels).
+  CONFIGURATOR submit → wire `answers` to CRM / n8n / GHL in submitCfg() // TODO
+  ===================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --blue:#1d4f7c; --blue-d:#163d61; --blue-deep:#102e49; --blue-soft:#e3edf5; --blue-tint:#eef3f8;
+  --green:#2c7351; --green-d:#22593f; --green-soft:#e2efe8;
+  --cta:#2c7351; --cta-d:#22593f; --cta-soft:#e2efe8;
+  --ink:#2a2723; --slate:#6a6258; --line:#e8e1d6; --line-2:#d8cfc1;
+  --bg:#ffffff; --soft:#faf6f0; --gold:#c8893a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:"Figtree",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+svg{display:block}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 22px}
+h1,h2,h3{font-weight:800;line-height:1.06;letter-spacing:-.025em;color:var(--ink)}
+h1{font-size:clamp(2.2rem,6vw,3.7rem)}
+h2{font-size:clamp(1.85rem,4.6vw,2.85rem)}
+h3{font-size:1.18rem;font-weight:700}
+.kick{display:inline-block;font-weight:800;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);padding:6px 13px;border-radius:100px}
+.lead{font-size:1.12rem;color:var(--slate);line-height:1.55}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:800;border-radius:13px;padding:15px 24px;font-size:1.02rem;transition:transform .08s,box-shadow .15s,background .15s;white-space:nowrap}
+.btn svg{width:20px;height:20px}
+.btn-cta{background:var(--cta);color:#fff;box-shadow:0 8px 20px -6px rgba(44,115,81,.45)}
+.btn-cta:hover{background:var(--cta-d);transform:translateY(-1px);box-shadow:0 12px 26px -6px rgba(44,115,81,.5)}
+.btn-out{background:#fff;color:var(--blue-deep);border:2px solid var(--line-2)}
+.btn-out:hover{border-color:var(--blue);background:var(--blue-tint)}
+.btn-lg{padding:18px 30px;font-size:1.1rem}
+.stars{color:var(--gold);letter-spacing:1px}
+
+/* ===== HEADER ===== */
+.hd{position:relative;z-index:90;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.hd-in{display:flex;align-items:center;gap:20px;height:74px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:1.4rem;letter-spacing:-.03em;color:var(--ink)}
+.brand .m{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--blue-d));display:grid;place-items:center;color:#fff}
+.brand .m svg{width:22px;height:22px}
+.brand small{display:block;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:-2px}
+.hnav{margin-left:auto;display:flex;align-items:center;gap:26px}
+.hnav a.lnk{font-weight:600;color:var(--ink);font-size:.97rem}
+.hnav a.lnk:hover{color:var(--blue)}
+.hphone{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--blue-deep)}
+.hphone svg{width:18px;height:18px;color:var(--green)}
+.burger{display:none;margin-left:auto;width:46px;height:46px;border-radius:11px;border:1px solid var(--line-2);place-items:center}
+.burger svg{width:24px;height:24px}
+@media(max-width:980px){.hnav a.lnk{display:none}.hphone{display:none}.hd .btn{display:none}.burger{display:grid}}
+
+/* drawer */
+.drawer{position:fixed;inset:0;z-index:200;background:rgba(15,33,46,.5);opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer.o{opacity:1;pointer-events:auto}
+.dpanel{position:absolute;top:0;right:0;width:min(360px,86vw);height:100%;background:#fff;padding:24px;display:flex;flex-direction:column;gap:6px;transform:translateX(100%);transition:transform .3s}
+.drawer.o .dpanel{transform:none}
+.dclose{align-self:flex-end;width:42px;height:42px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line)}
+.dclose svg{width:22px;height:22px}
+.dpanel a{padding:14px 12px;font-weight:700;font-size:1.1rem;border-radius:10px}
+.dpanel a:hover{background:var(--blue-tint)}
+.dpanel .btn{margin-top:14px}
+
+/* ===== TOP BARS ===== */
+.devbar{background:#e8590c;color:#fff;font-size:.86rem;font-weight:700}
+.devbar .wrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 22px;flex-wrap:wrap;text-align:center}
+.devbar a{color:#fff;font-weight:900;text-decoration:underline;text-underline-offset:2px}
+.devbar a:hover{color:#fff3e9}
+.topstick{position:sticky;top:0;z-index:90}
+.anbar{background:var(--blue-deep);color:#fff;font-size:.9rem;font-weight:600}
+.anbar .wrap{display:flex;align-items:center;justify-content:center;gap:16px;padding:9px 22px;flex-wrap:wrap;text-align:center}
+.anbar a{color:#fff;display:inline-flex;align-items:center;gap:7px;font-weight:800}
+.anbar a:hover{color:#cfe0c7}
+.anbar a svg{width:16px;height:16px;color:#7fd6a6}
+.anbar .sep{opacity:.4}
+@media(max-width:560px){.devbar .hideSm,.anbar .hideSm{display:none}.anbar .wrap,.devbar .wrap{gap:10px;font-size:.8rem}}
+
+/* ===== FALLS STATS ===== */
+.falls{background:var(--blue-deep);color:#d7e3f0}
+.falls .wrap{padding:clamp(48px,8vw,72px) 22px;text-align:center}
+.falls .kick{background:rgba(255,255,255,.1);color:#7fd6a6;letter-spacing:.16em}
+.falls h2{color:#fff;max-width:780px;margin:16px auto 0}
+.falls .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:44px}
+.falls .stat .n{font-size:clamp(2.6rem,7vw,3.7rem);font-weight:900;color:#52c08c;line-height:1}
+.falls .stat p{color:#b9cee2;margin:12px auto 0;font-size:1rem;max-width:300px}
+.falls .src{margin-top:38px;font-size:.85rem;font-style:italic;color:#8aa6c2}
+@media(max-width:720px){.falls .stats{grid-template-columns:1fr;gap:28px}}
+
+/* ===== HERO ===== */
+.hero{padding:54px 0 30px;background:radial-gradient(1100px 460px at 78% -8%,var(--blue-tint),transparent 60%)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+.hero h1{margin-top:16px}
+.hero h1 .hl{color:var(--blue)}
+.hero .lead{margin-top:18px;max-width:520px}
+.hcta{display:flex;gap:13px;flex-wrap:wrap;margin-top:26px}
+.hproof{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:24px;color:var(--slate);font-size:.95rem;font-weight:600}
+.hproof strong{color:var(--ink)}
+.hproof .d{width:5px;height:5px;border-radius:50%;background:var(--line-2)}
+.hero-figure{position:relative}
+.hero-figure .ph{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/3.5;box-shadow:0 30px 60px -28px rgba(16,46,73,.4);background:var(--blue-soft)}
+.hero-figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fchip{position:absolute;left:-14px;bottom:24px;background:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 18px 40px -16px rgba(11,63,134,.35);font-weight:800;font-size:.96rem}
+.fchip .i{width:42px;height:42px;border-radius:11px;background:var(--green-soft);color:var(--green-d);display:grid;place-items:center;flex:none}
+.fchip .i svg{width:24px;height:24px}
+.fchip small{display:block;font-weight:600;color:var(--slate);font-size:.8rem;margin-top:1px}
+@media(max-width:860px){.hero{padding:34px 0 18px}.hero-grid{grid-template-columns:1fr;gap:30px}.hero-figure{order:-1}.hero .lead{max-width:none}}
+
+/* ===== TRUST BAND ===== */
+.tband{background:var(--blue-deep);color:#fff}
+.tband .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:26px 22px;text-align:center}
+.tstat .n{font-size:1.75rem;font-weight:900;letter-spacing:-.02em}
+.tstat .l{font-size:.84rem;color:#bcd2f0;font-weight:600;margin-top:2px}
+.tstat+.tstat{border-left:1px solid rgba(255,255,255,.16)}
+@media(max-width:680px){.tband .wrap{grid-template-columns:1fr 1fr;gap:20px 8px}.tstat:nth-child(3),.tstat:nth-child(odd){border-left:none}.tstat:nth-child(even){border-left:1px solid rgba(255,255,255,.16)}}
+
+/* sections */
+.sec{padding:66px 0}
+.sec-soft{background:var(--soft)}
+.shead{max-width:680px;margin:0 auto 38px;text-align:center}
+.shead h2{margin-top:14px}
+.shead .lead{margin-top:14px}
+
+/* ===== LIFT TYPES (Bruno-style photo cards) ===== */
+.types{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.tcard{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .2s;cursor:pointer}
+.tcard:hover{transform:translateY(-3px);box-shadow:0 22px 44px -22px rgba(11,63,134,.32);border-color:var(--blue-soft)}
+.tcard-img{position:relative;aspect-ratio:4/3;overflow:hidden;background:#fff}
+.tcard-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tcard-img img.cn{object-fit:contain;background:#fff}
+.tcard-img .illus{width:100%;height:100%}
+.tcard-b{padding:22px 22px 24px}
+.tcard-b h3{color:var(--blue);font-size:1.45rem;font-weight:800}
+.tcard-b p{color:var(--slate);margin-top:8px;font-size:1rem}
+.tpill{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:800;color:var(--green-d);font-size:.92rem}
+.tpill .i{width:30px;height:30px;border-radius:9px;background:var(--green-soft);display:grid;place-items:center;flex:none}
+.tpill .i svg{width:18px;height:18px}
+@media(max-width:760px){.types{grid-template-columns:1fr}}
+
+/* ===== FEATURES grid ===== */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+.feat .i{width:48px;height:48px;border-radius:13px;background:var(--blue-tint);color:var(--blue);display:grid;place-items:center;margin-bottom:14px}
+.feat .i svg{width:26px;height:26px}
+.feat h3{font-size:1.1rem}
+.feat p{color:var(--slate);margin-top:6px;font-size:.97rem}
+@media(max-width:820px){.feats{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.feats{grid-template-columns:1fr}}
+
+/* ===== HOW IT WORKS ===== */
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+.s3{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px 24px;position:relative}
+.s3 .n{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:1.25rem;display:grid;place-items:center;counter-increment:s;margin-bottom:16px}
+.s3 .n::after{content:counter(s)}
+.s3 h3{font-size:1.18rem}
+.s3 p{color:var(--slate);margin-top:8px;font-size:.98rem}
+@media(max-width:760px){.steps3{grid-template-columns:1fr}}
+
+/* ===== REVIEWS ===== */
+.revs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.rcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.rtop{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.rav{width:68px;height:68px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.4rem;flex:none;overflow:hidden}
+.rav img{width:100%;height:100%;object-fit:cover}
+.rname{font-weight:800;line-height:1.15;flex:1}
+.rname span{display:block;font-weight:600;color:var(--slate);font-size:.82rem}
+.rg{width:22px;height:22px;flex:none}
+.rcard p{margin-top:10px;color:var(--ink);font-size:1rem}
+.rev-foot{text-align:center;margin-top:30px;font-weight:700;color:var(--slate)}
+@media(max-width:820px){.revs{grid-template-columns:1fr}}
+
+/* ===== MID CTA ===== */
+.qband{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;text-align:center}
+.qband .wrap{padding:64px 22px}
+.qband h2{color:#fff;max-width:680px;margin:12px auto 0}
+.qband p{color:#cfe1fa;max-width:560px;margin:14px auto 26px;font-size:1.08rem}
+.qband .kick{background:rgba(255,255,255,.16);color:#fff}
+
+/* ===== FAQ ===== */
+.faq{max-width:780px;margin:0 auto}
+.faq details{border:1px solid var(--line);border-radius:14px;margin-bottom:12px;background:#fff;overflow:hidden}
+.faq details[open]{border-color:var(--blue-soft);box-shadow:0 10px 26px -18px rgba(11,63,134,.3)}
+.faq summary{list-style:none;cursor:pointer;padding:19px 22px;font-weight:700;font-size:1.06rem;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq .pm{width:24px;height:24px;flex:none;position:relative}
+.faq .pm::before,.faq .pm::after{content:"";position:absolute;background:var(--blue);border-radius:2px;transition:transform .2s}
+.faq .pm::before{top:11px;left:4px;width:16px;height:2.5px}
+.faq .pm::after{top:4px;left:11px;width:2.5px;height:16px}
+.faq details[open] .pm::after{transform:rotate(90deg);opacity:0}
+.faq .ans{padding:0 22px 20px;color:var(--slate);line-height:1.6}
+
+/* ===== FINAL ===== */
+.final{background:var(--blue-deep);color:#fff;text-align:center}
+.final .wrap{padding:70px 22px}
+.final h2{color:#fff;max-width:760px;margin:14px auto 0}
+.final h2 em{color:#e8b572;font-style:normal}
+.final p{color:#bcd2f0;max-width:560px;margin:16px auto 26px;font-size:1.08rem}
+.final .kick{background:rgba(255,255,255,.16);color:#fff}
+.fcta{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
+.final .btn-out{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.final .btn-out:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.re{margin-top:22px;font-size:.92rem;color:#9cc0f0}
+
+/* ===== FOOTER ===== */
+.ft{background:#0a2a52;color:#cdddf2;padding:48px 0 30px;font-size:.95rem}
+.ft-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:34px}
+.ft .brand{color:#fff}.ft .brand small{color:#9cc0f0}
+.ft .blurb{margin-top:14px;max-width:330px;color:#a8c2e0}
+.ft h4{color:#fff;font-size:.95rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.ft a{display:block;padding:5px 0;color:#cdddf2}.ft a:hover{color:#fff}
+.ft .contact b{color:#fff}
+.ft .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ft .badge{font-size:.78rem;font-weight:700;color:#fff;background:rgba(255,255,255,.1);padding:6px 11px;border-radius:8px}
+.ft-bot{border-top:1px solid rgba(255,255,255,.12);margin-top:34px;padding-top:20px;font-size:.82rem;color:#8fb0d6}
+.ft-bot .fine{margin-top:8px;font-size:.75rem;color:#7396c0;max-width:760px}
+@media(max-width:760px){.ft-grid{grid-template-columns:1fr;gap:26px}}
+
+/* ===== STICKY MOBILE BAR ===== */
+.mbar{position:fixed;bottom:0;left:0;right:0;z-index:80;display:none;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
+.mbar a,.mbar button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;border-radius:12px;padding:14px;font-size:1rem}
+.mbar .c{background:#fff;border:2px solid var(--line-2);color:var(--blue-deep)}
+.mbar .q{background:var(--cta);color:#fff}
+.mbar svg{width:19px;height:19px}
+@media(max-width:980px){.mbar{display:flex}body{padding-bottom:74px}}
+
+/* =================================================================
+   CONFIGURATOR — full-screen, mobile-first, ONE STEP = ONE SCREEN
+   ================================================================= */
+.cfg{position:fixed;inset:0;z-index:300;background:#fff;display:none;flex-direction:column;height:100svh}
+.cfg.o{display:flex}
+.cfg-top{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:14px clamp(14px,4vw,28px);border-bottom:1px solid var(--line)}
+.cfg-ico{width:42px;height:42px;border-radius:11px;border:1px solid var(--line);display:grid;place-items:center;flex:none;color:var(--ink)}
+.cfg-ico:hover{background:var(--soft)}
+.cfg-ico svg{width:22px;height:22px}
+.cfg-ico[hidden]{display:none}
+.cfg-prog{flex:1;display:flex;flex-direction:column;gap:6px}
+.cfg-track{height:8px;background:var(--blue-soft);border-radius:100px;overflow:hidden}
+.cfg-fill{height:100%;background:var(--green);border-radius:100px;width:0;transition:width .3s}
+.cfg-stp{font-size:.78rem;font-weight:700;color:var(--slate);text-align:right}
+.cfg-main{flex:1 1 auto;min-height:0;width:100%;max-width:660px;margin:0 auto;display:flex;flex-direction:column;padding:clamp(14px,3.4vw,30px) clamp(14px,4vw,28px);overflow:hidden}
+.cfg-main.scroll{overflow-y:auto}
+.cfg-q{flex:0 0 auto;text-align:center;margin-bottom:clamp(12px,2.6vh,22px)}
+.cfg-q h2{font-size:clamp(1.5rem,4.6vw,2.15rem);line-height:1.12}
+.cfg-q .hint{display:block;margin-top:8px;font-size:1rem;font-weight:500;color:var(--slate)}
+.cfg-opts{flex:1 1 auto;min-height:0;display:grid;gap:clamp(10px,1.8vh,16px);align-content:start;width:100%;max-width:560px;margin:0 auto}
+.cfg-opts>*{min-width:0}
+
+/* columns mirror the reference funnels; a single row stays on one screen */
+.l-2v{grid-template-columns:repeat(2,minmax(0,1fr))}
+.l-3v{grid-template-columns:repeat(3,minmax(0,1fr))}
+.l-cap{grid-template-columns:repeat(2,minmax(0,1fr))}
+.l-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.l-6{grid-template-columns:repeat(2,minmax(0,1fr))}
+.l-3i{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(min-width:600px){
+  .l-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .l-6{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* TILE — photo/illustration with FIXED header label (never cut off) */
+.tile{position:relative;border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;min-height:0;transition:border-color .12s,box-shadow .15s,transform .08s;text-align:center}
+.tile:hover{border-color:var(--blue);box-shadow:0 12px 28px -16px rgba(19,102,214,.45)}
+.tile:active{transform:scale(.985)}
+.tile.sel{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.tile-head{flex:0 0 auto;background:var(--blue);color:#fff;font-weight:800;font-size:clamp(.95rem,2.6vw,1.12rem);padding:10px 6px;letter-spacing:-.01em}
+.tile-vis{flex:0 0 auto;position:relative;width:100%;overflow:hidden;background:#fff;display:block}
+.tile-vis img{position:absolute;inset:0}
+.tile-vis img,.tile-vis .illus{width:100%;height:100%;object-fit:cover}
+.l-2v .tile-vis{aspect-ratio:1.15}
+.l-3v .tile-vis{aspect-ratio:.74}
+.l-cap .tile-vis{aspect-ratio:1.55}
+.l-6 .tile-vis{aspect-ratio:1.6}
+/* icon-style tile (no header) — for upgrades/role/discount */
+.tile.ic{padding:clamp(10px,2vh,18px) 10px;gap:8px;justify-content:center;align-items:center}
+.tile.ic .tile-vis{flex:0 1 auto;width:clamp(54px,16vw,84px);height:clamp(54px,16vw,84px);background:var(--blue-tint);border-radius:14px;color:var(--blue)}
+.tile.ic .tile-vis .illus{padding:14%}
+.tile.ic .tile-lab{font-weight:700;font-size:clamp(.92rem,2.5vw,1.05rem);color:var(--ink);line-height:1.2}
+/* big text card — for length (101 style) */
+.tile.card{justify-content:center;align-items:center;color:#fff;border:none;background:var(--green);padding:14px;min-height:clamp(108px,16vh,150px)}
+.tile.card.alt{background:var(--blue)}
+.tile.card.sel{box-shadow:0 0 0 4px rgba(44,115,81,.32);outline:3px solid #fff;outline-offset:-6px}
+.tile.card .big{font-size:clamp(1.3rem,5vw,2rem);font-weight:900;line-height:1}
+.tile.card .sub{font-weight:700;opacity:.92;margin-top:8px;font-size:.95rem;border-top:2px solid rgba(255,255,255,.5);padding-top:8px}
+/* check badge */
+.chk{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;opacity:0;transform:scale(.6);transition:.15s}
+.chk svg{width:17px;height:17px}
+.tile.sel .chk{opacity:1;transform:none}
+.tile.card.sel .chk{background:#fff;color:var(--green-d)}
+
+/* contact step */
+.cfg-sum{background:var(--blue-tint);border:1px solid var(--blue-soft);border-radius:13px;padding:14px 16px;font-size:.96rem;margin-bottom:16px;line-height:1.5}
+.cfg-sum b{color:var(--blue-deep)}
+.cfg-sum .save{color:var(--green-d);font-weight:800}
+.cfields{display:grid;gap:14px}
+.cf label{display:block;font-weight:700;font-size:.92rem;margin-bottom:6px}
+.cf input{width:100%;padding:15px 15px;border:2px solid var(--line-2);border-radius:12px;font:inherit;font-size:1.05rem}
+.cf input:focus{outline:none;border-color:var(--blue)}
+.cf .msg{display:none;color:var(--cta-d);font-weight:600;font-size:.86rem;margin-top:5px}
+.cf.err input{border-color:var(--cta)}
+.cf.err .msg{display:block}
+.cf .req{color:var(--cta)}
+
+/* financing reassurance */
+.finnote{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-weight:700;font-size:.92rem;color:var(--green-d)}
+.finnote svg{width:17px;height:17px}
+.finlogos{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px;margin-top:16px}
+.finlogos .lg{height:30px;display:flex;align-items:center}
+.finlogos .lg img{height:28px;width:auto;display:block}
+
+/* footer (continue/skip) */
+.cfg-foot{flex:0 0 auto;border-top:1px solid var(--line);padding:14px clamp(14px,4vw,28px) calc(14px + env(safe-area-inset-bottom));display:none}
+.cfg-foot.show{display:block}
+.cfg-foot .row{width:100%;max-width:660px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.cfg-skip{font-weight:700;color:var(--slate);padding:14px 18px;border-radius:12px}
+.cfg-skip:hover{background:var(--soft)}
+.cfg-cta{flex:1}
+.cfg-cta:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+
+/* done */
+.cfg-done{text-align:center;margin:auto;max-width:460px;padding:20px}
+.cfg-done .c{width:74px;height:74px;border-radius:50%;background:var(--green-soft);color:var(--green-d);display:grid;place-items:center;margin:0 auto 20px}
+.cfg-done .c svg{width:40px;height:40px}
+.cfg-done h2{font-size:1.7rem}
+.cfg-done p{color:var(--slate);margin-top:12px;font-size:1.05rem}
+
+@media(max-height:560px){.cfg-q{margin-bottom:10px}.cfg-q h2{font-size:1.35rem}}
+</style>
+</head>
+<body id="top"><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 7006</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+
+<!-- ===== STICKY TOP: agency bar + customer bar + header all scroll with the user ===== -->
+<div class="topstick">
+
+<!-- DEV / AGENCY BAR — REMOVE before client launch -->
+
+<!-- customer announcement bar -->
+<div class="anbar"><div class="wrap">
+  <span class="hideSm">Free, no-obligation in-home assessment</span>
+  <span class="sep hideSm">·</span>
+  <a href="tel:"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>(470) 918-0516</a>
+  <span class="sep">·</span>
+  <span></span>
+</div></div>
+
+<!-- ===== HEADER ===== -->
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="brand" href="#top"><span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h5v-5h5v-5h5V5"/></svg></span><span>Greater Metropolitan Professional Services Group<small></small></span></a>
+    <nav class="hnav">
+      <a class="lnk" href="#types">Our Lifts</a>
+      <a class="lnk" href="#how">How It Works</a>
+      <a class="lnk" href="#reviews">Reviews</a>
+      <a class="lnk" href="#faq">FAQ</a>
+      <a class="hphone" href="tel:"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>(470) 918-0516</a>
+      <button class="btn btn-cta js-quote">Get My Free Quote</button>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</header>
+</div><!-- /topstick -->
+
+<div class="drawer" id="drawer">
+  <div class="dpanel">
+    <button class="dclose" id="dclose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <a href="#types">Our Lifts</a><a href="#how">How It Works</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a>
+    <a href="tel:" style="color:var(--blue-deep)">Call (470) 918-0516</a>
+    <button class="btn btn-cta js-quote">Get My Free Quote</button>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kick">Local Austin team</span>
+      <h1>Move up and down your stairs <span class="hl">safely again.</span></h1>
+      <p class="lead">Indoor, outdoor, straight and curved stair lifts — fitted by a friendly local Austin team with no structural changes to your home. Free quote, no obligation.</p>
+      <div class="hcta">
+        <button class="btn btn-cta btn-lg js-quote">Get My Free Quote</button>
+        <a class="btn btn-out btn-lg" href="tel:"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>(470) 918-0516</a>
+      </div>
+      <div class="hproof">
+        <span><span class="stars">★★★★★</span> <strong></strong> · 127 families</span>
+        <span class="d"></span><span></span>
+        <span class="d"></span><span>Lifetime warranty</span>
+      </div>
+    </div>
+    <div class="hero-figure">
+      <!-- Swap this <svg> for a real photo: <img src="img/hero-lift.jpg" alt="..."> -->
+      <div class="ph" id="heroPh"><svg class="illus" viewBox="0 0 400 350" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <rect width="400" height="350" fill="#eef4fc"/>
+        <rect y="262" width="400" height="88" fill="#dde9f8"/>
+        <path d="M52 350 V300 H120 V250 H188 V200 H256 V150 H324 V100 H392 V350 Z" fill="#fff"/>
+        <path d="M52 300 H120 V250 H188 V200 H256 V150 H324 V100 H392" stroke="#c4d6ee" stroke-width="4" fill="none"/>
+        <path d="M58 322 L356 90" stroke="#1366d6" stroke-width="13" stroke-linecap="round"/>
+        <g transform="translate(150,150) scale(2.5)">
+          <rect x="-4" y="34" width="48" height="8" rx="4" fill="#0b3f86"/>
+          <rect x="6" y="-6" width="30" height="32" rx="7" fill="#1366d6"/>
+          <rect x="0" y="22" width="42" height="11" rx="4" fill="#0d4fab"/>
+          <rect x="2" y="0" width="7" height="26" rx="3" fill="#1366d6"/>
+          <rect x="33" y="0" width="7" height="26" rx="3" fill="#1366d6"/>
+          <rect x="12" y="30" width="18" height="13" rx="3" fill="#1366d6"/>
+          <circle cx="21" cy="5" r="8" fill="#cfe0f7"/>
+        </g>
+      </svg></div>
+      <div class="fchip"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg></span><span>No structural changes<small>Mounts to your stairs, not walls</small></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUST BAND ===== -->
+<section class="tband">
+  <div class="wrap">
+    <div class="tstat"><div class="n">+</div><div class="l">Years in Austin</div></div>
+    <div class="tstat"><div class="n"></div><div class="l">Lifts installed</div></div>
+    <div class="tstat"><div class="n">Lifetime</div><div class="l">Warranty &amp; support</div></div>
+    <div class="tstat"><div class="n">1–2 hrs</div><div class="l">As little as, to install</div></div>
+  </div>
+</section>
+
+
+<!-- ===== LIFT TYPES ===== -->
+<section class="sec" id="types">
+  <div class="wrap">
+    <div class="shead"><span class="kick">A lift made to fit</span><h2>The right lift for your stairs</h2><p class="lead">Every staircase is different. We carry the full range — so you get the one that fits your home and your needs.</p></div>
+    <div class="types" id="typeGrid"></div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="sec sec-soft">
+  <div class="wrap">
+    <div class="shead"><span class="kick">Built-in peace of mind</span><h2>Safe, simple, dependable</h2></div>
+    <div class="feats" id="featGrid"></div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="shead"><span class="kick">Simpler than you think</span><h2>Installing a stair lift in your home</h2><p class="lead">Concerned that installing a stair lift in your Austin home will be a major undertaking? It's simpler than you think. Our expert technicians mount the lift directly to your staircase with minimal construction required. In most cases, installation is complete in just 1–2 days, so you can enjoy safer, more accessible living right away.</p></div>
+    <div class="steps3">
+      <div class="s3"><div class="n"></div><h3>We measure your staircase</h3><p>One of our expertly trained installation professionals will measure your staircase to ensure an exact fit.</p></div>
+      <div class="s3"><div class="n"></div><h3>Customize for your needs</h3><p>You'll work with our installation expert to choose colors, safety add-ons and modular comfort options for a stair lift solution that fits your needs. The custom parts will be ordered specifically to your home's measurements and requirements.</p></div>
+      <div class="s3"><div class="n"></div><h3>Test and certify for safety</h3><p>The lift will be tested for safety and proper operation. Upon completion, we provide a safety certificate for peace of mind.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FALLS STATS ===== -->
+<section class="falls">
+  <div class="wrap">
+    <span class="kick">Seamless safety solutions</span>
+    <h2>Falls are a growing concern for Austin seniors</h2>
+    <div class="stats">
+      <div class="stat"><div class="n">40%</div><p>of people hospitalized from hip fractures do not return home.</p></div>
+      <div class="stat"><div class="n">89%</div><p>of aging people prefer to stay in their home.</p></div>
+      <div class="stat"><div class="n">87%</div><p>of fractures in seniors are caused by falls in their homes.</p></div>
+    </div>
+    <p class="src">Data provided by the CDC's Stopping Elderly Accidents, Deaths &amp; Injuries (STEADI) Initiative</p>
+  </div>
+</section>
+
+<!-- ===== REVIEWS ===== -->
+<section class="sec sec-soft" id="reviews">
+  <div class="wrap">
+    <div class="shead"><span class="kick">Loved by Austin families</span><h2>What our neighbors say</h2></div>
+    <div class="revs" id="revGrid"></div>
+    <p class="rev-foot"><span class="stars">★★★★★</span> Rated  from 127 verified reviews on Google &amp; BBB</p>
+  </div>
+</section>
+
+
+<!-- ===== MID CTA ===== -->
+<section class="qband">
+  <div class="wrap">
+    <span class="kick">60 seconds · No obligation</span>
+    <h2>Tell us about your stairs and get a free quote</h2>
+    <p>Answer a few quick, tappable questions — we'll prepare a free quote built around exactly what you need.</p>
+    <button class="btn btn-cta btn-lg js-quote">Get My Free Quote</button>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="shead"><span class="kick">Good questions</span><h2>Things families ask us</h2></div>
+    <div class="faq">
+      <details open><summary>How much does a stairlift cost?<span class="pm"></span></summary><div class="ans">Stairlifts can range in price depending on fit, function, whether it's straight or curved, the number of landings and other selected features. Straight stairlifts tend to be more affordable, while curved lifts require custom rails. Scheduling a free consultation helps validate the right product and allows for accurate pricing.</div></details>
+      <details><summary>How long does a stairlift take to install, and how quickly can I get it?<span class="pm"></span></summary><div class="ans">Most straight stairlifts can be installed in 2–4 hours. Curved models may take longer due to custom fabrication. We keep stairlifts in stock for prompt installation; custom models take longer and can normally be shipped within three weeks.</div></details>
+      <details><summary>Can I install a stairlift myself?<span class="pm"></span></summary><div class="ans">No. Professional installation ensures safety, correct fitting, and warranty coverage.</div></details>
+      <details><summary>How do you install the rail? Do you use the walls?<span class="pm"></span></summary><div class="ans">The stairlift rail sits on feet that are installed into the tread of your steps. We do not use the walls for these installations.</div></details>
+      <details><summary>How do I know if a stairlift will fit my staircase? Can it handle a 90° or 180° turn?<span class="pm"></span></summary><div class="ans">We offer free in-home consultations to assess your staircase and recommend the best solution. Yes — we offer custom curved stairlifts designed to fit the unique contours of your staircase.</div></details>
+      <details><summary>Can it turn?<span class="pm"></span></summary><div class="ans">Yes. The seat rotates at the top of the stairs so it's safer to get on and off. If your staircase has a turn, the stairlift can be custom designed to accommodate it.</div></details>
+      <details><summary>How much weight can the stairlift carry?<span class="pm"></span></summary><div class="ans">Our stairlifts have varying weight capacities, typically ranging from 264 lb to 350 lb. Our heavy-duty stairlifts can carry up to 600 lb. Each stairlift is designed for use by one person at a time.</div></details>
+      <details><summary>What happens during a power outage?<span class="pm"></span></summary><div class="ans">Our stairlifts include battery backup systems, so they keep operating during power outages.</div></details>
+      <details><summary>Do you offer discounts?<span class="pm"></span></summary><div class="ans">Seniors (65+), active service members and veterans qualify for 10% off. We'll also help you explore VA grants, Medicaid waivers and FSA/HSA funds where they apply.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL ===== -->
+<section class="final">
+  <div class="wrap">
+    <span class="kick">Don't wait for a fall</span>
+    <h2>Most families wish they'd called <em>before</em> the fall — not after.</h2>
+    <p>Get your free, no-obligation quote in about a minute, or call to talk with a friendly local expert. No pressure, ever.</p>
+    <div class="fcta">
+      <button class="btn btn-cta btn-lg js-quote">Get My Free Quote</button>
+      <a class="btn btn-out btn-lg" href="tel:"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>(470) 918-0516</a>
+    </div>
+    <p class="re">Free quote · No obligation · Lifetime warranty · Serving Austin</p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="ft">
+  <div class="wrap ft-grid">
+    <div>
+      <a class="brand" href="#top"><span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h5v-5h5v-5h5V5"/></svg></span><span style="color:#fff">Greater Metropolitan Professional Services Group<small></small></span></a>
+      <p class="blurb">Helping Austin families stay safe, independent and at home — one step at a time, since .</p>
+      <div class="badges"><span class="badge">BBB A+</span><span class="badge">Licensed &amp; Insured</span><span class="badge">★ 4.9 Google</span></div>
+    </div>
+    <div><h4>Our Lifts</h4><a href="#types">Indoor stair lifts</a><a href="#types">Outdoor stair lifts</a><a href="#types">Straight stair lifts</a><a href="#types">Curved stair lifts</a></div>
+    <div class="contact"><h4>Talk to us</h4><a href="tel:"><b>Call:</b> (470) 918-0516</a><a href="mailto:"><b>Email:</b> </a><p style="padding:5px 0"><b>Hours:</b> </p><p style="padding:5px 0"><b>Serving:</b> Austin &amp; nearby</p></div>
+  </div>
+  <div class="wrap"><div class="ft-bot">© 2026 Greater Metropolitan Professional Services Group Stair Lifts · License # · Privacy Policy · Terms
+    <p class="fine">Reviews and photography are illustrative samples for layout — replace with the client's verified reviews and owned photos before launch.</p>
+  </div></div>
+</footer>
+
+<!-- ===== STICKY MOBILE BAR ===== -->
+<div class="mbar">
+  <a class="c" href="tel:"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>Call Now</a>
+  <button class="q js-quote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Free Quote</button>
+</div>
+
+<!-- ===== CONFIGURATOR ===== -->
+<div class="cfg" id="cfg" role="dialog" aria-modal="true" aria-label="Free quote form">
+  <div class="cfg-top">
+    <button class="cfg-ico" id="cfgBack" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+    <div class="cfg-prog"><div class="cfg-track"><div class="cfg-fill" id="cfgFill"></div></div><div class="cfg-stp" id="cfgStp"></div></div>
+    <button class="cfg-ico" id="cfgX" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="cfg-main" id="cfgMain"></div>
+  <div class="cfg-foot" id="cfgFoot"><div class="row">
+    <button class="btn btn-cta cfg-cta" id="cfgCta" type="button">Continue</button>
+  </div></div>
+</div>
+
+<script>
+var IMG={"hero": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-01-aafee010.jpg", "indoor": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-02-12e11795.jpg", "outdoor": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-03-5f612562.jpg", "ucolor": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-04-8c378d6d.jpg", "useat": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-05-f8571516.jpg", "ufold": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-06-367597dc.jpg", "rev1": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-07-93a5cb2e.jpg", "straight": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-08-8026286a.jpg", "landing": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-09-a16c0830.jpg", "curved": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-10-6650945f.jpg", "ufoot": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-11-bfb9db8b.jpg", "uswivel": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-12-e7885b45.jpg", "ostraight": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-13-c6ce8388.jpg", "olanding": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-14-c6112458.jpg", "ocurved": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-15-03043dcd.jpg", "ofoot": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-16-2fb2cdc5.jpg", "oseat": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-17-d1e7295a.jpg", "ofold": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-18-c26c9d53.jpg"};
+var FIN={"mobilitytrust": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-19-8f7393cd.png", "greensky": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-20-deb9f56d.png", "affirm": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-21-d5b756e5.png", "carecredit": "https://raw.githubusercontent.com/vincestars-cloud/scalingsos-demos/main/assets/stairlift/stairlift-img-22-0bc02fb6.png"};
+/* ---------- illustrations (clean, on-brand, never cut off; swap for photos via opt.img) ---------- */
+function ill(p,vb){return '<svg class="illus" viewBox="'+(vb||'0 0 120 120')+'" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">'+p+'</svg>'}
+var B='#1366d6',BD='#0b3f86',B2='#0d4fab',G='#16a05c',LT='#cfe0f7',ST='#c4d6ee';
+function chair(t){return '<g transform="'+t+'"><rect x="-4" y="34" width="48" height="8" rx="4" fill="'+BD+'"/><rect x="6" y="-6" width="30" height="32" rx="7" fill="'+B+'"/><rect x="0" y="22" width="42" height="11" rx="4" fill="'+B2+'"/><rect x="2" y="0" width="7" height="26" rx="3" fill="'+B+'"/><rect x="33" y="0" width="7" height="26" rx="3" fill="'+B+'"/><rect x="12" y="30" width="18" height="13" rx="3" fill="'+B+'"/><circle cx="21" cy="5" r="8" fill="'+LT+'"/></g>'}
+var icon=function(p){return ill(p,'0 0 100 100')};
+var ART={
+  indoor: ill('<rect width="120" height="120" fill="#eaf2fc"/><rect y="88" width="120" height="32" fill="#d7e6f8"/><path d="M34 92 H54 V76 H72 V60 H90 V44 H108 V92 Z" fill="#fff"/><path d="M34 92 H54 V76 H72 V60 H90 V44 H108" stroke="'+ST+'" stroke-width="2.5" fill="none"/><path d="M34 96 L98 40" stroke="'+B+'" stroke-width="6" stroke-linecap="round"/>'+chair('translate(40,52) scale(.78)')+''),
+  outdoor: ill('<rect width="120" height="120" fill="#e7f3ed"/><circle cx="94" cy="26" r="13" fill="#f5b13c"/><rect y="94" width="120" height="26" fill="#cbe6d4"/><path d="M30 94 H50 V82 H70 V70 H90 V94 Z" fill="#e9dec9"/><path d="M30 94 H50 V82 H70 V70 H90" stroke="#cbb98f" stroke-width="2.5" fill="none"/><path d="M30 98 L86 66" stroke="'+G+'" stroke-width="5" stroke-linecap="round"/>'+chair('translate(36,68) scale(.66)')+'<path d="M12 94 c0-16 7-24 7-24 s7 8 7 24z" fill="'+G+'"/>'),
+  straight: ill('<rect width="120" height="120" fill="#eef4fc"/><path d="M14 102 H38 V86 H58 V70 H78 V54 H98 V38 H114 V102 Z" fill="#fff"/><path d="M14 102 H38 V86 H58 V70 H78 V54 H98 V38 H114" stroke="'+ST+'" stroke-width="2.5" fill="none"/><path d="M16 98 L104 30" stroke="'+B+'" stroke-width="5.5" stroke-linecap="round"/>'),
+  landing: ill('<rect width="120" height="120" fill="#eef4fc"/><path d="M12 104 H36 V90 H78 V74 H96 V58 H114 V104 Z" fill="#fff"/><path d="M12 104 H36 V90 H78 V74 H96 V58 H114" stroke="'+ST+'" stroke-width="2.5" fill="none"/><path d="M14 100 L38 84 H76" stroke="'+B+'" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M82 78 L104 52" stroke="'+B+'" stroke-width="5.5" stroke-linecap="round"/>'),
+  curved: ill('<rect width="120" height="120" fill="#eef4fc"/><path d="M26 106 C26 56 60 34 108 34 V50 C74 50 44 68 44 106 Z" fill="#fff"/><path d="M26 106 C26 56 60 34 108 34" stroke="'+ST+'" stroke-width="2.5" fill="none"/><path d="M36 102 C36 64 66 46 102 46" stroke="'+B+'" stroke-width="5.5" fill="none" stroke-linecap="round"/>'),
+  chair: ill('<rect width="120" height="120" fill="#eef4fc"/><path d="M18 102 L102 34" stroke="'+B+'" stroke-width="7" stroke-linecap="round"/>'+chair('translate(38,40) scale(1.05)')+''),
+  color: icon('<circle cx="50" cy="50" r="33" fill="#fff" stroke="'+B+'" stroke-width="3.5"/><path d="M50 17a33 33 0 0 1 0 66z" fill="'+B+'" opacity=".15"/><circle cx="39" cy="40" r="5.5" fill="'+B+'"/><circle cx="56" cy="35" r="5.5" fill="'+G+'"/><circle cx="64" cy="51" r="5.5" fill="#f5a623"/><circle cx="50" cy="63" r="5.5" fill="'+BD+'"/>'),
+  foot: icon('<rect x="37" y="18" width="26" height="22" rx="5" fill="'+B+'"/><rect x="42" y="40" width="16" height="8" fill="'+B2+'"/><rect x="28" y="58" width="44" height="11" rx="5" fill="'+B+'"/><path d="M50 48v10" stroke="'+B+'" stroke-width="5"/>'),
+  swivel: icon('<path d="M74 38a28 28 0 1 0 4 24" stroke="'+B+'" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M66 22l12 12-14 6z" fill="'+BD+'"/>'),
+  seat: icon('<rect x="28" y="22" width="44" height="30" rx="6" fill="'+B+'"/><rect x="22" y="50" width="56" height="13" rx="5" fill="'+B2+'"/><rect x="26" y="32" width="7" height="20" rx="3" fill="'+BD+'"/><rect x="67" y="32" width="7" height="20" rx="3" fill="'+BD+'"/>'),
+  fold: icon('<path d="M22 68 L50 40 L78 68" stroke="'+B+'" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="40" r="7" fill="'+BD+'"/>'),
+  q: icon('<circle cx="50" cy="50" r="33" fill="#fff" stroke="'+B+'" stroke-width="3.5"/><path d="M40 42a10 10 0 1 1 14 9c-3 2-4 4-4 7v1" stroke="'+B+'" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="68" r="4" fill="'+B+'"/>'),
+  military: icon('<path d="M26 36h48l-24 15z" fill="'+G+'"/><path d="M26 51h48l-24 15z" fill="'+B+'"/><path d="M26 66h48l-24 15z" fill="'+BD+'"/>'),
+  senior: icon('<rect x="20" y="28" width="60" height="44" rx="11" fill="'+G+'"/><text x="50" y="59" font-family="Figtree,sans-serif" font-size="28" font-weight="900" fill="#fff" text-anchor="middle">65+</text>'),
+  neither: icon('<circle cx="50" cy="50" r="27" stroke="'+B+'" stroke-width="6.5" fill="none"/><path d="M31 31 69 69" stroke="'+B+'" stroke-width="6.5" stroke-linecap="round"/>'),
+  flag: icon('<rect x="16" y="30" width="68" height="40" rx="2" fill="#b22234"/><rect x="16" y="35.7" width="68" height="5.7" fill="#fff"/><rect x="16" y="47.1" width="68" height="5.7" fill="#fff"/><rect x="16" y="58.5" width="68" height="5.7" fill="#fff"/><rect x="16" y="30" width="31" height="22" fill="#283d72"/><g fill="#fff"><circle cx="23" cy="35" r="1.5"/><circle cx="30" cy="35" r="1.5"/><circle cx="37" cy="35" r="1.5"/><circle cx="44" cy="35" r="1.5"/><circle cx="26.5" cy="40" r="1.5"/><circle cx="33.5" cy="40" r="1.5"/><circle cx="40.5" cy="40" r="1.5"/><circle cx="23" cy="45" r="1.5"/><circle cx="30" cy="45" r="1.5"/><circle cx="37" cy="45" r="1.5"/><circle cx="44" cy="45" r="1.5"/></g>'),
+  home: icon('<path d="M50 22 80 48H20z" fill="'+B+'"/><rect x="29" y="46" width="42" height="30" fill="'+B2+'"/><rect x="44" y="58" width="12" height="18" fill="#fff"/>'),
+  care: icon('<circle cx="48" cy="36" r="13" fill="'+B+'"/><path d="M24 78c0-13 11-22 24-22s24 9 24 22z" fill="'+B2+'"/><path d="M64 28h12M70 22v12" stroke="'+G+'" stroke-width="6" stroke-linecap="round"/>'),
+  people: icon('<circle cx="36" cy="38" r="11" fill="'+B+'"/><circle cx="64" cy="38" r="11" fill="'+BD+'"/><path d="M16 76c0-12 9-20 20-20s20 8 20 20zM44 76c0-12 9-20 20-20s20 8 20 20z" fill="'+B+'" opacity=".88"/>'),
+  yes: icon('<rect x="26" y="48" width="13" height="30" rx="2" fill="'+B+'"/><path d="M42 50l10-24c6 0 9 4 8 10l-2 9h17c5 0 9 5 6 11l-7 18c-1 3-4 4-7 4H42z" fill="'+G+'"/>'),
+  no: icon('<rect x="26" y="22" width="13" height="30" rx="2" fill="'+BD+'"/><path d="M42 50l10 24c6 0 9-4 8-10l-2-9h17c5 0 9-5 6-11l-7-18c-1-3-4-4-7-4H42z" fill="'+B+'"/>')
+};
+
+/* ---------- marketing cards (rendered for clean code) ---------- */
+var TYPES=[
+  {h:'Indoor Stair Lifts',art:'indoor',img:IMG.indoor,d:'Comfortable, quiet lifts for everyday stairs — often installed the same week.',pill:'Limited lifetime warranty'},
+  {h:'Outdoor Stair Lifts',art:'outdoor',img:IMG.outdoor,d:'Weatherproof lifts for porches, decks and garden steps. Enjoy your whole home, year-round.',pill:'All-weather engineering'},
+  {h:'Straight Stair Lifts',art:'straight',img:IMG.ucolor,d:'Cut to fit standard staircases. Slim, folding design keeps your stairs clear.',pill:'300 lb & 400 lb capacities'},
+  {h:'Curved Stair Lifts',art:'curved',img:IMG.ufold,d:'Handcrafted to follow every bend, landing and spiral for the smoothest ride.',pill:'Made to measure'}
+];
+document.getElementById('typeGrid').innerHTML=TYPES.map(function(t){
+  return '<article class="tcard"><div class="tcard-img">'+ART[t.art]+'<img class="'+(t.fit==='contain'?'cn':'')+'" src="'+t.img+'" alt="'+t.h+'" loading="lazy" onerror="this.remove()"></div><div class="tcard-b"><h3>'+t.h+'</h3><p>'+t.d+'</p><span class="tpill"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>'+t.pill+'</span></div></article>';
+}).join('');
+
+/* hero photo (swap for full-res img/hero-lift.jpg in production) */
+document.getElementById('heroPh').insertAdjacentHTML('beforeend','<img src="'+IMG.hero+'" alt="A grandmother riding her stair lift while her grandchildren sit nearby" onerror="this.remove()">');
+
+var FEATS=[
+  {t:'No damage to your home',d:'Mounts to the stairs, not your walls — and fully removable.',p:'<path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/>'},
+  {t:'Works in a power outage',d:'Battery backup keeps you moving — up to 60 trips.',p:'<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>'},
+  {t:'Safety sensors',d:'Stops automatically if anything is in the way.',p:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>'},
+  {t:'Lifetime warranty',d:'Backed for life and serviced 24/7 by certified techs.',p:'<path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 19.3 7.2 17l.9-5.4L4.2 7.7l5.4-.8L12 2Z"/>'},
+  {t:'Fits any staircase',d:'Straight, curved, narrow or outdoor — even 29″ wide.',p:'<path d="M4 20C4 12 10 6 20 6"/><path d="M4 20h6"/>'},
+  {t:'Financing available',d:'Monthly plans, plus rental and reconditioned options.',p:'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/>'}
+];
+document.getElementById('featGrid').innerHTML=FEATS.map(function(f){
+  return '<div class="feat"><div class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+f.p+'</svg></div><h3>'+f.t+'</h3><p>'+f.d+'</p></div>';
+}).join('');
+
+var REVS=[
+  {n:'Maria G.',r:'Verified customer',photo:IMG.rev1,q:'I was nervous at first, but now I ride up to my sewing room whenever I want. I only wish I\u2019d done it sooner.'},
+  {n:'Robert T.',r:'Verified customer',i:'RT',q:'From the first call to the install, everyone was kind and never pushy. Dad is back to sleeping in his own bed upstairs.'},
+  {n:'Linda & Joe P.',r:'Verified customer',i:'LP',q:'The visit was free and honest, no damage to our staircase, installed in a single afternoon. Highly recommend.'}
+];
+var gicon='<svg class="rg" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.8 3.2-7.9Z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.6-2.7c-1 .7-2.3 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M6 14.4a6.6 6.6 0 0 1 0-4.2V7.4H2.3a11 11 0 0 0 0 9.8L6 14.4Z"/><path fill="#EA4335" d="M12 5.5c1.6 0 3 .5 4.1 1.6l3.1-3.1A11 11 0 0 0 2.3 7.4L6 10.2c.9-2.5 3.2-4.7 6-4.7Z"/></svg>';
+document.getElementById('revGrid').innerHTML=REVS.map(function(r){
+  var av=r.photo?'<span class="rav"><img src="'+r.photo+'" alt="'+r.n+'"></span>':'<span class="rav">'+r.i+'</span>';
+  return '<div class="rcard"><div class="rtop">'+av+'<span class="rname">'+r.n+'<span>'+r.r+'</span></span>'+gicon+'</div><span class="stars">★★★★★</span><p>\u201C'+r.q+'\u201D</p></div>';
+}).join('');
+
+/* ---------- header drawer ---------- */
+var drawer=document.getElementById('drawer');
+document.getElementById('burger').onclick=function(){drawer.classList.add('o');document.body.style.overflow='hidden'};
+function closeDr(){drawer.classList.remove('o');document.body.style.overflow=''}
+document.getElementById('dclose').onclick=closeDr;
+drawer.addEventListener('click',function(e){if(e.target===drawer)closeDr()});
+drawer.querySelectorAll('a').forEach(function(a){a.onclick=closeDr});
+
+/* ============================================================
+   CONFIGURATOR ENGINE
+   ============================================================ */
+var STEPS=[
+  {key:'location',title:'Where do you need a stair lift?',layout:'l-2v',photo:true,
+    opts:[{v:'Indoors',img:IMG.indoor},{v:'Outdoors',img:IMG.outdoor}]},
+  {key:'staircase',title:'Which staircase is most like yours?',layout:'l-3v',photo:true,
+    opts:[{v:'Straight',img:IMG.straight,imgOut:IMG.ostraight},{v:'Landings',img:IMG.landing,imgOut:IMG.olanding},{v:'Curved',img:IMG.curved,imgOut:IMG.ocurved}]},
+  {key:'length',title:'How long is your staircase?',layout:'l-4',cards:true,
+    opts:[{v:'1–6 steps',sub:'Shorter'},{v:'7–14 steps',sub:'Standard'},{v:'15+ steps',sub:'Longer'},{v:'Not sure',alt:true}]},
+  {key:'capacity',title:'Which lift capacity?',layout:'l-cap',cards:true,skipIf:function(){return answers.location==='Outdoors'},
+    opts:[{v:'300 lb'},{v:'400 lb'}]},
+  {key:'upgrades',title:'Any upgrades you\u2019d like?',hint:'Optional — pick any, or choose "Not sure".',layout:'l-6',multi:true,
+    opts:[{v:'Custom color',img:IMG.ucolor},{v:'Power footrest',img:IMG.ufoot},{v:'Power swivel',img:IMG.uswivel},{v:'Larger seat',img:IMG.useat},{v:'Folding rail',img:IMG.ufold},{v:'Not sure',art:'q'}],
+    optsOut:[{v:'Larger seat',img:IMG.oseat},{v:'Larger footrest',img:IMG.ofoot},{v:'Park position',img:IMG.ofold},{v:'Not sure',art:'q'}]},
+  {key:'savings',title:'Could you qualify for 10% off?',hint:'Seniors 65+, veterans & active military save 10%.',layout:'l-3i',icon:true,
+    opts:[{v:'Military',art:'flag'},{v:'Senior 65+',art:'senior'},{v:'Neither',art:'neither'}]},
+  {key:'role',title:'A couple of quick things',sub2:true},
+  {key:'contact',title:'Where should we send your free quote?',contact:true}
+];
+
+var answers={},step=0;
+function skipped(i){return STEPS[i].skipIf&&STEPS[i].skipIf()}
+function activeIdx(){var a=[];for(var i=0;i<STEPS.length;i++)if(!skipped(i))a.push(i);return a}
+var cfg=document.getElementById('cfg'),main=document.getElementById('cfgMain'),
+    fill=document.getElementById('cfgFill'),stp=document.getElementById('cfgStp'),
+    back=document.getElementById('cfgBack'),foot=document.getElementById('cfgFoot'),
+    cta=document.getElementById('cfgCta');
+
+function vis(o){var src=(answers.location==='Outdoors'&&o.imgOut)?o.imgOut:o.img;var base=o.art?ART[o.art]:'';return base+(src?'<img src="'+src+'" alt="'+o.v+'" loading="lazy" onerror="this.remove()">':'')}
+
+function photoTile(o,sel){
+  return '<button type="button" class="tile'+(sel?' sel':'')+'" data-v="'+o.v+'"><span class="tile-head">'+o.v+'</span><span class="tile-vis">'+vis(o)+'</span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>';
+}
+function iconTile(o,sel){
+  return '<button type="button" class="tile ic'+(sel?' sel':'')+'" data-v="'+o.v+'"><span class="tile-vis">'+vis(o)+'</span><span class="tile-lab">'+o.v+'</span><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>';
+}
+function cardTile(o,sel){
+  return '<button type="button" class="tile card'+(o.alt?' alt':'')+(sel?' sel':'')+'" data-v="'+o.v+'"><span class="big">'+o.v+'</span>'+(o.sub?'<span class="sub">'+o.sub+'</span>':'')+'<span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></button>';
+}
+
+function render(){
+  var s=STEPS[step], act=activeIdx(), total=act.length, pos=act.indexOf(step);
+  fill.style.width=Math.round((pos/(total-1))*100)+'%';
+  stp.textContent='Step '+(pos+1)+' of '+total;
+  back.hidden=pos<=0;
+  foot.classList.remove('show');
+  main.classList.remove('scroll');
+
+  var h='<div class="cfg-q"><h2>'+s.title+(s.hint?'<span class="hint">'+s.hint+'</span>':'')+'</h2></div>';
+
+  if(s.contact){
+    main.classList.add('scroll');
+    h='<div class="cfg-q"><h2>'+s.title+'</h2></div>';
+    if(summary())h+='<div class="cfg-sum">'+summary()+'</div>';
+    h+='<div class="cfields">'+
+        cfield('name','Full Name',1)+
+        cfield('phone','Phone',1,'tel','numeric')+
+        cfield('zip','ZIP Code',1,'text','numeric')+
+        cfield('email','Email',0,'email')+
+      '</div>';
+    main.innerHTML=h; bindContact();
+    foot.classList.add('show'); cta.textContent='Get My Free Quote'; cta.disabled=!contactValid();
+    return;
+  }
+  if(s.sub2){ // role + financing on one screen (matches reference)
+    main.classList.add('scroll');
+    h+='<div style="text-align:center"><p style="font-weight:700;margin-bottom:12px">What\u2019s your role?</p>'+
+       '<div class="cfg-opts l-3i" id="roleG" style="display:grid;margin-bottom:24px">'+
+         [{v:'Homeowner',art:'home'},{v:'Caregiver',art:'care'},{v:'Head of household',art:'people'}].map(function(o){return iconTile(o,answers.role===o.v)}).join('')+
+       '</div>'+
+       '<p style="font-weight:700;margin-bottom:12px">Interested in financing?</p>'+
+       '<div class="cfg-opts l-3i" id="finG" style="display:grid;grid-template-columns:1fr 1fr;max-width:300px;margin:0 auto">'+
+         [{v:'Yes',art:'yes'},{v:'No',art:'no'}].map(function(o){return iconTile(o,answers.financing===o.v)}).join('')+
+       '</div>'+
+       '<p class="finnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Soft pull — no impact on your credit score</p>'+
+       '<div class="finlogos">'+['mobilitytrust','greensky','affirm','carecredit'].map(function(k){return '<span class="lg"><img src="'+FIN[k]+'" alt="financing partner"></span>'}).join('')+'</div>'+
+       '</div>';
+    main.innerHTML=h;
+    bindSub('roleG','role'); bindSub('finG','financing');
+    foot.classList.add('show'); cta.textContent='Continue'; cta.disabled=!(answers.role&&answers.financing);
+    return;
+  }
+
+  // tile steps
+  var opts=(answers.location==='Outdoors'&&s.optsOut)?s.optsOut:s.opts;
+  var cur=answers[s.key]; if(s.multi&&!Array.isArray(cur))cur=[];
+  var tiles=opts.map(function(o){
+    var sel=s.multi?cur.indexOf(o.v)>-1:cur===o.v;
+    if(s.cards)return cardTile(o,sel);
+    if(s.icon)return iconTile(o,sel);
+    return photoTile(o,sel);
+  });
+  h+='<div class="cfg-opts '+s.layout+'">'+tiles.join('')+'</div>';
+  main.innerHTML=h;
+  bindTiles(s);
+  if(s.multi){foot.classList.add('show');cta.textContent='Continue';cta.disabled=false}
+}
+
+function bindTiles(s){
+  main.querySelectorAll('.cfg-opts .tile').forEach(function(t){
+    t.addEventListener('click',function(){
+      var v=t.dataset.v;
+      if(s.multi){
+        var arr=answers[s.key]||[]; var i=arr.indexOf(v);
+        if(i>-1)arr.splice(i,1);else arr.push(v);
+        answers[s.key]=arr; t.classList.toggle('sel');
+      }else{
+        answers[s.key]=v;
+        main.querySelectorAll('.tile').forEach(function(x){x.classList.remove('sel')});
+        t.classList.add('sel');
+        setTimeout(next,160);
+      }
+    });
+  });
+}
+function bindSub(id,key){
+  document.getElementById(id).querySelectorAll('.tile').forEach(function(t){
+    t.addEventListener('click',function(){
+      answers[key]=t.dataset.v;
+      t.parentElement.querySelectorAll('.tile').forEach(function(x){x.classList.remove('sel')});
+      t.classList.add('sel');
+      if(STEPS[step].sub2) cta.disabled=!(answers.role&&answers.financing);
+    });
+  });
+}
+
+function cfield(k,lab,req,type,im){
+  var v=answers['c_'+k]||'';
+  var msg=k==='name'?'Please enter your first and last name.':'Please enter your '+lab.replace(' (optional)','').toLowerCase()+'.';
+  return '<div class="cf" data-f="'+k+'"><label>'+lab+(req?' <span class="req">*</span>':'')+'</label>'+
+    '<input type="'+(type||'text')+'"'+(im?' inputmode="'+im+'"':'')+' autocomplete="'+(k==='name'?'name':k==='phone'?'tel':k==='zip'?'postal-code':k==='email'?'email':'off')+'" value="'+v.replace(/"/g,'&quot;')+'" data-k="'+k+'"'+(req?' data-req="1"':'')+' placeholder="'+(k==='name'?'Jane Smith':k==='phone'?'(404) 555-0100':k==='zip'?'30301':'you@email.com')+'">'+
+    '<span class="msg">'+msg+'</span></div>';
+}
+function bindContact(){
+  main.querySelectorAll('input[data-k]').forEach(function(inp){
+    inp.addEventListener('input',function(){answers['c_'+inp.dataset.k]=inp.value;inp.closest('.cf').classList.remove('err');cta.disabled=!contactValid()});
+  });
+}
+function nameOK(){var n=(answers.c_name||'').trim();return n.split(/\s+/).filter(Boolean).length>=2}
+function contactValid(){return nameOK()&&(answers.c_phone||'').trim().length>=7&&(answers.c_zip||'').trim().length>=5}
+
+function summary(){
+  var p=[];['location','staircase','length','capacity'].forEach(function(k){if(answers[k]&&answers[k]!=='Not sure')p.push(answers[k])});
+  var line=p.length?'<b>Your lift:</b> '+p.join(' · '):'';
+  if(answers.savings&&answers.savings!=='Neither')line+=(line?'<br>':'')+'<span class="save">✓ 10% '+(answers.savings==='Senior 65+'?'senior':'military')+' discount applied</span>';
+  return line;
+}
+
+function next(){for(var i=step+1;i<STEPS.length;i++){if(!skipped(i)){step=i;render();return}}}
+back.addEventListener('click',function(){for(var i=step-1;i>=0;i--){if(!skipped(i)){step=i;render();return}}});
+cta.addEventListener('click',function(){
+  var s=STEPS[step];
+  if(s.contact){
+    var ok=true;
+    main.querySelectorAll('.cf input[data-req]').forEach(function(inp){
+      var k=inp.dataset.k,val=(inp.value||'').trim(),bad=false;
+      if(val.length===0)bad=true;
+      if(k==='name'&&!nameOK())bad=true;
+      if(k==='zip'&&val.length<5)bad=true;
+      if(bad){inp.closest('.cf').classList.add('err');ok=false}
+    });
+    if(ok)submitCfg();
+  }else next();
+});
+
+function submitCfg(){
+  // TODO: POST `answers` to client CRM / n8n / GHL webhook:
+  // fetch('WEBHOOK_URL',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(answers)});
+  fill.style.width='100%'; stp.textContent=''; back.hidden=true; foot.classList.remove('show');
+  main.classList.add('scroll');
+  main.innerHTML='<div class="cfg-done"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>'+
+    '<h2>Thank you — we\u2019ve got it.</h2>'+
+    '<p>A friendly local expert will call you within one business hour to confirm your free, no-obligation quote.</p>'+
+    '<p style="margin-top:14px">Prefer to talk now? Call <a href="tel:" style="color:var(--cta-d);font-weight:800">(470) 918-0516</a>.</p></div>';
+}
+
+function openCfg(){cfg.classList.add('o');document.body.style.overflow='hidden';step=0;answers={};render()}
+function closeCfg(){cfg.classList.remove('o');document.body.style.overflow=''}
+document.getElementById('cfgX').onclick=closeCfg;
+document.addEventListener('click',function(e){var t=e.target.closest('.js-quote');if(t){e.preventDefault();closeDr();openCfg()}});
+addEventListener('keydown',function(e){if(e.key==='Escape'&&cfg.classList.contains('o'))closeCfg()});
+</script>
+</body>
+</html>
