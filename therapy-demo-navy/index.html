@@ -84,7 +84,7 @@
   .avatar.more { background: var(--dark); font-size: 9px; }
   .proof-text { font-size: 11px; line-height: 1.3; color: #56655d; }
   .proof-text b { display: block; color: #1f3028; font-size: 11px; }
-  .hero-visual { position: absolute; right: -3px; bottom: 0; width: 596px; height: 724px; z-index: 1; }
+  .hero-visual { position: absolute; right: 0; bottom: 0; width: 596px; height: 724px; z-index: 1; overflow: hidden; }
   .hero-visual::before {
     content: ""; position: absolute; inset: 58px 0 0 40px;
     background: radial-gradient(circle at 52% 50%, rgba(255,255,255,.36), transparent 63%);
@@ -92,7 +92,7 @@
   }
   .hero-person { position: absolute; right: 100px; bottom: 0; height: 724px; width: 514px; object-fit: cover; object-position: 51% 18%; z-index: 1; }
   .float-card {
-    position: absolute; right: -45px; bottom: 118px; width: 176px; min-height: 153px; border-radius: 22px;
+    position: absolute; right: 8px; bottom: 118px; width: 176px; min-height: 153px; border-radius: 22px;
     background: rgba(255,254,250,.95); box-shadow: 0 22px 56px rgba(28,43,35,.16); z-index: 3;
     padding: 34px 22px 19px; text-align: center; border: 1px solid rgba(255,255,255,.88);
   }
