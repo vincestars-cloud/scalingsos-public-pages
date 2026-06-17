@@ -3879,18 +3879,18 @@ async function startPlacesDiscovery(force) {
   const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
   const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
   const cities = []; // let n8n expand selected states from the 40k+ city population map
-  const maxSearches = Math.min(2000, Math.max(250, states.length * industries.length * 250));
+  const batchSize = 250; // per n8n execution; the Places workflow auto-continues until the full plan is done
   if (!states.length || !industries.length) {
     showToast('Select at least one state and one industry before running Places discovery.', true);
     return;
   }
   const status = document.getElementById('placesDiscoveryStatus');
-  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Checking recent searches for up to ' + maxSearches.toLocaleString() + ' Places queries...'; }
+  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Checking recent searches; full Places crawl will run in ' + batchSize.toLocaleString() + '-query batches...'; }
   try {
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'start_discovery', states, industries, cities, max_searches: maxSearches, min_city_population: 40000, force: !!force })
+      body: JSON.stringify({ action:'start_discovery', states, industries, cities, max_searches: batchSize, batch_size: batchSize, auto_continue: true, query_terms_mode: 'all_terms', max_terms_per_industry: 0, min_city_population: 40000, force: !!force })
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json().catch(() => ({}));
@@ -3904,8 +3904,8 @@ async function startPlacesDiscovery(force) {
       return;
     }
     if (json && json.ok === false) throw new Error(json.error || json.warning || 'discovery rejected');
-    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Places discovery started: up to ' + maxSearches.toLocaleString() + ' Google queries'; }
-    showToast('Places discovery started: ' + states.length + ' states, ' + industries.length + ' industries, up to ' + maxSearches.toLocaleString() + ' Google queries');
+    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Places discovery started: all selected cities/terms, ' + batchSize.toLocaleString() + ' queries per batch'; }
+    showToast('Places discovery started: ' + states.length + ' states, ' + industries.length + ' industries, all 40k+ cities/terms in ' + batchSize.toLocaleString() + '-query batches');
     refreshProspectorConfigCache();
   } catch(e) {
     if (status) { status.className = 'prospector-status paused'; status.textContent = 'Discovery not started'; }
