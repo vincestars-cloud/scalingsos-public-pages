@@ -731,6 +731,10 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">6hr Follow-up SMS<textarea id="settingsFollowup6h" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">24hr Follow-up SMS<textarea id="settingsFollowup24h" rows="4" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
+        <div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,240px);gap:12px;margin-top:12px;align-items:end">
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 3 - 60 Sec After Msg 2<textarea id="settingsMsg3AfterMsg2" rows="3" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:8px;padding:10px 0 8px"><input id="settingsMsg3Enabled" type="checkbox" style="width:16px;height:16px"> Auto-send Msg 3</label>
+        </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px;align-items:end">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Sender Numbers<textarea id="settingsSenderNumbers" rows="3" placeholder="+14702846486&#10;+14042324867" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Active Sender<input id="settingsActiveSender" type="text" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
@@ -2651,6 +2655,7 @@ function renderSettings() {
 }
 
 function settingsVal(id){ return (document.getElementById(id)?.value || '').trim(); }
+function settingsChecked(id){ return document.getElementById(id)?.checked === true; }
 function settingsNum(id, fallback){
   var n = parseInt(settingsVal(id), 10);
   return Number.isFinite(n) ? n : fallback;
@@ -2767,6 +2772,12 @@ function fillSmsMessageTemplateFields(force){
   if(o && (force || !o.dataset.loaded)){ o.value=mt.offer_template || ''; o.dataset.loaded='1'; }
   fill('settingsFollowup6h', mt.followup_sms_1a_body || '{name}, are you pretty busy at the moment?');
   fill('settingsFollowup24h', mt.followup_sms_1b_body || "No pressure if now's not the right time - just figured I'd reach out. Want me to send over details or leave it alone??");
+  fill('settingsMsg3AfterMsg2', mt.msg3_after_msg2_body || 'I only charge a one time 99 if you want to keep it.');
+  var msg3EnabledEl=$('settingsMsg3Enabled');
+  if(msg3EnabledEl && (force || !msg3EnabledEl.dataset.loaded)){
+    msg3EnabledEl.checked = mt.msg3_after_msg2_enabled === true || mt.msg3_after_msg2_auto_send === true;
+    msg3EnabledEl.dataset.loaded='1';
+  }
   fill('settingsSenderNumbers', Array.isArray(cfg.sender_numbers) && cfg.sender_numbers.length ? cfg.sender_numbers.join('\n') : '+14702846486\n+14042324867');
   fill('settingsActiveSender', cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486');
   fill('settingsSendStart', cfg.send_window_start != null ? String(cfg.send_window_start) : '9');
@@ -2814,6 +2825,10 @@ async function saveSmsMessageTemplates(){
   mt.offer_template=(document.getElementById('settingsOfferTemplate')?.value||'').trim();
   mt.followup_sms_1a_body=val('settingsFollowup6h');
   mt.followup_sms_1b_body=val('settingsFollowup24h');
+  mt.msg3_after_msg2_body=val('settingsMsg3AfterMsg2') || 'I only charge a one time 99 if you want to keep it.';
+  mt.msg3_after_msg2_enabled=settingsChecked('settingsMsg3Enabled');
+  mt.msg3_after_msg2_auto_send=mt.msg3_after_msg2_enabled;
+  mt.msg3_after_msg2_delay_seconds=60;
   if(!mt.outreach_initial || !mt.followup_after_reply_has_website_variants.length || !mt.followup_after_reply_no_website_variants.length){ if(st){st.textContent='Msg 1 plus at least one Existing Website and No Website Msg 2 are required'; st.style.color='var(--red)';} return; }
   try{
     var resp=await fetch(N8N_BASE+'/scalingsos-prospector-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',config:Object.assign({message_templates:mt}, operationalSettingsPayload())})});
