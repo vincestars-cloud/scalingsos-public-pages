@@ -3878,7 +3878,8 @@ async function saveProspectorConfig() {
 async function startPlacesDiscovery(force) {
   const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
   const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
-  const cities = citiesForStates(states);
+  const cities = []; // let n8n expand selected states from the 40k+ city population map
+  const maxSearches = Math.min(500, Math.max(250, states.length * industries.length * 250));
   if (!states.length || !industries.length) {
     showToast('Select at least one state and one industry before running Places discovery.', true);
     return;
@@ -3890,7 +3891,7 @@ async function startPlacesDiscovery(force) {
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'start_discovery', states, industries, cities, max_searches: Math.min(50, Math.max(1, states.length * industries.length * 3)), force: !!force })
+      body: JSON.stringify({ action:'start_discovery', states, industries, cities, max_searches: maxSearches, min_city_population: 40000, force: !!force })
     });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json().catch(() => ({}));
