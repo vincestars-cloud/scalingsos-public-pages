@@ -3879,7 +3879,7 @@ async function startPlacesDiscovery(force) {
   const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
   const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
   const cities = []; // let n8n expand selected states from the 40k+ city population map
-  const maxSearches = Math.min(500, Math.max(250, states.length * industries.length * 250));
+  const maxSearches = Math.min(2000, Math.max(250, states.length * industries.length * 250));
   if (!states.length || !industries.length) {
     showToast('Select at least one state and one industry before running Places discovery.', true);
     return;
