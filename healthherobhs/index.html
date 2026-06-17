@@ -978,7 +978,31 @@
 
 <style id="solo-therapist-overrides">.therapist-cards.solo{grid-template-columns:1fr;max-width:540px;margin-left:auto;margin-right:auto}.therapist-cards.solo .photo-placeholder{min-height:230px;display:grid;place-items:center}.therapist-cards.solo .photo-placeholder span{font-size:54px;font-weight:600;letter-spacing:.02em}.therapist-cards.solo .therapist-info{padding:26px 26px 30px;text-align:center}.therapist-cards.solo .therapist-info h3{font-size:23px}.therapist-cards.solo .detail{justify-content:center}.therapist-cards.solo .view-btn{margin:14px auto 0}.topbar .client-logo,.nav .client-logo{max-height:44px;width:auto;max-width:210px;object-fit:contain;display:block}@media(max-width:720px){.nav .client-logo{max-height:36px;max-width:150px}}</style>
 <style id="solo-fixes-v2">.therapist-cards.solo{grid-template-columns:1fr!important;max-width:540px;margin-left:auto!important;margin-right:auto!important;gap:0!important;float:none!important}.therapist-cards.solo .therapist-card{width:100%}.therapist-cards.solo .therapist-info h3{font-size:23px!important;line-height:1.14!important;overflow-wrap:anywhere}@media(max-width:980px){.therapist-cards.solo{max-width:460px!important}}@media(max-width:720px){.therapist-cards.solo{max-width:400px!important}.therapist-cards.solo .therapist-info h3{font-size:22px!important}.therapist-cards.solo .photo-placeholder span{font-size:46px!important}}.therapist-cards.solo .detail{display:flex!important;justify-content:center}.story-marquee{min-height:280px}.story-track{position:relative!important;animation:storyLoopReliable 60s linear infinite!important}.insurance-logo{border:0!important;background:transparent!important;box-shadow:none!important}.ann-short{display:none}@media(max-width:720px){.ann-full{display:none}.ann-short{display:inline}.announcement-inner{flex-wrap:nowrap;justify-content:center;gap:0;font-size:12px;padding:8px 10px;line-height:1.3}.announcement-inner a{display:none}}</style>
-<style id="bp">:root{--purple-900:#0e1d26;--purple-800:#152832;--purple-700:#1b3341;--purple-500:#284c61;--purple-300:#719cb5;--lavender-200:#bccad1;--lavender-100:#d0d8dc;--green-900:#0e1d26;--green-800:#152832;--green-700:#1b3341;--green-500:#284c61;--green-300:#719cb5;--sage-200:#bccad1;--sage-100:#d0d8dc;--red:#719cb5;--orange:#719cb5;--cream:#eaebec;--cream-2:#eff0f0;--card:#f5f5f5;--clay:#719cb5;--clay-dark:#53839e;--gold:#a9b9c2;--gold-soft:#cdd3d6;--ink:#1a1d1e;--muted:#5e6e78;--line:#c4ced4;--dark:#0e1d26;--dark-2:#0f1c24;--dark-3:#0c171d;--deep:#1b3341;--green:#284c61;--green-2:#719cb5;--mint:#eaebec;--ink:#1a1d1e;--muted:#5e6e78;--soft:#bccad1;--soft-2:#bccad1;--paper:#d0d8dc;--card:#f5f5f5;--line:#c4ced4;--gold:#a9b9c2;}</style></head>
+<style id="bp">:root{--purple-900:#0e1d26;--purple-800:#152832;--purple-700:#1b3341;--purple-500:#284c61;--purple-300:#719cb5;--lavender-200:#bccad1;--lavender-100:#d0d8dc;--green-900:#0e1d26;--green-800:#152832;--green-700:#1b3341;--green-500:#284c61;--green-300:#719cb5;--sage-200:#bccad1;--sage-100:#d0d8dc;--red:#719cb5;--orange:#719cb5;--cream:#eaebec;--cream-2:#eff0f0;--card:#f5f5f5;--clay:#719cb5;--clay-dark:#53839e;--gold:#a9b9c2;--gold-soft:#cdd3d6;--ink:#1a1d1e;--muted:#5e6e78;--line:#c4ced4;--dark:#0e1d26;--dark-2:#0f1c24;--dark-3:#0c171d;--deep:#1b3341;--green:#284c61;--green-2:#719cb5;--mint:#eaebec;--ink:#1a1d1e;--muted:#5e6e78;--soft:#bccad1;--soft-2:#bccad1;--paper:#d0d8dc;--card:#f5f5f5;--line:#c4ced4;--gold:#a9b9c2;}</style>
+<style id="mobile-fixes-v3">
+/* #4 service icons: svg had no size rule -> kept hardcoded 41px and overflowed onto titles on mobile */
+.service-ico svg{width:100%!important;height:100%!important;display:block}
+/* #3 stories: one slow seamless loop; kill conflicting absolute-position + duration overrides that scrolled cards off-screen */
+.story-marquee{overflow:hidden}
+#stories .story-track{position:relative!important;top:auto!important;left:auto!important;display:flex!important;width:max-content!important;animation:storyScrollV3 120s linear infinite!important;transform:translateX(0)}
+#stories .story-marquee:hover .story-track{animation-play-state:paused}
+#stories .story-card{flex:0 0 340px!important;width:340px!important}
+@keyframes storyScrollV3{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:760px){#stories .story-track{animation-duration:70s!important}#stories .story-card{flex:0 0 300px!important;width:300px!important}}
+/* #2 top insurance strip scrolls horizontally */
+.ins-strip .ins-inner{display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:14px 26px!important}
+.ins-strip .ins-label{flex:0 0 auto}
+.ins-viewport{flex:1 1 300px;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ins-track{display:flex;width:max-content;animation:insScrollV3 28s linear infinite}
+.ins-viewport:hover .ins-track{animation-play-state:paused}
+.ins-strip .ins-row{display:flex!important;flex-wrap:nowrap!important;align-items:center;gap:40px!important;padding-right:40px;flex:0 0 auto}
+@keyframes insScrollV3{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:700px){.ins-strip .ins-row{gap:28px!important;padding-right:28px}.ins-track{animation-duration:18s}}
+/* #1 sticky CTA bar: bulletproof bottom pin + iOS safe-area */
+.sticky-lower-ctas{top:auto!important;bottom:max(10px,env(safe-area-inset-bottom))!important}
+@media(prefers-reduced-motion:reduce){.story-track,.ins-track{animation:none!important}}
+</style>
+</head>
 <body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 7227</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
 <div class="announcement-bar" role="banner">
   <div class="announcement-inner">
@@ -1050,13 +1074,25 @@
 <section class="ins-strip">
 <div class="container ins-inner">
 <div class="ins-label">In-Network With Most Major Plans</div>
-<div aria-label="Accepted insurance plans" class="ins-row">
+<div class="ins-viewport">
+<div class="ins-track">
+<div class="ins-row">
 <img alt="Aetna" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-aetna.webp"/>
 <img alt="Cigna" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-cigna.webp"/>
 <img alt="UnitedHealthcare" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-united.webp"/>
 <img alt="Humana" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-humana.webp"/>
 <img alt="Oscar" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-oscar.webp"/>
 <img alt="HSA/FSA Eligible" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-hsafsa.svg"/>
+</div>
+<div aria-hidden="true" class="ins-row">
+<img alt="Aetna" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-aetna.webp"/>
+<img alt="Cigna" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-cigna.webp"/>
+<img alt="UnitedHealthcare" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-united.webp"/>
+<img alt="Humana" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-humana.webp"/>
+<img alt="Oscar" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-oscar.webp"/>
+<img alt="HSA/FSA Eligible" loading="lazy" src="https://demo.scalingsos.com/assets/therapist/ins-hsafsa.svg"/>
+</div>
+</div>
 </div>
 </div>
 </section>
