@@ -504,6 +504,16 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         </label>
         <button class="btn btn-primary" onclick="saveProspectorConfig()">Save Outreach Settings</button>
       </div>
+      <div class="control-panel" id="smsTargetingPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+          <h3 style="margin:0">SMS Industry Targeting</h3>
+          <button class="btn" type="button" id="smsTargetingRefreshBtn" onclick="refreshSmsTargetingCounts(true)" style="font-size:.78rem;padding:6px 12px;border:1px solid var(--border);background:#fff;color:#334155;font-weight:700">&#8635; Refresh Counts</button>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining sendable pool &mdash; when a bucket you target nears zero, run Places Discovery again. Does not affect Places discovery or any message already queued.</p>
+        <div id="smsTargetingMeta" style="font-size:.72rem;color:var(--text-muted);margin:0 0 12px"></div>
+        <div id="smsTargetingRows"></div>
+        <button class="btn btn-primary" type="button" onclick="saveSmsTargeting()" style="margin-top:14px">Save SMS Targeting</button>
+      </div>
       <div class="control-panel">
         <h3>Outreach Queue</h3>
         <div id="outreachQueueSummary" style="font-size:.82rem;color:var(--text-muted);margin-bottom:10px">Loading queue...</div>
@@ -3820,6 +3830,10 @@ async function loadProspectorState() {
     prospectorConfigCache = cfg && cfg.ok !== false ? cfg : prospectorConfigCache;
     if (currentPageName && currentPageName()==='settings') { try{ fillSmsMessageTemplateFields(true); }catch(_e){} }
     renderProspector();
+    try {
+      renderSmsTargeting();
+      if(!(prospectorConfigCache && prospectorConfigCache.industry_counts && prospectorConfigCache.industry_counts.computed_at)) refreshSmsTargetingCounts(false);
+    } catch(_e){}
     setTimeout(() => {
       document.querySelectorAll('input[name="state"]').forEach(cb => { cb.checked = (cfg.states || []).includes(cb.value); });
       document.querySelectorAll('input[name="industry"]').forEach(cb => { cb.checked = (cfg.industries || []).includes(cb.value); });
@@ -3888,6 +3902,78 @@ async function saveProspectorConfig() {
     console.error('Prospector save failed:', e);
     showToast('Config save failed: ' + e.message, true);
   }
+}
+
+// ===== SMS Industry Targeting (website-bucket per industry) — sms_industry_filter_20260618 =====
+const SMS_TARGET_OPTS = [['all','All'],['no_website','No Website'],['broken','Broken Site'],['working','Working Site'],['skip','Skip']];
+function _smsTgtKey(name){ return String(name||'').trim().toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
+function _smsTgtIndustries(){
+  const cfg = prospectorConfigCache || {};
+  const ic = (cfg.industry_counts && cfg.industry_counts.by_industry) ? cfg.industry_counts.by_industry : {};
+  const known = INDUSTRIES.map(function(n){ return { name:n, key:_smsTgtKey(n) }; });
+  const seen = {}; known.forEach(function(k){ seen[k.key]=1; });
+  Object.keys(ic).forEach(function(k){ if(!seen[k] && k!=='unknown'){ known.push({ name:k, key:k }); seen[k]=1; } });
+  known.sort(function(a,b){ return ((ic[b.key]&&ic[b.key].total)||0)-((ic[a.key]&&ic[a.key].total)||0) || a.name.localeCompare(b.name); });
+  return known;
+}
+function renderSmsTargeting(){
+  const host = document.getElementById('smsTargetingRows'); if(!host) return;
+  const cfg = prospectorConfigCache || {};
+  const filt = (cfg.sms_industry_filter && typeof cfg.sms_industry_filter==='object') ? cfg.sms_industry_filter : {};
+  const ic = (cfg.industry_counts && cfg.industry_counts.by_industry) ? cfg.industry_counts.by_industry : {};
+  const meta = document.getElementById('smsTargetingMeta');
+  if(meta){
+    const ca = cfg.industry_counts && cfg.industry_counts.computed_at;
+    meta.textContent = ca ? ('Pool counts as of ' + new Date(ca).toLocaleString() + ((cfg.industry_counts.read_error)?(' (partial: '+cfg.industry_counts.read_error+')'):'')) : 'Counts not loaded yet — click Refresh Counts.';
+  }
+  host.innerHTML = _smsTgtIndustries().map(function(it){
+    const c = ic[it.key] || { total:0, no_website:0, broken:0, working:0 };
+    const cur = String(filt[it.key] || 'all');
+    const radios = SMS_TARGET_OPTS.map(function(o){
+      const checked = cur===o[0] ? ' checked' : '';
+      return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.78rem;font-weight:600;color:#334155"><input type="radio" name="smstgt_'+it.key+'" value="'+o[0]+'"'+checked+'> '+o[1]+'</label>';
+    }).join('');
+    const dim = c.total===0 ? 'opacity:.55;' : '';
+    return '<div style="padding:9px 0;border-bottom:1px solid var(--border);'+dim+'">'
+      + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:5px">'
+      + '<span style="font-weight:800;font-size:.86rem;color:#0f172a">'+esc(it.name)+'</span>'
+      + '<span style="font-size:.72rem;color:var(--text-muted);font-weight:600">Pool '+Number(c.total).toLocaleString()+' &middot; No Site '+Number(c.no_website).toLocaleString()+' &middot; Broken '+Number(c.broken).toLocaleString()+' &middot; Working '+Number(c.working).toLocaleString()+'</span>'
+      + '</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:12px">'+radios+'</div>'
+      + '</div>';
+  }).join('');
+}
+async function saveSmsTargeting(){
+  const filter = {};
+  _smsTgtIndustries().forEach(function(it){
+    const sel = document.querySelector('input[name="smstgt_'+it.key+'"]:checked');
+    const v = sel ? sel.value : 'all';
+    if(v && v!=='all') filter[it.key] = v; // 'all' is the default — omit so it stays unfiltered
+  });
+  try{
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:{ sms_industry_filter: filter } }) });
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const j = await resp.json().catch(function(){ return {}; });
+    if(j && j.ok === false) throw new Error(j.error || 'rejected');
+    if(j && j.sms_industry_filter) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { sms_industry_filter: j.sms_industry_filter });
+    const n = Object.keys(filter).length;
+    showToast(n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All');
+    renderSmsTargeting();
+  }catch(e){ showToast('SMS targeting save failed: ' + e.message, true); }
+}
+let _smsCountsLoading = false;
+async function refreshSmsTargetingCounts(force){
+  if(_smsCountsLoading) return;
+  const btn = document.getElementById('smsTargetingRefreshBtn');
+  _smsCountsLoading = true; if(btn){ btn.disabled = true; btn.textContent = 'Counting…'; }
+  try{
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'refresh_counts' }) });
+    const j = await resp.json().catch(function(){ return {}; });
+    if(j && j.industry_counts) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { industry_counts: j.industry_counts, sms_industry_filter: j.sms_industry_filter || ((prospectorConfigCache||{}).sms_industry_filter) });
+    renderSmsTargeting();
+    if(force) showToast('Pool counts refreshed');
+  }catch(e){ if(force) showToast('Count refresh failed: ' + e.message, true); }
+  finally{ _smsCountsLoading = false; if(btn){ btn.disabled = false; btn.innerHTML = '&#8635; Refresh Counts'; } }
 }
 
 async function startPlacesDiscovery(force) {
