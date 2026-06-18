@@ -509,7 +509,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <h3 style="margin:0">SMS Industry Targeting</h3>
           <button class="btn" type="button" id="smsTargetingRefreshBtn" onclick="refreshSmsTargetingCounts(true)" style="font-size:.78rem;padding:6px 12px;border:1px solid var(--border);background:#fff;color:#334155;font-weight:700">&#8635; Refresh Counts</button>
         </div>
-        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining sendable pool &mdash; when a bucket you target nears zero, run Places Discovery again. Does not affect Places discovery or any message already queued.</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining pool in a sendable status (approximate &mdash; per-send LRN/DNC checks may drop a few more) &mdash; when a bucket you target nears zero, run Places Discovery again. Does not affect Places discovery or any message already queued.</p>
         <div id="smsTargetingMeta" style="font-size:.72rem;color:var(--text-muted);margin:0 0 12px"></div>
         <div id="smsTargetingRows"></div>
         <button class="btn btn-primary" type="button" onclick="saveSmsTargeting()" style="margin-top:14px">Save SMS Targeting</button>
@@ -3944,11 +3944,14 @@ function renderSmsTargeting(){
   }).join('');
 }
 async function saveSmsTargeting(){
+  // Send an EXPLICIT value for every rendered industry — including 'all'. The config API drops
+  // 'all'-valued keys when they are present in the payload, so this is what lets a user reset an
+  // industry back to All (omitting the key would let the server's previous-state merge re-apply a
+  // stale rule, creating a one-way latch). 'all' keys are not stored; only real buckets persist.
   const filter = {};
   _smsTgtIndustries().forEach(function(it){
     const sel = document.querySelector('input[name="smstgt_'+it.key+'"]:checked');
-    const v = sel ? sel.value : 'all';
-    if(v && v!=='all') filter[it.key] = v; // 'all' is the default — omit so it stays unfiltered
+    filter[it.key] = sel ? sel.value : 'all';
   });
   try{
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:{ sms_industry_filter: filter } }) });
@@ -3956,7 +3959,9 @@ async function saveSmsTargeting(){
     const j = await resp.json().catch(function(){ return {}; });
     if(j && j.ok === false) throw new Error(j.error || 'rejected');
     if(j && j.sms_industry_filter) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { sms_industry_filter: j.sms_industry_filter });
-    const n = Object.keys(filter).length;
+    // count what the server actually stored (real buckets only), not the 'all' rows we sent
+    const stored = (j && j.sms_industry_filter && typeof j.sms_industry_filter==='object') ? j.sms_industry_filter : filter;
+    const n = Object.keys(stored).filter(function(k){ var v=String(stored[k]||''); return v && v!=='all'; }).length;
     showToast(n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All');
     renderSmsTargeting();
   }catch(e){ showToast('SMS targeting save failed: ' + e.message, true); }
