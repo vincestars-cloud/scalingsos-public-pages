@@ -3835,8 +3835,14 @@ async function loadProspectorState() {
       if(!(prospectorConfigCache && prospectorConfigCache.industry_counts && prospectorConfigCache.industry_counts.computed_at)) refreshSmsTargetingCounts(false);
     } catch(_e){}
     setTimeout(() => {
-      document.querySelectorAll('input[name="state"]').forEach(cb => { cb.checked = (cfg.states || []).includes(cb.value); });
-      document.querySelectorAll('input[name="industry"]').forEach(cb => { cb.checked = (cfg.industries || []).includes(cb.value); });
+      // persist last Places Discovery selection across refresh: prefer the last discovery run, fall back to saved config
+      var __ld = (cfg.discovery && cfg.discovery.last_request) || {};
+      var __pStates = (Array.isArray(__ld.states) && __ld.states.length) ? __ld.states : (cfg.states || []);
+      var __pInds = (Array.isArray(__ld.industries) && __ld.industries.length) ? __ld.industries : (cfg.industries || []);
+      var __pStatesU = __pStates.map(function(s){ return String(s).toUpperCase(); });
+      var __pIndKeys = __pInds.map(function(i){ return _smsTgtKey(i); });
+      document.querySelectorAll('input[name="state"]').forEach(cb => { cb.checked = __pStatesU.includes(String(cb.value).toUpperCase()); });
+      document.querySelectorAll('input[name="industry"]').forEach(cb => { cb.checked = __pIndKeys.includes(_smsTgtKey(cb.value)); });
       const rate = Math.max(1, Math.min(60, parseInt(cfg.outreach_per_minute) || 1));
       const sl = document.getElementById('targetSlider'); if (sl) sl.value = rate;
       const lb = document.getElementById('targetVal'); if (lb) lb.textContent = rate;
