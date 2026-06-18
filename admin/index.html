@@ -299,8 +299,8 @@ onkeypress="if(event.key==='Enter')doAuth()">
 <script>
 function _h(s){var h=0;for(var i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return'h'+Math.abs(h).toString(36);}
 var _C=_h('scalingsos2026');
-function doAuth(){var pw=document.getElementById('auth-pw').value;if(_h(pw)===_C){localStorage.setItem('sos_admin',_C);document.getElementById('auth-gate').style.display='none';if(typeof loadAllData==='function')loadAllData();if(typeof fetchBusinesses==='function')fetchBusinesses();}else{document.getElementById('auth-err').style.display='block';}}
-if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').style.display='none';window.addEventListener('DOMContentLoaded',function(){if(typeof loadAllData==='function')loadAllData();});}
+function doAuth(){var pw=document.getElementById('auth-pw').value;if(_h(pw)===_C){localStorage.setItem('sos_admin',_C);document.getElementById('auth-gate').style.display='none';if(typeof loadAllData==='function')loadAllData();else if(typeof fetchBusinesses==='function')fetchBusinesses();}else{document.getElementById('auth-err').style.display='block';}}
+if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').style.display='none';}
 </script>
 
 <!-- OVERLAY -->
