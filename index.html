@@ -87,12 +87,18 @@ h1.display .ln1,h1.display .ln2{display:block;}
 
 /* ── BENEFIT STRIP (between VSL and form) ── */
 .benefits{max-width:600px;margin:clamp(26px,3.8vw,40px) auto 0;text-align:center;}
-.benefits .lead{font-size:clamp(19px,2.7vw,24px);font-weight:700;color:var(--navy);margin-bottom:clamp(15px,2.1vw,22px);letter-spacing:-.01em;}
+.benefits .lead{font-size:clamp(19px,3.3vw,28px);font-weight:700;color:var(--navy);margin-bottom:clamp(15px,2.1vw,22px);letter-spacing:-.01em;}
 .benefits .lead span{color:#16a34a;}
-.benefits .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,16px) clamp(22px,3vw,34px);text-align:left;}
+.benefits .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,18px) clamp(22px,3vw,36px);text-align:left;}
 @media(max-width:520px){.benefits .grid{grid-template-columns:1fr;max-width:300px;margin:0 auto;}}
-.benefits .item{display:flex;align-items:flex-start;gap:11px;font-size:clamp(15px,2vw,17px);font-weight:600;color:var(--navy);line-height:1.35;}
-.benefits .item svg{flex-shrink:0;width:22px;height:22px;margin-top:1px;}
+.benefits .item{display:flex;align-items:flex-start;gap:11px;font-size:clamp(15px,2.2vw,19px);font-weight:600;color:var(--navy);line-height:1.35;}
+.benefits .item svg{flex-shrink:0;width:clamp(22px,2.4vw,25px);height:clamp(22px,2.4vw,25px);margin-top:1px;}
+.benefits .research{margin-top:clamp(22px,2.8vw,32px);}
+.benefits .research .eyb{font-size:clamp(11px,1.3vw,12.5px);font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hover);margin-bottom:clamp(9px,1.2vw,12px);}
+.benefits .research .names{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:9px 16px;}
+.benefits .research .names b{font-size:clamp(15px,1.9vw,19px);font-weight:800;color:var(--navy);}
+.benefits .research .names .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.65;}
+@media(max-width:520px){.benefits .research .names{gap:7px 12px;}}
 
 /* ── CAPTURE FORM (replaces CTA button) ── */
 .capture{margin-top:clamp(22px,3.5vw,32px);max-width:620px;margin-left:auto;margin-right:auto;}
@@ -231,6 +237,10 @@ window.SSOS = {
       <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Gets you found on Google</span>
       <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Brings in steady referrals</span>
       <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Captures every lead &mdash; never miss a job</span>
+    </div>
+    <div class="research">
+      <p class="eyb">Strategy Backed By Research From</p>
+      <div class="names"><b>Harvard</b><span class="dot"></span><b>Bain</b><span class="dot"></span><b>Google</b><span class="dot"></span><b>Gartner</b></div>
     </div>
   </div>
 
