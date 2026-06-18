@@ -504,6 +504,14 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         </label>
         <button class="btn btn-primary" onclick="saveProspectorConfig()">Save Outreach Settings</button>
       </div>
+      <div class="control-panel" id="pipelineMetricsPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+          <h3 style="margin:0">Pipeline Metrics &mdash; one source of truth</h3>
+          <span id="pipelineMetricsAsOf" style="font-size:.72rem;color:var(--text-muted)"></span>
+        </div>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 12px">Computed once, server-side, with the canonical website rule &mdash; the same source the targeting panel, SMS filter, and worker all read. Use Refresh Counts (in SMS Targeting) to recompute.</p>
+        <div id="pipelineMetricsBody"></div>
+      </div>
       <div class="control-panel" id="smsTargetingPanel">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
           <h3 style="margin:0">SMS Industry Targeting</h3>
@@ -3831,6 +3839,7 @@ async function loadProspectorState() {
     if (currentPageName && currentPageName()==='settings') { try{ fillSmsMessageTemplateFields(true); }catch(_e){} }
     renderProspector();
     try {
+      renderPipelineMetrics();
       renderSmsTargeting();
       if(!(prospectorConfigCache && prospectorConfigCache.industry_counts && prospectorConfigCache.industry_counts.computed_at)) refreshSmsTargetingCounts(false);
     } catch(_e){}
@@ -3910,6 +3919,32 @@ async function saveProspectorConfig() {
   }
 }
 
+// ===== Pipeline Metrics (single SSOT) — reads the one canonical industry_counts payload =====
+function renderPipelineMetrics(){
+  const host = document.getElementById('pipelineMetricsBody'); if(!host) return;
+  const ic = (prospectorConfigCache && prospectorConfigCache.industry_counts) || {};
+  const f = ic.funnel || {}; const t = ic.totals || {};
+  const asof = document.getElementById('pipelineMetricsAsOf');
+  if(asof) asof.textContent = ic.computed_at ? ('as of ' + new Date(ic.computed_at).toLocaleString()) : 'click Refresh Counts to compute';
+  function card(label, val, sub){ return '<div class="stat-card"><div class="label">'+label+'</div><div class="value">'+Number(val||0).toLocaleString()+'</div>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div>'; }
+  if(!ic.computed_at){ host.innerHTML = '<div style="font-size:.82rem;color:var(--text-muted)">No metrics computed yet &mdash; click <b>Refresh Counts</b> in SMS Industry Targeting below.</div>'; return; }
+  const skipped = Number(f.skipped_modern||0) + Number(f.skipped_other||0);
+  host.innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:14px">'
+    + card('Total scraped', f.total)
+    + card('Skipped (has site/other)', skipped, 'not targets')
+    + card('Messaged', f.messaged_status, 'in conversation')
+    + card('Sendable left', f.sendable, 'remaining pool')
+    + card('Textable left', t.mobile, 'mobile numbers')
+    + '</div>'
+    + '<div style="font-size:.8rem;font-weight:700;color:#0f172a;margin:4px 0 6px">Sendable pool by bucket &mdash; textable = mobile numbers (rest are landlines)</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'
+    + card('No Site', t.no_website, Number(t.mobile_no_website||0).toLocaleString()+' textable')
+    + card('Broken', t.broken, Number(t.mobile_broken||0).toLocaleString()+' textable')
+    + card('Working', t.working, Number(t.mobile_working||0).toLocaleString()+' textable')
+    + '</div>';
+}
+
 // ===== SMS Industry Targeting (website-bucket per industry) — sms_industry_filter_20260618 =====
 const SMS_TARGET_OPTS = [['all','All'],['no_website','No Website'],['broken','Broken Site'],['working','Working Site'],['skip','Skip']];
 function _smsTgtKey(name){ return String(name||'').trim().toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
@@ -3981,6 +4016,7 @@ async function refreshSmsTargetingCounts(force){
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'refresh_counts' }) });
     const j = await resp.json().catch(function(){ return {}; });
     if(j && j.industry_counts) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { industry_counts: j.industry_counts, sms_industry_filter: j.sms_industry_filter || ((prospectorConfigCache||{}).sms_industry_filter) });
+    renderPipelineMetrics();
     renderSmsTargeting();
     if(force) showToast('Pool counts refreshed');
   }catch(e){ if(force) showToast('Count refresh failed: ' + e.message, true); }
