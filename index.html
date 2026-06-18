@@ -85,6 +85,15 @@ h1.display .ln1,h1.display .ln2{display:block;}
 .volrow input[type=range]{flex:1;accent-color:var(--gold);}
 .setdiv{height:1px;background:rgba(255,255,255,.1);margin:6px 0;}
 
+/* ── BENEFIT STRIP (between VSL and form) ── */
+.benefits{max-width:600px;margin:clamp(26px,3.8vw,40px) auto 0;text-align:center;}
+.benefits .lead{font-size:clamp(16px,2.1vw,19px);font-weight:700;color:var(--navy);margin-bottom:clamp(14px,2vw,20px);letter-spacing:-.01em;}
+.benefits .lead span{color:var(--gold-hover);}
+.benefits .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,16px) clamp(22px,3vw,34px);text-align:left;}
+@media(max-width:520px){.benefits .grid{grid-template-columns:1fr;max-width:300px;margin:0 auto;}}
+.benefits .item{display:flex;align-items:flex-start;gap:10px;font-size:clamp(14px,1.7vw,15px);font-weight:600;color:var(--navy);line-height:1.35;}
+.benefits .item svg{flex-shrink:0;width:19px;height:19px;margin-top:1px;}
+
 /* ── CAPTURE FORM (replaces CTA button) ── */
 .capture{margin-top:clamp(22px,3.5vw,32px);max-width:620px;margin-left:auto;margin-right:auto;}
 .cap-h{text-align:center;font-size:clamp(19px,2.6vw,26px);font-weight:800;letter-spacing:-.02em;color:var(--navy);margin-bottom:4px;}
@@ -211,6 +220,17 @@ window.SSOS = {
         </div>
         <button onclick="SP.fullscreen()" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
       </div>
+    </div>
+  </div>
+
+  <!-- BENEFIT STRIP -->
+  <div class="benefits">
+    <p class="lead">A <span>website</span> that&hellip;</p>
+    <div class="grid">
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#b8962f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Turns visitors into booked jobs</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#b8962f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Gets you found on Google</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#b8962f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Brings in steady referrals</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#b8962f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Captures every lead &mdash; never miss a job</span>
     </div>
   </div>
 
