@@ -275,20 +275,26 @@ async function status(jobId) {
   return { ok: true, action: 'status', job_id: jobId, job: job, raw_unique_count: rawCount, occurrence_count: occurrenceCount, density_sample: summarize(records, 15) };
 }
 
+let __stage = 'start';
 try {
+  __stage = 'read_input';
   const inputItems = $input.all();
   const input = inputItems && inputItems[0] && inputItems[0].json ? inputItems[0].json : {};
   const body = input.body || input || {};
+  __stage = 'parse_action';
   const action = String(body.action || body.mode || 'start').toLowerCase();
   if (action === 'status') {
+    __stage = 'status';
     if (!SUPABASE_KEY) return [{ json: { ok: false, error: 'Missing n8n Supabase service-role environment/variable secret.', missing_supabase_key: true } }];
     return [{ json: await status.call(this, String(body.job_id || body.discovery_job_id || '')) }];
   }
 
+  __stage = 'parse_filters';
   const states = arr(body.states || body.state).map(function (s) { return String(s).toUpperCase(); }).filter(Boolean);
   const industries = arr(body.industries || body.industry).map(norm).filter(Boolean);
   if (!states.length || !industries.length) return [{ json: { ok: false, error: 'Select at least one state and one industry.' } }];
 
+  __stage = 'parse_options';
   const opts = {
     minPopulation: Math.max(40000, Number(body.min_city_population || body.min_population || 40000)),
     maxCities: Math.max(0, Number(body.max_cities || body.max_cities_per_run || 0)),
@@ -306,6 +312,7 @@ try {
     dryRun: action === 'dry_run' || body.dry_run === true
   };
 
+  __stage = 'load_existing_job';
   const jobId = String(body.job_id || body.discovery_job_id || ('freeid_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8)));
   let existingJob = null;
   if (SUPABASE_KEY && !opts.dryRun) {
@@ -316,7 +323,9 @@ try {
   }
   if (existingJob && Number(existingJob.next_offset || 0) > opts.startOffset) opts.startOffset = Number(existingJob.next_offset || 0);
 
+  __stage = 'load_city_data';
   const cityData = await this.helpers.httpRequest({ method: 'GET', url: CITY_DATA_URL, json: true, timeout: 20000 });
+  __stage = 'build_plan';
   const plan = buildPlan(Array.isArray(cityData && cityData.rows) ? cityData.rows : [], states, industries, opts);
   const total = plan.tasks.length;
   const start = Math.min(opts.startOffset, total);
@@ -324,10 +333,12 @@ try {
   if (opts.dryRun) {
     return [{ json: { ok: true, action: 'dry_run', job_id: jobId, mode: 'discover-ids', field_mask: FIELD_MASK, states: states, industries: industries, selected_cities: plan.cities.length, total_queries: total, batch_start: start, batch_end: end, sample_task: plan.tasks[0] || null } }];
   }
+  __stage = 'check_secrets';
   if (!SUPABASE_KEY || !GOOGLE_KEY) {
     return [{ json: { ok: false, error: 'Missing n8n environment/variable secrets for Google Places and/or Supabase service role.', missing_google_key: !GOOGLE_KEY, missing_supabase_key: !SUPABASE_KEY } }];
   }
 
+  __stage = 'save_job_started';
   const jobBase = {
     id: jobId,
     status: start >= total ? 'completed' : 'running',
@@ -430,5 +441,5 @@ try {
   }
   return [{ json: { ok: !errors.length, action: action, job_id: jobId, mode: 'discover-ids', field_mask: FIELD_MASK, paid_fields_requested: false, promote_prospects: false, states: states, industries: industries, selected_cities: plan.cities.length, total_queries: total, completed_queries: end, next_offset: end, has_more: hasMore, auto_continue: opts.autoContinue, api_calls: depthState.apiCalls, adaptive_splits: depthState.adaptiveSplits, raw_records: allRecords.length, unique_places_batch: density.unique_places, raw_saved: rawSave.saved, occurrences_saved: occSave.saved, top_areas: density.top_areas, top_terms: density.top_terms, errors: errors.slice(0, 5) } }];
 } catch (e) {
-  return [{ json: { ok: false, error: String(e && e.message || e).slice(0, 1000), action: 'free_id_discovery_failed' } }];
+  return [{ json: { ok: false, error: String(e && e.message || e).slice(0, 1000), stage: __stage, stack: String(e && e.stack || '').slice(0, 1500), action: 'free_id_discovery_failed' } }];
 }
