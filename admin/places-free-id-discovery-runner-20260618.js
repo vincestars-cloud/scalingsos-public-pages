@@ -35,6 +35,9 @@ const INDUSTRY_TERMS = {
 function getSecret(names, fallback) {
   for (const name of names) {
     try {
+      if (typeof __secrets !== 'undefined' && __secrets && __secrets[name]) return String(__secrets[name]);
+    } catch (e) {}
+    try {
       if (typeof $vars !== 'undefined' && $vars && $vars[name]) return String($vars[name]);
     } catch (e) {}
     try {
