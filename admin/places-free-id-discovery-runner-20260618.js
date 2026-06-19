@@ -276,7 +276,8 @@ async function status(jobId) {
 }
 
 try {
-  const input = $input.first().json || {};
+  const inputItems = $input.all();
+  const input = inputItems && inputItems[0] && inputItems[0].json ? inputItems[0].json : {};
   const body = input.body || input || {};
   const action = String(body.action || body.mode || 'start').toLowerCase();
   if (action === 'status') {
