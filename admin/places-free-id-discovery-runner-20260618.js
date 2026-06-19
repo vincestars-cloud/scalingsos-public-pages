@@ -7,27 +7,27 @@ const FIELD_MASK = 'places.id,nextPageToken';
 const SOURCE = 'google_places_free_id_grid';
 
 const INDUSTRY_TERMS = {
-  cleaning: ['cleaning service', 'house cleaning', 'commercial cleaning', 'janitorial service', 'maid service', 'cleaners'],
+  cleaning: ['cleaning service', 'house cleaning', 'commercial cleaning', 'janitorial service', 'maid service', 'office cleaning', 'move out cleaning', 'residential cleaning'],
   diesel_mechanic: ['diesel mechanic', 'mobile diesel mechanic', 'diesel repair', 'truck repair', 'heavy diesel repair'],
   electrical: ['electrician', 'electrical contractor', 'electrical repair', 'residential electrician', 'commercial electrician'],
-  fencing: ['fence company', 'fence contractor', 'fence installation', 'fence repair', 'wood fence', 'vinyl fence', 'chain link fence'],
+  fencing: ['fence company', 'fence contractor', 'fence installation', 'fence repair', 'wood fence contractor', 'privacy fence installation', 'chain link fence contractor', 'vinyl fence contractor'],
   flooring: ['flooring contractor', 'flooring company', 'floor installation', 'hardwood flooring', 'tile flooring'],
   funeral_home: ['funeral home', 'funeral services', 'cremation service', 'mortuary'],
   home_care: ['home care agency', 'senior home care', 'in home care', 'home health care', 'caregiver service'],
   hvac: ['hvac contractor', 'air conditioning repair', 'heating and cooling', 'hvac company', 'ac repair'],
-  landscaping: ['landscaping company', 'lawn care service', 'landscaper', 'landscape contractor', 'yard maintenance', 'lawn mowing', 'landscape design'],
-  mobile_mechanic: ['mobile mechanic', 'mobile auto repair', 'mobile car mechanic', 'auto repair mobile', 'mechanic near me'],
+  landscaping: ['landscaping company', 'lawn care service', 'lawn maintenance', 'lawn mowing service', 'landscape contractor', 'yard maintenance', 'residential landscaping', 'landscape design'],
+  mobile_mechanic: ['mobile mechanic', 'mobile auto repair', 'mobile car mechanic', 'on site auto repair', 'mobile brake repair', 'mobile diagnostic', 'mechanic that comes to you', 'mobile vehicle repair'],
   mobile_truck_repair: ['mobile truck repair', 'mobile diesel truck repair', 'roadside truck repair', 'semi truck repair'],
-  mold_remediation: ['mold remediation', 'mold removal', 'mold inspection', 'water damage restoration mold'],
-  moving: ['moving company', 'movers', 'local movers', 'moving service', 'residential movers'],
+  mold_remediation: ['mold remediation', 'mold removal', 'mold inspection', 'mold cleanup', 'black mold removal', 'water damage restoration mold', 'mold testing', 'mold abatement'],
+  moving: ['moving company', 'movers', 'local movers', 'residential movers', 'moving service', 'apartment movers', 'packing and moving', 'furniture movers'],
   painting: ['painting contractor', 'house painter', 'painting company', 'interior painter', 'exterior painter'],
   pest_control: ['pest control', 'exterminator', 'pest control service', 'termite control'],
-  plumbing: ['plumber', 'plumbing company', 'plumbing contractor', 'emergency plumber', 'drain cleaning'],
-  remodeling: ['remodeling contractor', 'home remodeling', 'bathroom remodeler', 'kitchen remodeler', 'renovation contractor'],
+  plumbing: ['plumber', 'plumbing company', 'plumbing contractor', 'emergency plumber', 'drain cleaning', 'water heater repair', 'residential plumber', 'sewer repair'],
+  remodeling: ['general contractor', 'remodeling contractor', 'home remodeling', 'renovation contractor', 'bathroom remodeler', 'kitchen remodeling', 'home renovation', 'residential contractor'],
   roofing: ['roofing company', 'roofing contractor', 'roofer', 'roof repair', 'roof replacement', 'metal roofing', 'gutter and roofing', 'storm damage roof repair'],
-  septic_tank: ['septic tank service', 'septic pumping', 'septic company', 'septic repair', 'septic cleaning'],
+  septic_tank: ['septic tank service', 'septic pumping', 'septic company', 'septic repair', 'septic cleaning', 'septic system service', 'septic inspection', 'septic installer'],
   solar: ['solar installer', 'solar company', 'solar panel installation', 'residential solar'],
-  therapy_counseling: ['therapy counseling', 'therapist', 'counseling services', 'mental health counselor', 'psychotherapy'],
+  therapy_counseling: ['mental health counselor', 'therapist', 'counseling services', 'psychotherapy', 'marriage counselor', 'trauma therapist', 'anxiety therapist', 'family counseling'],
   tree_repair: ['tree service', 'tree removal', 'tree trimming', 'arborist', 'stump grinding'],
   tree_service: ['tree service', 'tree removal', 'tree trimming', 'arborist', 'stump grinding']
 };
@@ -102,6 +102,51 @@ function createCellsForBbox(bbox, cellKm, areaLabel, circle) {
   }
   return cells;
 }
+function createStateUnionCells(cities, state, opts) {
+  const stateCities = cities.filter(function (c) { return String(c.state || '').toUpperCase() === String(state || '').toUpperCase(); });
+  if (!stateCities.length) return [];
+  const avgLat = stateCities.reduce(function (sum, c) { return sum + Number(c.lat || 0); }, 0) / stateCities.length;
+  const latStep = opts.cellKm / 110.574;
+  const lngStep = opts.cellKm / Math.max(1, 111.320 * Math.cos(rad(avgLat)));
+  const byKey = {};
+  for (const city of stateCities) {
+    const center = { lat: Number(city.lat), lng: Number(city.lng) };
+    if (!Number.isFinite(center.lat) || !Number.isFinite(center.lng)) continue;
+    const bbox = circleBbox(center, opts.cityRadiusKm);
+    const minRow = Math.floor(bbox.south / latStep);
+    const maxRow = Math.ceil(bbox.north / latStep);
+    const minCol = Math.floor(bbox.west / lngStep);
+    const maxCol = Math.ceil(bbox.east / lngStep);
+    for (let row = minRow; row <= maxRow; row += 1) {
+      for (let col = minCol; col <= maxCol; col += 1) {
+        const rect = { south: row * latStep, west: col * lngStep, north: (row + 1) * latStep, east: (col + 1) * lngStep };
+        if (!rectIntersectsCircle(rect, center, opts.cityRadiusKm)) continue;
+        const key = String(state || '').toUpperCase() + ':' + row + ':' + col;
+        const c = rectCenter(rect);
+        const prev = byKey[key];
+        const distanceKm = haversineKm(center, c);
+        if (!prev || Number(city.population || 0) > Number(prev.city.population || 0) || distanceKm < prev.distanceKm) {
+          byKey[key] = { city: city, distanceKm: distanceKm, rect: rect, row: row, col: col };
+        }
+      }
+    }
+  }
+  return Object.keys(byKey).map(function (key) {
+    const entry = byKey[key];
+    const areaLabel = entry.city.city + ' ' + entry.city.state;
+    const rect = entry.rect;
+    return {
+      id: 'stategrid-' + String(state || '').toUpperCase() + '-r' + entry.row + '-c' + entry.col,
+      rect: rect,
+      depth: 0,
+      areaLabel: areaLabel,
+      stateGridKey: key,
+      city: entry.city
+    };
+  }).sort(function (a, b) {
+    return String(a.stateGridKey).localeCompare(String(b.stateGridKey));
+  });
+}
 function splitCell(cell) {
   const r = cell.rect;
   const midLat = (r.south + r.north) / 2;
@@ -161,20 +206,36 @@ function buildPlan(cities, states, industries, opts) {
   selectedCities.sort(function (a, b) { return Number(b.population || 0) - Number(a.population || 0) || String(a.city).localeCompare(String(b.city)); });
   const limitedCities = opts.maxCities > 0 ? selectedCities.slice(0, opts.maxCities) : selectedCities;
   const tasks = [];
-  for (const city of limitedCities) {
-    const center = { lat: Number(city.lat), lng: Number(city.lng) };
-    if (!Number.isFinite(center.lat) || !Number.isFinite(center.lng)) continue;
-    const areaLabel = city.city + ' ' + city.state;
-    const cells = createCellsForBbox(circleBbox(center, opts.cityRadiusKm), opts.cellKm, areaLabel, { center: center, radiusKm: opts.cityRadiusKm });
-    for (const industry of industries) {
-      const industryKey = norm(industry);
-      const terms = (INDUSTRY_TERMS[industryKey] || [String(industry).replace(/_/g, ' ')]).slice(0, opts.maxTerms || 99);
-      for (const term of terms) {
-        for (const cell of cells) tasks.push({ city: city, areaLabel: areaLabel, industryKey: industryKey, industry: industry, term: term, cell: cell });
+  const planCells = [];
+  if (opts.gridMode === 'state_union') {
+    for (const state of states) {
+      const cells = createStateUnionCells(limitedCities, state, opts);
+      planCells.push.apply(planCells, cells);
+      for (const industry of industries) {
+        const industryKey = norm(industry);
+        const terms = (INDUSTRY_TERMS[industryKey] || [String(industry).replace(/_/g, ' ')]).slice(0, opts.maxTerms || 99);
+        for (const term of terms) {
+          for (const cell of cells) tasks.push({ city: cell.city, areaLabel: cell.areaLabel, industryKey: industryKey, industry: industry, term: term, cell: cell });
+        }
+      }
+    }
+  } else {
+    for (const city of limitedCities) {
+      const center = { lat: Number(city.lat), lng: Number(city.lng) };
+      if (!Number.isFinite(center.lat) || !Number.isFinite(center.lng)) continue;
+      const areaLabel = city.city + ' ' + city.state;
+      const cells = createCellsForBbox(circleBbox(center, opts.cityRadiusKm), opts.cellKm, areaLabel, { center: center, radiusKm: opts.cityRadiusKm });
+      planCells.push.apply(planCells, cells);
+      for (const industry of industries) {
+        const industryKey = norm(industry);
+        const terms = (INDUSTRY_TERMS[industryKey] || [String(industry).replace(/_/g, ' ')]).slice(0, opts.maxTerms || 99);
+        for (const term of terms) {
+          for (const cell of cells) tasks.push({ city: city, areaLabel: areaLabel, industryKey: industryKey, industry: industry, term: term, cell: cell });
+        }
       }
     }
   }
-  return { tasks: tasks, cities: limitedCities };
+  return { tasks: tasks, cities: limitedCities, cells: planCells };
 }
 async function searchPage(term, cell, pageToken, pageSize) {
   const body = { textQuery: term, pageSize: pageSize, includePureServiceAreaBusinesses: true, locationRestriction: { rectangle: rectanglePayload(cell.rect) } };
@@ -303,19 +364,24 @@ try {
   if (!states.length || !industries.length) return [{ json: { ok: false, error: 'Select at least one state and one industry.' } }];
 
   __stage = 'parse_options';
+  const discoveryStage = String(body.discovery_stage || body.stage || 'coarse').toLowerCase();
+  const gridMode = String(body.grid_mode || body.gridMode || 'state_union').toLowerCase() === 'city' ? 'city' : 'state_union';
+  const coarse = discoveryStage.indexOf('coarse') >= 0 || discoveryStage.indexOf('precompute') >= 0;
   const opts = {
     minPopulation: Math.max(40000, Number(body.min_city_population || body.min_population || 40000)),
     maxCities: Math.max(0, Number(body.max_cities || body.max_cities_per_run || 0)),
     maxTerms: Math.max(1, Math.min(12, Number(body.max_terms || body.max_terms_per_industry || 8))),
     cityRadiusKm: Math.max(5, Math.min(100, Number(body.city_radius_km || 35))),
-    cellKm: Math.max(2, Math.min(50, Number(body.cell_km || 8))),
+    cellKm: Math.max(2, Math.min(50, Number(body.cell_km || (coarse ? 20 : 8)))),
     pageSize: Math.max(1, Math.min(20, Number(body.page_size || 20))),
-    maxPages: Math.max(1, Math.min(3, Number(body.max_pages || 3))),
-    batchSize: Math.max(1, Math.min(150, Number(body.batch_size || body.max_searches || 25))),
+    maxPages: Math.max(1, Math.min(3, Number(body.max_pages || (coarse ? 1 : 3)))),
+    batchSize: Math.max(1, Math.min(150, Number(body.batch_size || body.max_searches || (coarse ? 75 : 25)))),
     startOffset: Math.max(0, Number(body.start_offset || 0)),
     saturationThreshold: Math.max(20, Math.min(60, Number(body.saturation_threshold || 55))),
-    maxDepth: Math.max(0, Math.min(3, Number(body.max_depth || 2))),
+    maxDepth: Math.max(0, Math.min(3, Number(body.max_depth || (coarse ? 0 : 2)))),
     pageDelayMs: Math.max(250, Math.min(3000, Number(body.page_delay_ms || 500))),
+    discoveryStage: discoveryStage,
+    gridMode: gridMode,
     autoContinue: body.auto_continue !== false,
     dryRun: action === 'dry_run' || body.dry_run === true
   };
@@ -339,7 +405,7 @@ try {
   const start = Math.min(opts.startOffset, total);
   const end = Math.min(total, start + opts.batchSize);
   if (opts.dryRun) {
-    return [{ json: { ok: true, action: 'dry_run', job_id: jobId, mode: 'discover-ids', field_mask: FIELD_MASK, states: states, industries: industries, selected_cities: plan.cities.length, total_queries: total, batch_start: start, batch_end: end, sample_task: plan.tasks[0] || null } }];
+    return [{ json: { ok: true, action: 'dry_run', job_id: jobId, mode: 'discover-ids', discovery_stage: opts.discoveryStage, grid_mode: opts.gridMode, field_mask: FIELD_MASK, states: states, industries: industries, selected_cities: plan.cities.length, selected_cells: (plan.cells || []).length, total_queries: total, estimated_max_api_calls: total * opts.maxPages, batch_start: start, batch_end: end, sample_task: plan.tasks[0] || null } }];
   }
   __stage = 'check_secrets';
   if (!SUPABASE_KEY || !GOOGLE_KEY) {
@@ -361,7 +427,7 @@ try {
     total_queries: total,
     completed_queries: start,
     next_offset: start,
-    params: { mode: 'discover-ids', field_mask: FIELD_MASK, city_radius_km: opts.cityRadiusKm, cell_km: opts.cellKm, max_terms: opts.maxTerms, max_depth: opts.maxDepth, source: SOURCE },
+    params: { mode: 'discover-ids', discovery_stage: opts.discoveryStage, grid_mode: opts.gridMode, field_mask: FIELD_MASK, city_radius_km: opts.cityRadiusKm, cell_km: opts.cellKm, max_terms: opts.maxTerms, max_depth: opts.maxDepth, selected_cells: (plan.cells || []).length, source: SOURCE },
     updated_at: new Date().toISOString()
   };
   await sbUpsert.call(this, '/rest/v1/places_discovery_jobs?on_conflict=id', [jobBase], 'resolution=merge-duplicates,return=minimal');
@@ -444,10 +510,10 @@ try {
   }], 'return=minimal');
   if (hasMore && opts.autoContinue) {
     try {
-      await this.helpers.httpRequest({ method: 'POST', url: SELF_WEBHOOK_URL, headers: { 'Content-Type': 'application/json' }, body: { action: 'continue', job_id: jobId, start_offset: end, states: states, industries: industries, batch_size: opts.batchSize, min_city_population: opts.minPopulation, max_cities: opts.maxCities, max_terms: opts.maxTerms, city_radius_km: opts.cityRadiusKm, cell_km: opts.cellKm, page_size: opts.pageSize, max_pages: opts.maxPages, max_depth: opts.maxDepth, saturation_threshold: opts.saturationThreshold, auto_continue: true }, json: true, timeout: 1000 });
+      await this.helpers.httpRequest({ method: 'POST', url: SELF_WEBHOOK_URL, headers: { 'Content-Type': 'application/json' }, body: { action: 'continue', job_id: jobId, start_offset: end, states: states, industries: industries, batch_size: opts.batchSize, min_city_population: opts.minPopulation, max_cities: opts.maxCities, max_terms: opts.maxTerms, city_radius_km: opts.cityRadiusKm, cell_km: opts.cellKm, page_size: opts.pageSize, max_pages: opts.maxPages, max_depth: opts.maxDepth, grid_mode: opts.gridMode, discovery_stage: opts.discoveryStage, saturation_threshold: opts.saturationThreshold, auto_continue: true }, json: true, timeout: 1000 });
     } catch (e) {}
   }
-  return [{ json: { ok: !errors.length, action: action, job_id: jobId, mode: 'discover-ids', field_mask: FIELD_MASK, paid_fields_requested: false, promote_prospects: false, states: states, industries: industries, selected_cities: plan.cities.length, total_queries: total, completed_queries: end, next_offset: end, has_more: hasMore, auto_continue: opts.autoContinue, api_calls: depthState.apiCalls, adaptive_splits: depthState.adaptiveSplits, raw_records: allRecords.length, unique_places_batch: density.unique_places, raw_saved: rawSave.saved, occurrences_saved: occSave.saved, top_areas: density.top_areas, top_terms: density.top_terms, errors: errors.slice(0, 5) } }];
+  return [{ json: { ok: !errors.length, action: action, job_id: jobId, mode: 'discover-ids', discovery_stage: opts.discoveryStage, grid_mode: opts.gridMode, field_mask: FIELD_MASK, paid_fields_requested: false, promote_prospects: false, states: states, industries: industries, selected_cities: plan.cities.length, selected_cells: (plan.cells || []).length, total_queries: total, completed_queries: end, next_offset: end, has_more: hasMore, auto_continue: opts.autoContinue, api_calls: depthState.apiCalls, adaptive_splits: depthState.adaptiveSplits, raw_records: allRecords.length, unique_places_batch: density.unique_places, raw_saved: rawSave.saved, occurrences_saved: occSave.saved, top_areas: density.top_areas, top_terms: density.top_terms, errors: errors.slice(0, 5) } }];
 } catch (e) {
   return [{ json: { ok: false, error: String(e && e.message || e).slice(0, 1000), stage: __stage, stack: String(e && e.stack || '').slice(0, 1500), action: 'free_id_discovery_failed' } }];
 }
