@@ -4712,7 +4712,7 @@ function _hasFollowupReplyInPeriod(s){
   }
   return false;
 }
-function setCommsFilter(f){ window._commsFilter=f; window._commsPage=0; [['all','commsFltAll'],['replied','commsFltReplied'],['replied2','commsFltReplied2']].forEach(function(pp){ var b=document.getElementById(pp[1]); if(b){ var on=(f===pp[0]); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
+function setCommsFilter(f){ window._commsFilter=f; if(f==='all'){ window._commsDispFilter=''; } window._commsPage=0; [['all','commsFltAll'],['replied','commsFltReplied'],['replied2','commsFltReplied2']].forEach(function(pp){ var b=document.getElementById(pp[1]); if(b){ var on=(f===pp[0]); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function _msgObjMeta(m){
   var meta=(m&&m.meta)||{};
   if(typeof meta==='string' && meta.trim()){
