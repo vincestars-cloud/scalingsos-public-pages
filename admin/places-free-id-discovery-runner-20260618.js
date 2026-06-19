@@ -278,8 +278,13 @@ async function status(jobId) {
 let __stage = 'start';
 try {
   __stage = 'read_input';
-  const inputItems = $input.all();
-  const input = inputItems && inputItems[0] && inputItems[0].json ? inputItems[0].json : {};
+  let input = {};
+  if (typeof __payload !== 'undefined' && __payload) {
+    input = __payload;
+  } else {
+    const inputItems = $input.all();
+    input = inputItems && inputItems[0] && inputItems[0].json ? inputItems[0].json : {};
+  }
   const body = input.body || input || {};
   __stage = 'parse_action';
   const action = String(body.action || body.mode || 'start').toLowerCase();
