@@ -279,10 +279,10 @@ try {
   const input = $input.first().json || {};
   const body = input.body || input || {};
   const action = String(body.action || body.mode || 'start').toLowerCase();
-  if (!SUPABASE_KEY || !GOOGLE_KEY) {
-    return [{ json: { ok: false, error: 'Missing n8n environment/variable secrets for Google Places and/or Supabase service role.', missing_google_key: !GOOGLE_KEY, missing_supabase_key: !SUPABASE_KEY } }];
+  if (action === 'status') {
+    if (!SUPABASE_KEY) return [{ json: { ok: false, error: 'Missing n8n Supabase service-role environment/variable secret.', missing_supabase_key: true } }];
+    return [{ json: await status.call(this, String(body.job_id || body.discovery_job_id || '')) }];
   }
-  if (action === 'status') return [{ json: await status.call(this, String(body.job_id || body.discovery_job_id || '')) }];
 
   const states = arr(body.states || body.state).map(function (s) { return String(s).toUpperCase(); }).filter(Boolean);
   const industries = arr(body.industries || body.industry).map(norm).filter(Boolean);
@@ -307,10 +307,12 @@ try {
 
   const jobId = String(body.job_id || body.discovery_job_id || ('freeid_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8)));
   let existingJob = null;
-  try {
-    const jobs = await sbGet.call(this, '/rest/v1/places_discovery_jobs?id=eq.' + encodeURIComponent(jobId) + '&select=*');
-    existingJob = Array.isArray(jobs) && jobs[0] ? jobs[0] : null;
-  } catch (e) {}
+  if (SUPABASE_KEY && !opts.dryRun) {
+    try {
+      const jobs = await sbGet.call(this, '/rest/v1/places_discovery_jobs?id=eq.' + encodeURIComponent(jobId) + '&select=*');
+      existingJob = Array.isArray(jobs) && jobs[0] ? jobs[0] : null;
+    } catch (e) {}
+  }
   if (existingJob && Number(existingJob.next_offset || 0) > opts.startOffset) opts.startOffset = Number(existingJob.next_offset || 0);
 
   const cityData = await this.helpers.httpRequest({ method: 'GET', url: CITY_DATA_URL, json: true, timeout: 20000 });
@@ -320,6 +322,9 @@ try {
   const end = Math.min(total, start + opts.batchSize);
   if (opts.dryRun) {
     return [{ json: { ok: true, action: 'dry_run', job_id: jobId, mode: 'discover-ids', field_mask: FIELD_MASK, states: states, industries: industries, selected_cities: plan.cities.length, total_queries: total, batch_start: start, batch_end: end, sample_task: plan.tasks[0] || null } }];
+  }
+  if (!SUPABASE_KEY || !GOOGLE_KEY) {
+    return [{ json: { ok: false, error: 'Missing n8n environment/variable secrets for Google Places and/or Supabase service role.', missing_google_key: !GOOGLE_KEY, missing_supabase_key: !SUPABASE_KEY } }];
   }
 
   const jobBase = {
