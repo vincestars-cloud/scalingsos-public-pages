@@ -475,7 +475,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
       </div>
       <div class="control-panel">
         <h3>Places Discovery</h3>
-        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">Stage 1 runs ID-only Google Places discovery first, dedupes in Supabase, and does not create prospects or demos. Stage 2 enrichment/review runs from those saved IDs later. SMS rate and daily cap do not apply.</p>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">Stage 1 runs ID-only Google Places discovery first, dedupes in Supabase, and does not create prospects or demos. It starts with a coarse merged state grid, then dense winners can be refined before paid enrichment/review. SMS rate and daily cap do not apply.</p>
         <button class="btn btn-primary" onclick="startPlacesDiscovery(false)">Run Stage 1 ID Discovery</button>
         <div class="prospector-status paused" id="placesDiscoveryStatus" style="margin-top:10px">Manual run only</div>
         <div id="placesDiscoveryResults" style="display:none;margin-top:10px;font-size:.82rem;color:var(--text-secondary);line-height:1.45"></div>
@@ -3894,7 +3894,7 @@ async function saveProspectorConfig() {
 async function startPlacesDiscovery(force) {
   const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
   const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
-  const batchSize = 25; // ID-only grid batches are intentionally small to avoid n8n/API timeouts
+  const batchSize = 75; // coarse ID-only grid batches are resumable and avoid n8n/API timeouts
   if (!states.length || !industries.length) {
     showToast('Select at least one state and one industry before running Places discovery.', true);
     return;
@@ -3902,16 +3902,17 @@ async function startPlacesDiscovery(force) {
   const status = document.getElementById('placesDiscoveryStatus');
   const results = document.getElementById('placesDiscoveryResults');
   if (results) { results.style.display = 'none'; results.innerHTML = ''; }
-  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Starting free ID-only grid discovery in ' + batchSize.toLocaleString() + '-query batches...'; }
+  if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Starting coarse free ID-only state-grid discovery in ' + batchSize.toLocaleString() + '-query batches...'; }
   try {
     const resp = await fetch(N8N_BASE + '/scalingsos-places-free-id-discovery', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         action:'start',
-        discovery_stage:'text_search_new_grid_id_only',
+        discovery_stage:'coarse_precompute',
         api:'new',
         mode:'discover-ids',
+        grid_mode:'state_union',
         field_mask:'places.id,nextPageToken',
         id_only:true,
         promote_prospects:false,
@@ -3922,8 +3923,11 @@ async function startPlacesDiscovery(force) {
         query_terms_mode: 'all_terms',
         max_terms_per_industry: 8,
         min_city_population: 40000,
-        cell_km: 8,
+        cell_km: 20,
         city_radius_km: 35,
+        page_size: 20,
+        max_pages: 1,
+        max_depth: 0,
         force: !!force
       })
     });
@@ -3932,7 +3936,7 @@ async function startPlacesDiscovery(force) {
     if (json && json.ok === false) throw new Error(json.error || json.warning || 'discovery rejected');
     localStorage.setItem('sos_places_free_id_job_id', json.job_id || '');
     renderPlacesDiscoveryResult(json);
-    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Stage 1 ID discovery running: ' + (json.completed_queries || 0).toLocaleString() + ' / ' + (json.total_queries || 0).toLocaleString() + ' grid queries'; }
+    if (status) { status.className = 'prospector-status scanning'; status.innerHTML = '<span class="pipeline-dot"></span> Coarse Stage 1 ID discovery running: ' + (json.completed_queries || 0).toLocaleString() + ' / ' + (json.total_queries || 0).toLocaleString() + ' grid queries'; }
     showToast('Stage 1 ID discovery started: ' + states.length + ' states, ' + industries.length + ' industries');
     if (json.job_id && json.has_more) setTimeout(() => checkPlacesDiscoveryStatus(json.job_id, true), 8000);
   } catch(e) {
@@ -3950,10 +3954,15 @@ function renderPlacesDiscoveryResult(json) {
   const completed = json.completed_queries || job.completed_queries || 0;
   const total = json.total_queries || job.total_queries || 0;
   const unique = json.unique_places_batch || json.raw_unique_count || (json.density_sample && json.density_sample.unique_places) || 0;
+  const params = job.params || {};
+  const gridMode = json.grid_mode || params.grid_mode || '--';
+  const stage = json.discovery_stage || params.discovery_stage || '--';
+  const cells = json.selected_cells || params.selected_cells || '';
   box.style.display = 'block';
   box.innerHTML =
     '<div><strong>Job:</strong> ' + esc(json.job_id || job.id || '--') + '</div>' +
-    '<div><strong>Status:</strong> ' + esc(json.status || job.status || (json.has_more ? 'running' : 'completed')) + ' · <strong>Progress:</strong> ' + Number(completed).toLocaleString() + ' / ' + Number(total).toLocaleString() + ' queries · <strong>Unique IDs:</strong> ' + Number(unique).toLocaleString() + '</div>' +
+    '<div><strong>Status:</strong> ' + esc(json.status || job.status || (json.has_more ? 'running' : 'completed')) + ' · <strong>Stage:</strong> ' + esc(stage) + ' · <strong>Grid:</strong> ' + esc(gridMode) + (cells ? ' · <strong>Cells:</strong> ' + Number(cells).toLocaleString() : '') + '</div>' +
+    '<div><strong>Progress:</strong> ' + Number(completed).toLocaleString() + ' / ' + Number(total).toLocaleString() + ' queries · <strong>Unique IDs:</strong> ' + Number(unique).toLocaleString() + '</div>' +
     (topAreas.length ? '<div style="margin-top:6px"><strong>Dense areas:</strong> ' + topAreas.map(a => esc(a.label) + ' (' + Number(a.unique_places || 0).toLocaleString() + ')').join(', ') + '</div>' : '') +
     (topTerms.length ? '<div style="margin-top:4px"><strong>Dense terms:</strong> ' + topTerms.map(a => esc(a.label) + ' (' + Number(a.unique_places || 0).toLocaleString() + ')').join(', ') + '</div>' : '');
 }
