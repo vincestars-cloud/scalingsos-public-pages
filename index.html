@@ -334,7 +334,7 @@ window.SSOS = {
   // analytics
   var maxPct=0, reachedCta=false, lastSent=0;
   function post(url,body,beacon){try{var data=JSON.stringify(body);if(beacon&&navigator.sendBeacon){navigator.sendBeacon(url,new Blob([data],{type:'application/json'}));return;}fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:data,keepalive:!!beacon}).catch(function(){});}catch(e){}}
-  post(C.TRACK_URL,{kind:'visit',visitor_id:visitorId,session_id:sessionId,path:location.pathname,referrer:document.referrer,user_agent:navigator.userAgent,utm:utm()});
+  post(C.TRACK_URL,{kind:'visit',visitor_id:visitorId,session_id:sessionId,path:location.pathname,referrer:document.referrer,user_agent:navigator.userAgent,utm:utm(),tz:(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(_e){return ''}})(),lang:(navigator.language||'')});
   function sendProgress(beacon){var d=v.duration||0;post(C.TRACK_URL,{kind:'video',visitor_id:visitorId,session_id:sessionId,video_id:'main',duration_seconds:Math.round(d),watched_seconds:Math.round(v.currentTime||0),max_pct:Math.round(maxPct),last_pct:Math.round(d?(v.currentTime/d*100):0),completed:maxPct>=95,reached_cta:reachedCta,utm:utm()},beacon);}
 
   // deceptive bar curve
