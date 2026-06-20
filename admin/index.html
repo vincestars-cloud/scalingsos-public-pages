@@ -5129,10 +5129,10 @@ function renderSmsComms() {
   if(_m1r && !telnyxCached(_cmRange)) _m1r.textContent=_msg1Denom?(Math.round(100*repliedCount/_msg1Denom)+'% of '+_msg1Denom.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts in period';
   var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub && !telnyxCached(_cmRange)) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts in period';
   var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(x.s):''; if(b==='not_interested')_cdc.ni++; else if(b==='interested')_cdc.co++; else if(b==='offer')_cdc.offer++; else if(b==='client')_cdc.client++; });
-  if(!telnyxCached(_cmRange)){
-  var _cni=document.getElementById('cmNotInt'); if(_cni)_cni.textContent=Number(_cdc.ni).toLocaleString();
-  var _cco=document.getElementById('cmConsidering'); if(_cco)_cco.textContent=Number(_cdc.co).toLocaleString(); var _cof=document.getElementById('cmOfferSent'); if(_cof)_cof.textContent=Number(_cdc.offer).toLocaleString(); var _ccl=document.getElementById('cmClients'); if(_ccl)_ccl.textContent=Number(_cdc.client).toLocaleString();
-  }
+  // period-bounded outcomes from disposition_set_at (authoritative, single source) — falls back to client _cdc if the webhook fails
+  var _setCmOut=function(o){ var _S=function(id,v){var e=document.getElementById(id); if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmNotInt',o.not_interested); _S('cmConsidering',o.interested); _S('cmOfferSent',o.offers); _S('cmClients',o.clients); };
+  _setCmOut({not_interested:_cdc.ni,interested:_cdc.co,offers:_cdc.offer,clients:_cdc.client});
+  (function(_pr){ try{ fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+encodeURIComponent(_pr)).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes) _setCmOut(_d.outcomes); }).catch(function(){}); }catch(_e){} })(_cmRange);
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
   calledNoReply=(function(){ var seen={}; items.forEach(function(x){ var ph=_normPhone(x.s.phone); if(ph && (calledPhones[ph] || _commsCalledNoReply(x.s))) seen[ph]=1; }); return Object.keys(seen).length; })();
   var _cnr=document.getElementById('cmCalledNoReply'); if(_cnr) _cnr.textContent=Number(calledNoReply).toLocaleString();
