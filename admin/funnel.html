@@ -74,10 +74,11 @@ body.embed .wrap{padding-top:4px;}
     <h2>Video engagement by visitor <span class="badge" id="sessCount">0</span></h2>
     <div style="overflow-x:auto">
       <table>
-        <thead><tr><th>Visitor</th><th style="width:200px">% of video watched</th><th>Watch time</th><th>Reached CTA</th><th>Finished</th><th>Last seen</th></tr></thead>
-        <tbody id="sessBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+        <thead><tr><th>Visitor</th><th>Visits</th><th>Time on site</th><th style="width:150px">% video watched</th><th>Watch time</th><th>Area</th><th>CTA</th><th>Finished</th><th>Last seen</th></tr></thead>
+        <tbody id="sessBody"><tr><td colspan="9" class="empty">Loading…</td></tr></tbody>
       </table>
     </div>
+    <div id="sessPager" style="display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:8px"></div>
   </div>
 
   <div class="panel">
@@ -100,9 +101,11 @@ function ago(iso){ if(!iso) return '—'; var d=new Date(iso),s=(Date.now()-d.ge
   if(s<86400) return Math.round(s/3600)+'h ago'; return Math.round(s/86400)+'d ago'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
+var _fpage=0, _flimit=20;
+function funnelPage(delta){ _fpage=Math.max(0,_fpage+delta); load(); }
 function load(){
   var err=document.getElementById('err'); err.style.display='none';
-  fetch(N8N+'/ssos-funnel-admin-analytics').then(function(r){return r.json()}).then(function(d){
+  fetch(N8N+'/ssos-funnel-admin-analytics?p_offset='+(_fpage*_flimit)+'&p_limit='+_flimit).then(function(r){return r.json()}).then(function(d){
     if(d.error){ throw new Error(d.error); }
     document.getElementById('k_visits').textContent = d.visits_total||0;
     document.getElementById('k_today').textContent  = d.visits_today||0;
@@ -116,21 +119,32 @@ function load(){
     var sess=d.sessions||[];
     document.getElementById('sessCount').textContent=sess.length;
     var sb=document.getElementById('sessBody');
-    sb.innerHTML = sess.length ? '' : '<tr><td colspan="6" class="empty">No video views yet.</td></tr>';
+    sb.innerHTML = sess.length ? '' : '<tr><td colspan="9" class="empty">No video views yet.</td></tr>';
     sess.forEach(function(s){
       var pct=Math.round(s.max_pct||0);
       var who = s.email ? esc(s.name||s.email) : 'Anonymous';
       var sub = s.email ? esc(s.email) : esc((s.visitor_id||'').slice(0,12));
       var tr=document.createElement('tr');
+      var _g=s.geo||{}; var _area=(_g.city?esc(_g.city)+(_g.region?', '+esc(_g.region):''):(_g.region?esc(_g.region):(_g.country?esc(_g.country):(_g.tz?esc(String(_g.tz).split('/').pop().replace(/_/g,' ')):'—'))));
+      var _tos=(function(t){t=Number(t||0);if(t<=0)return '—';if(t<60)return t+'s';if(t<3600)return Math.round(t/60)+'m';return (Math.round(t/360)/10)+'h';})(s.time_on_site_sec);
       tr.innerHTML='<td class="who">'+who+'<span class="sub">'+sub+'</span></td>'+
+        '<td>'+(s.visit_count||0)+'</td>'+
+        '<td>'+_tos+'</td>'+
         '<td><div class="bar"><div class="fill" style="width:'+pct+'%"></div><div class="t">'+pct+'%</div></div></td>'+
         '<td>'+fmtTime(s.watched_seconds)+' / '+fmtTime(s.duration_seconds)+'</td>'+
+        '<td class="muted">'+_area+'</td>'+
         '<td>'+(s.reached_cta?'<span class="chip yes">Yes</span>':'<span class="chip no">No</span>')+'</td>'+
         '<td>'+(s.completed?'<span class="chip yes">Yes</span>':'<span class="chip no">No</span>')+'</td>'+
         '<td class="muted">'+ago(s.updated_at)+'</td>';
       sb.appendChild(tr);
     });
 
+    var _ftot=d.visitors_total||sess.length, _fpages=Math.max(1,Math.ceil(_ftot/_flimit));
+    var _pg=document.getElementById('sessPager');
+    if(_pg){ var bs='padding:5px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;font-size:13px';
+      _pg.innerHTML='<button '+(_fpage<=0?'disabled':'')+' onclick="funnelPage(-1)" style="'+bs+'">\u2039 Prev</button>'+
+        '<span style="color:#64748b">Page '+(_fpage+1)+' / '+_fpages+' \u00b7 '+_ftot+' visitors</span>'+
+        '<button '+((_fpage+1)>=_fpages?'disabled':'')+' onclick="funnelPage(1)" style="'+bs+'">Next \u203a</button>'; }
     var vis=d.recent_visits||[];
     document.getElementById('visCount').textContent=vis.length;
     var vb=document.getElementById('visBody');
