@@ -5119,7 +5119,7 @@ function renderSmsComms() {
     if(_m1r) _m1r.textContent=sentTotal?(Math.round(100*repliedCount/sentTotal)+'% reply rate'):'';
   }
   var _cmd=document.getElementById('cmDelivered'); if(_cmd)_cmd.textContent=_cmst?Number(_cmst.delivered).toLocaleString():'—';
-  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub',offer:'cmOfferSent',offerSub:'cmOfferSentSub',co:'cmConsidering',ni:'cmNotInt',client:'cmClients',clientSub:'cmClientsSub'});
+  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub'});
   var _contactStats=(window._msgLogRows!=null&&typeof computeContactMsgStats==='function')?computeContactMsgStats(_cmRange==='all', _cmRange):null;
   var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&_contactStats&&!telnyxCached(_cmRange))_ccm.textContent=Number(_contactStats.deliveredContacts||_contactStats.contacts||0).toLocaleString();
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
