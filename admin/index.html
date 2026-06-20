@@ -3978,7 +3978,7 @@ function renderPipelineMetrics(){
     const brokenN = Number(bc.broken!=null?bc.broken:tot.broken);
     const workingN = Number(bc.existing!=null?bc.existing:tot.existing);
     const skippedT = Number(bc.skipped!=null?bc.skipped:tot.skipped) + workingN;
-    const sendableLeft = (ms.remaining_pool!=null) ? Number(ms.remaining_pool) : (rem.no_website + rem.broken);
+    const sendableLeft = (ms.remaining_pool && typeof ms.remaining_pool==='object') ? Object.keys(ms.remaining_pool).reduce(function(a,k){return a+Number(ms.remaining_pool[k]||0);},0) : (Number(ms.remaining_pool||0) || (rem.no_website + rem.broken));
     const messaged = Math.max(0, (tot.no_website + tot.broken) - (rem.no_website + rem.broken));
     if(asof) asof.textContent = 'current (live)';
     host.innerHTML =
