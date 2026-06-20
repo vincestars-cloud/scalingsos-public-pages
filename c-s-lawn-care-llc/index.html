@@ -235,7 +235,6 @@
 <option>Large or multiple areas</option>
 <option>Not sure — help me estimate</option>
 </select>
-<small id="projectSizeHelp">Pick the closest option. We’ll confirm before service.</small>
 </div>
 </div>
 <div class="wizard-step" data-step="3">
@@ -356,21 +355,6 @@
       serviceDate.min = tomorrow.toISOString().split('T')[0];
     }
 
-    const projectSizeHelp = document.getElementById('projectSizeHelp');
-    const sizeHelpText = {
-      'Mowing': 'Small = simple area. Standard = normal front + back yard. Large = corner lot, big backyard, or multiple areas.',
-      'Leaf Removal': 'Small = light cleanup. Standard = front + back. Large = heavy leaves, big yard, or multiple piles.',
-      'Mulch': 'Small = a few beds. Standard = front beds. Large = front + back beds or full refresh.',
-      'Sod': 'Small = one patch. Standard = one lawn area. Large = multiple areas or major repair.',
-      'Landscaping': 'Small = one area. Standard = a few areas. Large = full-yard project or multiple sections.',
-      'Tree & Shrub': 'Small = a few shrubs. Standard = front + back trimming. Large = many shrubs or several trees.',
-      'Not Sure': 'Choose Not sure if you do not know. We’ll help estimate before confirming.'
-    };
-    document.querySelectorAll('input[name="service_needed"]').forEach(input => {
-      input.addEventListener('change', () => {
-        if (projectSizeHelp) projectSizeHelp.textContent = sizeHelpText[input.value] || 'Pick the closest option. We’ll confirm before service.';
-      });
-    });
 
     const quoteForm = document.getElementById('quote');
     const steps = Array.from(document.querySelectorAll('.wizard-step'));
