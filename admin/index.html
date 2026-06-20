@@ -388,6 +388,10 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         <div class="stat-card"><div class="label">Not Interested</div><div class="value" id="dbNotInterested" style="color:#dc2626">--</div><div class="sub">terminal / do not message</div></div>
         <div class="stat-card green"><div class="label">Clients</div><div class="value" id="dbClients">--</div><div class="sub" id="dbClientsSub">-- conversion</div></div>
       </div>
+      <div class="chart-wrap" id="dbIndustryOutcomesWrap" style="margin-bottom:24px;display:none">
+        <h3>Outcomes Per Industry</h3>
+        <div id="dbIndustryOutcomes" style="overflow-x:auto"></div>
+      </div>
       <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:24px">
         <div class="chart-wrap" style="margin:0"><h3>Top Industries</h3><div id="dbTopIndustries"></div></div>
         <div class="chart-wrap" style="margin:0"><h3>Replies per Industry</h3><div id="dbReplyIndustries"></div></div>
@@ -1482,6 +1486,19 @@ function renderDashboard() {
     chart.innerHTML=days.map(function(d,i){ var h=Math.max((counts[i]/max)*140,2); return '<div class="bar-col"><div class="bar-val">'+counts[i]+'</div><div class="bar" style="height:'+h+'px"></div><div class="bar-label">'+d.toLocaleDateString('en-US',{weekday:'short'})+'</div></div>'; }).join('');
 	    var h3=chart.parentElement&&chart.parentElement.querySelector('h3'); if(h3) h3.textContent='SMS Delivered Per Day (Last 7 Days)';
 	  }
+  (function renderDashboardIndustryOutcomes(){
+    var wrap=document.getElementById('dbIndustryOutcomesWrap'); var host=document.getElementById('dbIndustryOutcomes'); if(!wrap||!host) return;
+    var snap=(prospectorConfigCache&&prospectorConfigCache.metrics_snapshot)||{}; var bio=snap.by_industry_outcome||{};
+    var merged={}; Object.keys(bio).forEach(function(k){ var key=String(k||'').toLowerCase().trim(); if(!key) return; var o=bio[k]||{}; var m=merged[key]||(merged[key]={clients:0,offers_sent:0,interested:0,not_interested:0}); m.clients+=Number(o.clients||0); m.offers_sent+=Number(o.offers_sent||0); m.interested+=Number(o.interested||0); m.not_interested+=Number(o.not_interested||0); });
+    var rowsArr=Object.keys(merged).map(function(key){ var m=merged[key]; m.total=m.clients+m.offers_sent+m.interested+m.not_interested; m.key=key; return m; }).filter(function(m){ return m.total>0; }).sort(function(a,b){ return b.total-a.total; });
+    if(!rowsArr.length){ wrap.style.display='none'; host.innerHTML=''; return; }
+    function esc(t){ return String(t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function cap(t){ return t.replace(/\b\w/g,function(c){ return c.toUpperCase(); }); }
+    function n(v){ return Number(v||0).toLocaleString(); }
+    var html='<table style="width:100%;border-collapse:collapse;font-size:.82rem"><thead><tr style="text-align:left;color:var(--text-muted);border-bottom:1px solid var(--border)">'+['Industry','Clients','Offers Sent','Interested','Not Interested'].map(function(h,i){ return '<th style="padding:7px 10px'+(i?';text-align:right':'')+'">'+h+'</th>'; }).join('')+'</tr></thead><tbody>';
+    html+=rowsArr.map(function(m){ return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 10px;font-weight:600">'+esc(cap(m.key))+'</td><td style="padding:7px 10px;text-align:right;color:#16a34a;font-weight:700">'+n(m.clients)+'</td><td style="padding:7px 10px;text-align:right">'+n(m.offers_sent)+'</td><td style="padding:7px 10px;text-align:right;color:#ca8a04">'+n(m.interested)+'</td><td style="padding:7px 10px;text-align:right;color:#dc2626">'+n(m.not_interested)+'</td></tr>'; }).join('');
+    html+='</tbody></table>'; host.innerHTML=html; wrap.style.display='';
+  })();
   renderDashboardAnalytics(range, rows);
 	}
 		function _commsIsRepliedInRange(s,range){ return _hasReplyAfterMessageInRange(s,range,_isMsg1Message); }
@@ -3250,6 +3267,13 @@ function applyTelnyxMessageMetrics(range, ids){
       var r2Sub=document.getElementById(ids.reply2Sub);
       if(r2Sub && r2) r2Sub.textContent=(r2Sub.textContent||'').replace(/\s*\|\s*Cost\/reply:.*/,'')+' | Cost/reply: '+money(cost/r2);
     }
+    if(tm.outcomes){
+      var _oc=tm.outcomes;
+      if(ids.offer){ var _ofEl=document.getElementById(ids.offer); if(_ofEl) _ofEl.textContent=Number(_oc.offers||0).toLocaleString(); }
+      if(ids.co){ var _coEl=document.getElementById(ids.co); if(_coEl) _coEl.textContent=Number(_oc.interested||0).toLocaleString(); }
+      if(ids.ni){ var _niEl=document.getElementById(ids.ni); if(_niEl) _niEl.textContent=Number(_oc.not_interested||0).toLocaleString(); }
+      if(ids.client){ var _clEl=document.getElementById(ids.client); if(_clEl) _clEl.textContent=Number(_oc.clients||0).toLocaleString(); }
+    }
     if(ids.offerSub){
       var offers=num(ids.offer);
       var offerSub=document.getElementById(ids.offerSub);
@@ -3943,6 +3967,35 @@ function renderPipelineMetrics(){
   const asof = document.getElementById('pipelineMetricsAsOf');
   if(asof) asof.textContent = ic.computed_at ? ('as of ' + new Date(ic.computed_at).toLocaleString()) : 'click Refresh Counts to compute';
   function card(label, val, sub){ return '<div class="stat-card"><div class="label">'+label+'</div><div class="value">'+Number(val||0).toLocaleString()+'</div>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div>'; }
+  // CURRENT snapshot (live config GET) — preferred over the stale industry_counts scan; merges industry case-duplicates by summing.
+  const ms = (prospectorConfigCache && prospectorConfigCache.metrics_snapshot) || null;
+  if(ms && Number(ms.total)>0){
+    const sumBuckets = function(src){ const o={no_website:0,broken:0,skipped:0,existing:0,unknown:0}; const m=(src&&typeof src==='object')?src:{}; Object.keys(m).forEach(function(k){ const b=m[k]||{}; o.no_website+=Number(b.no_website||0); o.broken+=Number(b.broken||0); o.skipped+=Number(b.skipped||0); o.existing+=Number(b.existing||0); o.unknown+=Number(b.unknown||0); }); return o; };
+    const tot = sumBuckets(ms.by_industry_bucket);
+    const rem = sumBuckets(ms.remaining_bucket);
+    const bc = (ms.by_class && typeof ms.by_class==='object') ? ms.by_class : {};
+    const noSite = Number(bc.no_website!=null?bc.no_website:tot.no_website);
+    const brokenN = Number(bc.broken!=null?bc.broken:tot.broken);
+    const workingN = Number(bc.existing!=null?bc.existing:tot.existing);
+    const skippedT = Number(bc.skipped!=null?bc.skipped:tot.skipped) + workingN;
+    const sendableLeft = (ms.remaining_pool!=null) ? Number(ms.remaining_pool) : (rem.no_website + rem.broken);
+    const messaged = Math.max(0, (tot.no_website + tot.broken) - (rem.no_website + rem.broken));
+    if(asof) asof.textContent = 'current (live)';
+    host.innerHTML =
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:14px">'
+      + card('Total scraped', ms.total)
+      + card('Skipped (has site/other)', skippedT, 'not targets')
+      + card('Messaged', messaged, 'in conversation')
+      + card('Sendable left', sendableLeft, 'remaining pool')
+      + '</div>'
+      + '<div style="font-size:.8rem;font-weight:700;color:#0f172a;margin:4px 0 6px">Remaining pool by bucket (uncontacted)</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'
+      + card('No Site', noSite, Number(rem.no_website||0).toLocaleString()+' left')
+      + card('Broken', brokenN, Number(rem.broken||0).toLocaleString()+' left')
+      + card('Working', workingN, 'has site')
+      + '</div>';
+    return;
+  }
   if(!ic.computed_at){ host.innerHTML = '<div style="font-size:.82rem;color:var(--text-muted)">No metrics computed yet &mdash; click <b>Refresh Counts</b> in SMS Industry Targeting below.</div>'; return; }
   const skipped = Number(f.skipped_modern||0) + Number(f.skipped_other||0);
   host.innerHTML =
@@ -3964,27 +4017,53 @@ function renderPipelineMetrics(){
 // ===== SMS Industry Targeting (website-bucket per industry) — sms_industry_filter_20260618 =====
 const SMS_TARGET_OPTS = [['all','All'],['no_website','No Website'],['broken','Broken Site'],['working','Working Site'],['skip','Skip']];
 function _smsTgtKey(name){ return String(name||'').trim().toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
+// Build a per-industry snapshot from the lightweight prospectorConfigCache.metrics_snapshot
+// (NO heavy 40k refresh_counts server scan). Merge case-duplicate industry keys
+// (e.g. "Moving" + "moving") case-insensitively via _smsTgtKey. Totals = sum of every website
+// bucket; remaining (r_*) tracks the uncontacted pool so the UI visibly depletes as we message.
+function _smsTgtSnap(){
+  const ms = (prospectorConfigCache && prospectorConfigCache.metrics_snapshot) || {};
+  const tot = ms.by_industry_bucket || {};   // TOTAL scraped per industry per website bucket
+  const rem = ms.remaining_bucket || {};      // REMAINING (uncontacted) — depletes as messaged
+  const knownByKey = {}; INDUSTRIES.forEach(function(n){ knownByKey[_smsTgtKey(n)] = n; });
+  const out = {};
+  function row(key, name){ if(!out[key]) out[key] = { name:name, total:0, no_website:0, broken:0, existing:0, r_total:0, r_no_website:0, r_broken:0, r_existing:0 }; return out[key]; }
+  function add(src, R){
+    Object.keys(src||{}).forEach(function(rawName){
+      const key = _smsTgtKey(rawName); if(!key || key==='unknown') return;
+      const r = row(key, knownByKey[key] || rawName);
+      const b = src[rawName] || {};
+      const t = (Number(b.no_website)||0)+(Number(b.broken)||0)+(Number(b.skipped)||0)+(Number(b.existing)||0)+(Number(b.unknown)||0);
+      if(R){ r.r_total+=t; r.r_no_website+=Number(b.no_website)||0; r.r_broken+=Number(b.broken)||0; r.r_existing+=Number(b.existing)||0; }
+      else { r.total+=t; r.no_website+=Number(b.no_website)||0; r.broken+=Number(b.broken)||0; r.existing+=Number(b.existing)||0; }
+    });
+  }
+  add(tot, false); add(rem, true);
+  // ensure every known industry shows (even at 0) so the filter UI stays complete
+  INDUSTRIES.forEach(function(n){ row(_smsTgtKey(n), n); });
+  return out;
+}
 function _smsTgtIndustries(){
-  const cfg = prospectorConfigCache || {};
-  const ic = (cfg.industry_counts && cfg.industry_counts.by_industry) ? cfg.industry_counts.by_industry : {};
+  const snap = _smsTgtSnap();
   const known = INDUSTRIES.map(function(n){ return { name:n, key:_smsTgtKey(n) }; });
   const seen = {}; known.forEach(function(k){ seen[k.key]=1; });
-  Object.keys(ic).forEach(function(k){ if(!seen[k] && k!=='unknown'){ known.push({ name:k, key:k }); seen[k]=1; } });
-  known.sort(function(a,b){ return ((ic[b.key]&&ic[b.key].total)||0)-((ic[a.key]&&ic[a.key].total)||0) || a.name.localeCompare(b.name); });
+  Object.keys(snap).forEach(function(k){ if(!seen[k]){ known.push({ name:(snap[k].name||k), key:k }); seen[k]=1; } });
+  known.sort(function(a,b){ return ((snap[b.key]&&snap[b.key].total)||0)-((snap[a.key]&&snap[a.key].total)||0) || a.name.localeCompare(b.name); });
   return known;
 }
 function renderSmsTargeting(){
   const host = document.getElementById('smsTargetingRows'); if(!host) return;
   const cfg = prospectorConfigCache || {};
   const filt = (cfg.sms_industry_filter && typeof cfg.sms_industry_filter==='object') ? cfg.sms_industry_filter : {};
-  const ic = (cfg.industry_counts && cfg.industry_counts.by_industry) ? cfg.industry_counts.by_industry : {};
+  const snap = _smsTgtSnap();
   const meta = document.getElementById('smsTargetingMeta');
   if(meta){
-    const ca = cfg.industry_counts && cfg.industry_counts.computed_at;
-    meta.textContent = ca ? ('Pool counts as of ' + new Date(ca).toLocaleString() + ((cfg.industry_counts.read_error)?(' (partial: '+cfg.industry_counts.read_error+')'):'')) : 'Counts not loaded yet — click Refresh Counts.';
+    const _ms = (cfg.metrics_snapshot && typeof cfg.metrics_snapshot==='object') ? cfg.metrics_snapshot : null;
+    const _ca = _ms && (_ms.computed_at || _ms.as_of || _ms.updated_at);
+    meta.textContent = _ms ? ('Total scraped ' + Number(_ms.total||0).toLocaleString() + ' prospects' + (_ca ? (' · as of ' + new Date(_ca).toLocaleString()) : '') + ' · "(N left)" = remaining uncontacted pool') : 'Counts not loaded yet.';
   }
   host.innerHTML = _smsTgtIndustries().map(function(it){
-    const c = ic[it.key] || { total:0, no_website:0, broken:0, working:0 };
+    const c = snap[it.key] || { total:0, no_website:0, broken:0, existing:0, r_total:0, r_no_website:0, r_broken:0, r_existing:0 };
     const cur = String(filt[it.key] || 'all');
     const radios = SMS_TARGET_OPTS.map(function(o){
       const checked = cur===o[0] ? ' checked' : '';
@@ -3994,7 +4073,7 @@ function renderSmsTargeting(){
     return '<div style="padding:9px 0;border-bottom:1px solid var(--border);'+dim+'">'
       + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:5px">'
       + '<span style="font-weight:800;font-size:.86rem;color:#0f172a">'+esc(it.name)+'</span>'
-      + '<span style="font-size:.72rem;color:var(--text-muted);font-weight:600">Pool '+Number(c.total).toLocaleString()+' &middot; No Site '+Number(c.no_website).toLocaleString()+' &middot; Broken '+Number(c.broken).toLocaleString()+' &middot; Working '+Number(c.working).toLocaleString()+'</span>'
+      + '<span style="font-size:.72rem;color:var(--text-muted);font-weight:600">Total scraped '+Number(c.total).toLocaleString()+' &middot; No Site '+Number(c.no_website).toLocaleString()+' ('+Number(c.r_no_website).toLocaleString()+' left) &middot; Broken &amp; Old '+Number(c.broken).toLocaleString()+' ('+Number(c.r_broken).toLocaleString()+' left) &middot; Modern '+Number(c.existing).toLocaleString()+' ('+Number(c.r_existing).toLocaleString()+' left)</span>'
       + '</div>'
       + '<div style="display:flex;flex-wrap:wrap;gap:12px">'+radios+'</div>'
       + '</div>';
@@ -4025,16 +4104,18 @@ async function saveSmsTargeting(){
 }
 let _smsCountsLoading = false;
 async function refreshSmsTargetingCounts(force){
+  // No heavy 40k server scan anymore — counts come from prospectorConfigCache.metrics_snapshot,
+  // which loadProspectorState() already fetched. Re-read the latest config + re-render.
   if(_smsCountsLoading) return;
   const btn = document.getElementById('smsTargetingRefreshBtn');
-  _smsCountsLoading = true; if(btn){ btn.disabled = true; btn.textContent = 'Counting…'; }
+  _smsCountsLoading = true; if(btn){ btn.disabled = true; btn.textContent = 'Refreshing…'; }
   try{
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'refresh_counts' }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'get' }) });
     const j = await resp.json().catch(function(){ return {}; });
-    if(j && j.industry_counts) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { industry_counts: j.industry_counts, sms_industry_filter: j.sms_industry_filter || ((prospectorConfigCache||{}).sms_industry_filter) });
+    if(j && j.ok !== false) prospectorConfigCache = j;
     renderPipelineMetrics();
     renderSmsTargeting();
-    if(force) showToast('Pool counts refreshed');
+    if(force) showToast('Counts refreshed');
   }catch(e){ if(force) showToast('Count refresh failed: ' + e.message, true); }
   finally{ _smsCountsLoading = false; if(btn){ btn.disabled = false; btn.innerHTML = '&#8635; Refresh Counts'; } }
 }
@@ -5038,7 +5119,7 @@ function renderSmsComms() {
     if(_m1r) _m1r.textContent=sentTotal?(Math.round(100*repliedCount/sentTotal)+'% reply rate'):'';
   }
   var _cmd=document.getElementById('cmDelivered'); if(_cmd)_cmd.textContent=_cmst?Number(_cmst.delivered).toLocaleString():'—';
-  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub',offer:'cmOfferSent',offerSub:'cmOfferSentSub',client:'cmClients',clientSub:'cmClientsSub'});
+  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub',offer:'cmOfferSent',offerSub:'cmOfferSentSub',co:'cmConsidering',ni:'cmNotInt',client:'cmClients',clientSub:'cmClientsSub'});
   var _contactStats=(window._msgLogRows!=null&&typeof computeContactMsgStats==='function')?computeContactMsgStats(_cmRange==='all', _cmRange):null;
   var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&_contactStats&&!telnyxCached(_cmRange))_ccm.textContent=Number(_contactStats.deliveredContacts||_contactStats.contacts||0).toLocaleString();
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
@@ -5048,8 +5129,10 @@ function renderSmsComms() {
   if(_m1r && !telnyxCached(_cmRange)) _m1r.textContent=_msg1Denom?(Math.round(100*repliedCount/_msg1Denom)+'% of '+_msg1Denom.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts in period';
   var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub && !telnyxCached(_cmRange)) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts in period';
   var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(x.s):''; if(b==='not_interested')_cdc.ni++; else if(b==='interested')_cdc.co++; else if(b==='offer')_cdc.offer++; else if(b==='client')_cdc.client++; });
+  if(!telnyxCached(_cmRange)){
   var _cni=document.getElementById('cmNotInt'); if(_cni)_cni.textContent=Number(_cdc.ni).toLocaleString();
   var _cco=document.getElementById('cmConsidering'); if(_cco)_cco.textContent=Number(_cdc.co).toLocaleString(); var _cof=document.getElementById('cmOfferSent'); if(_cof)_cof.textContent=Number(_cdc.offer).toLocaleString(); var _ccl=document.getElementById('cmClients'); if(_ccl)_ccl.textContent=Number(_cdc.client).toLocaleString();
+  }
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
   calledNoReply=(function(){ var seen={}; items.forEach(function(x){ var ph=_normPhone(x.s.phone); if(ph && (calledPhones[ph] || _commsCalledNoReply(x.s))) seen[ph]=1; }); return Object.keys(seen).length; })();
   var _cnr=document.getElementById('cmCalledNoReply'); if(_cnr) _cnr.textContent=Number(calledNoReply).toLocaleString();
