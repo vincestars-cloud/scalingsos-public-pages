@@ -6424,7 +6424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   .table-wrap{ scrollbar-width:thin; }
 
   /* ---- COMMS / SMS-REPLY VIEW ------------------------------------------- */
-  .chat-send-row .btn{ flex:1 1 100%; }   /* one big action button per row */
+  .chat-send-row .btn{ flex:1 1 calc(50% - 4px); }   /* 2-up: secondary buttons two per row; Send stays full-width via #chatSendOnlyBtn */
   .chat-header h4{ font-size:.95rem; }
   .msg{ max-width:92%; }
   #commsStats{ grid-template-columns:1fr !important; }
