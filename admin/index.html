@@ -1244,7 +1244,7 @@ async function loadAllData() {
     fetch(N8N_BASE + '/scalingsos-calls').then(r => r.json()).catch(() => [])
   ]);
   data = { businesses, leads, events, sms, conversations: (data&&data.conversations)||[], calls };
-  fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){});
+  if(!window._inboxAt || (Date.now()-window._inboxAt)>120000){ window._inboxAt=Date.now(); fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
   bumpPerfRev();
   document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
   showLoading(false);
