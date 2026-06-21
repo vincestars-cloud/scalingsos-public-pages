@@ -160,6 +160,17 @@
     @media (max-width:620px){
       .mobile-only{display:inline-flex!important}section{padding:62px 0}h1{font-size:43px}h2{font-size:34px}.hero{min-height:610px;background-position:73% center}.hero-inner{padding-top:56px}.hero p{font-size:14px}.btn{width:100%;height:46px}.quote-title{font-size:13px}.quote-grid{grid-template-columns:1fr}.field,.submit{height:46px}.quote-grid textarea{grid-column:1!important;height:82px!important}.choice-grid{grid-template-columns:1fr}.wizard-copy h3{font-size:24px}.wizard-actions{display:grid;grid-template-columns:1fr 1fr}.wizard-next,.wizard-submit{min-width:0;width:100%;height:48px}.wizard-back{width:100%;height:48px}.wizard-progress{margin-bottom:15px}.about-grid{gap:26px}.photo-stack{height:285px;grid-template-columns:1fr .78fr;gap:10px}.mini-col{gap:10px}.seal{width:74px;height:74px}.seal:before{width:40px;height:40px}.section-head{align-items:flex-start}.section-head .arrows{display:none}.service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;overflow:visible;margin-right:0}.service-img{height:118px}.service-card .body{padding:13px 12px 15px}.service-card h3{font-size:18px}.service-card p{font-size:11px;line-height:1.45}.learn{font-size:11px}.process-img{height:230px}.step{grid-template-columns:38px 1fr}.steps:before{left:11px}.gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:125px 125px 125px;gap:9px}.ba-wrap{height:245px}.map-card{height:255px}.review{width:300px}.review-track{animation-duration:28s}.faq-grid{gap:28px}.footer-grid{grid-template-columns:1fr;gap:24px}footer{padding-bottom:28px}.bottom{font-size:10px}.cta{text-align:left}.cta .btnrow{align-items:stretch}.announcement{height:auto}.pill{font-size:10px}
     }
+  
+    .svc-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+    .svc-modal-overlay.open{opacity:1;pointer-events:auto}
+    .svc-modal{background:#fff;border-radius:16px;padding:36px 32px;max-width:480px;width:calc(100% - 40px);box-shadow:0 24px 60px rgba(0,0,0,.2);position:relative;transform:translateY(12px);transition:transform .2s}
+    .svc-modal-overlay.open .svc-modal{transform:none}
+    .svc-modal-close{position:absolute;top:14px;right:16px;width:32px;height:32px;border-radius:50%;border:0;background:#f2f4f0;color:#4a5e51;font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center}
+    .svc-modal h3{font-size:26px;margin:0 0 10px;color:#142d20}
+    .svc-modal-sub{font-size:13px;color:#637169;line-height:1.58;margin:0 0 16px}
+    .svc-modal .checklist{margin:0 0 22px}
+    .svc-modal .btn{width:100%;height:48px;font-size:13px;border-radius:8px}
+    @media(max-width:480px){.svc-modal{padding:26px 20px}}
   </style>
 </head>
 <body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 1189</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
@@ -187,7 +198,7 @@
 <div class="hero-inner">
 <span class="pill"><i class="mini-dot"></i>C&amp;S lawn care</span>
 <h1>Transform Your Yard With Expert Care From C&amp;S lawn care</h1>
-<p>At C&amp;S lawn care, we deliver dependable mowing, edging, cleanup, and seasonal lawn care services built to create beautiful, well-maintained commercial properties.</p>
+<p>At C&amp;S lawn care, we deliver dependable mowing, edging, cleanup, and seasonal lawn care services built to create beautiful, well-maintained properties.</p>
 <div class="btnrow"><a class="btn primary" href="#quote">Book Service</a><a class="btn light" href="tel:+14709180516">Contact Us Now →</a></div>
 </div>
 </div>
@@ -275,9 +286,9 @@
 <div class="container">
 <div class="section-head"><div><span class="section-label"><i class="leaf"></i> Our Core Services</span><h2>Expert Lawn Care Services</h2></div><div class="arrows"><button class="arrow" type="button">‹</button><button class="arrow next" type="button">›</button></div></div>
 <div class="service-grid">
-<article class="service-card"><div class="service-img"><img alt="Lawn renovation cutting" src="https://demo.scalingsos.com/assets/lawn/lawn-3.jpg"/></div><div class="body"><h3>Lawn Renovation Cutting</h3><p>We transform tired lawns with clean trimming, clean cuts, and sharp edges.</p><a class="learn" href="#quote">Learn More →</a></div></article>
-<article class="service-card"><div class="service-img"><img alt="Commercial lawn care" src="https://demo.scalingsos.com/assets/lawn/lawn-4.jpg"/></div><div class="body"><h3>Commercial Lawn Care</h3><p>Full-service maintenance for businesses, properties, and commercial landscapes.</p><a class="learn" href="#quote">Learn More →</a></div></article>
-<article class="service-card"><div class="service-img"><img alt="Tree and shrub care" src="https://demo.scalingsos.com/assets/lawn/lawn-5.jpg"/></div><div class="body"><h3>Tree &amp; Shrub Care</h3><p>Keep outdoor spaces neat with shrub trimming, small tree care, and cleanup.</p><a class="learn" href="#quote">Learn More →</a></div></article>
+<article class="service-card"><div class="service-img"><img alt="Lawn cutting" src="https://demo.scalingsos.com/assets/lawn/lawn-3.jpg"/></div><div class="body"><h3>Lawn Cutting</h3><p>We transform tired lawns with clean trimming, clean cuts, and sharp edges.</p><a class="learn learn-more-svc" data-svc="lawn-cutting" href="#">Learn More →</a></div></article>
+<article class="service-card"><div class="service-img"><img alt="Commercial lawn care" src="https://demo.scalingsos.com/assets/lawn/lawn-4.jpg"/></div><div class="body"><h3>Commercial Lawn Care</h3><p>Full-service maintenance for businesses, properties, and commercial landscapes.</p><a class="learn learn-more-svc" data-svc="commercial" href="#">Learn More →</a></div></article>
+<article class="service-card"><div class="service-img"><img alt="Tree and shrub care" src="https://demo.scalingsos.com/assets/lawn/lawn-5.jpg"/></div><div class="body"><h3>Tree &amp; Shrub Care</h3><p>Keep outdoor spaces neat with shrub trimming, small tree care, and cleanup.</p><a class="learn learn-more-svc" data-svc="tree-shrub" href="#">Learn More →</a></div></article>
 </div>
 </div>
 </section>
@@ -306,7 +317,7 @@
 </div></div></section>
 <section class="cta" id="contact"><div class="container"><h2>Let’s Grow Something<br/>Beautiful Together</h2><p>Your lawn is the first thing people see. Give it the professional care it deserves with reliable lawn service from C&amp;S lawn care.</p><div class="btnrow"><a class="btn primary" href="tel:+14709180516">(470) 918-0516</a><a class="btn light" href="#quote">Contact Us Now →</a></div></div></section>
 </main>
-<footer><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-badge">CL</span><span><strong>C&amp;S lawn care</strong><small>Services</small></span></a><p>C&amp;S lawn care is committed to keeping your lawn healthy, beautiful, and professionally cared for.</p><div class="social"><a>f</a><a>in</a><a>ig</a><a>x</a></div></div><div class="foot"><h4>Company</h4><a href="#home">Home</a><a href="#about">About Us</a><a href="#services">Services</a><a href="#testimonials">Reviews</a><a href="#contact">Contact Us</a></div><div class="foot"><h4>Our Services</h4><a>Lawn Renovation Cutting</a><a>Commercial Lawn Care</a><a>Tree And Shrub Care</a><a>Seasonal Yard Cleanup</a><a>Leaf &amp; Debris Removal</a></div><div class="foot"><h4>Area Served</h4><a>Dalton</a><a>North Dalton</a><a>South Dalton</a><a>East Dalton</a><a>West Dalton</a><a>Greater Dalton</a></div><div class="foot"><h4>Contact Info</h4><p>(470) 918-0516</p><p>info@cslawncarellc.com</p><p>Dalton, GA</p></div></div><div class="bottom"><span>© Copyright 2026 C&amp;S lawn care. All Rights Reserved.</span><span>Privacy Policy | Terms of Service</span></div></div></footer>
+<footer><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-badge">CL</span><span><strong>C&amp;S lawn care</strong><small>Services</small></span></a><p>C&amp;S lawn care is committed to keeping your lawn healthy, beautiful, and professionally cared for.</p><div class="social"><a>f</a><a>in</a><a>ig</a><a>x</a></div></div><div class="foot"><h4>Company</h4><a href="#home">Home</a><a href="#about">About Us</a><a href="#services">Services</a><a href="#testimonials">Reviews</a><a href="#contact">Contact Us</a></div><div class="foot"><h4>Our Services</h4><a>Lawn Cutting</a><a>Commercial Lawn Care</a><a>Tree And Shrub Care</a><a>Seasonal Yard Cleanup</a><a>Leaf &amp; Debris Removal</a></div><div class="foot"><h4>Area Served</h4><a>Dalton</a><a>North Dalton</a><a>South Dalton</a><a>East Dalton</a><a>West Dalton</a><a>Greater Dalton</a></div><div class="foot"><h4>Contact Info</h4><p>(470) 918-0516</p><p>info@cslawncarellc.com</p><p>Dalton, GA</p></div></div><div class="bottom"><span>© Copyright 2026 C&amp;S lawn care. All Rights Reserved.</span><span>Privacy Policy | Terms of Service</span></div></div></footer>
 <div aria-label="Quick actions" class="mobile-sticky-cta">
 <a class="book" href="#quote">Book Service</a>
 <a class="call" href="tel:+14709180516">Call Us (470) 918-0516</a>
@@ -410,5 +421,53 @@
     });
     showStep(0);
   </script>
+
+<div class="svc-modal-overlay" id="svcModal" role="dialog" aria-modal="true">
+  <div class="svc-modal">
+    <button class="svc-modal-close" id="svcModalClose" type="button" aria-label="Close">&#215;</button>
+    <h3 id="svcModalTitle"></h3>
+    <div id="svcModalBody"></div>
+    <button class="btn primary" id="svcModalBook" type="button">Book This Service &#8594;</button>
+  </div>
+</div>
+<script>
+    const svcModal = document.getElementById('svcModal');
+    const svcModalTitle = document.getElementById('svcModalTitle');
+    const svcModalBody = document.getElementById('svcModalBody');
+    const svcModalClose = document.getElementById('svcModalClose');
+    const svcModalBook = document.getElementById('svcModalBook');
+    const serviceDetails = {
+      'lawn-cutting': {
+        title: 'Lawn Cutting',
+        sub: 'Regular mowing keeps your property looking sharp and well-maintained. One of the highest-impact services for curb appeal.',
+        bullets: ['Clean, even mowing with sharp blades','Precise edging along driveways and walkways','Full cleanup — no clippings left behind','Available as one-time or recurring service']
+      },
+      'commercial': {
+        title: 'Commercial Lawn Care',
+        sub: 'Professional full-service maintenance for businesses, commercial properties, HOAs, and larger landscapes.',
+        bullets: ['Scheduled maintenance plans available','Crew-level service for larger properties','Mowing, edging, trimming, and debris cleanup','Flexible scheduling to fit your property needs']
+      },
+      'tree-shrub': {
+        title: 'Tree & Shrub Care',
+        sub: 'Overgrown shrubs and trees take away from your property's appearance. We keep them shaped, trimmed, and looking great.',
+        bullets: ['Shrub shaping and precision trimming','Small tree pruning and cleanup','Dead branch and debris removal','Full yard cleanup after every visit']
+      }
+    };
+    document.querySelectorAll('.learn-more-svc').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const d = serviceDetails[link.dataset.svc];
+        if (!d) return;
+        svcModalTitle.textContent = d.title;
+        svcModalBody.innerHTML = '<p class="svc-modal-sub">' + d.sub + '</p><ul class="checklist">' + d.bullets.map(b => '<li>' + b + '</li>').join('') + '</ul>';
+        svcModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    function closeSvcModal() { svcModal.classList.remove('open'); document.body.style.overflow = ''; }
+    svcModalClose.addEventListener('click', closeSvcModal);
+    svcModal.addEventListener('click', e => { if (e.target === svcModal) closeSvcModal(); });
+    svcModalBook.addEventListener('click', () => { closeSvcModal(); document.getElementById('quote').scrollIntoView({behavior:'smooth'}); });
+</script>
 </body>
 </html>
