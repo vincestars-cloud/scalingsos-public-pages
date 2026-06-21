@@ -5135,10 +5135,11 @@ function renderSmsComms() {
   window._commsOutcomeCache=window._commsOutcomeCache||{};
   var _setCmOut=function(o){ var _S=function(id,v){var e=document.getElementById(id); if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmNotInt',o.not_interested); _S('cmConsidering',o.interested); _S('cmOfferSent',o.offers); _S('cmClients',o.clients); };
   if(window._commsOutcomeCache[_cmRange]) _setCmOut(window._commsOutcomeCache[_cmRange]); else _setCmOut({not_interested:_cdc.ni,interested:_cdc.co,offers:_cdc.offer,clients:_cdc.client});
-  if((!window._commsOutcomeAt || (Date.now()-window._commsOutcomeAt)>60000) && !window._commsOutcomeLoading){
-    window._commsOutcomeLoading=true; window._commsOutcomeAt=Date.now();
-    Promise.all(['today','yesterday','7d','month','all'].map(function(_p){ return fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+_p).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes) window._commsOutcomeCache[_p]=_d.outcomes; }).catch(function(){}); }))
-      .then(function(){ window._commsOutcomeLoading=false; var _cur=String(window._commsDateRange||'today'); if(window._commsOutcomeCache[_cur]) _setCmOut(window._commsOutcomeCache[_cur]); })
+  var _cmActive=String(window._commsDateRange||'today');
+  if(!window._commsOutcomeAtBy) window._commsOutcomeAtBy={};
+  if((!window._commsOutcomeAtBy[_cmActive] || (Date.now()-window._commsOutcomeAtBy[_cmActive])>300000) && !window._commsOutcomeLoading){
+    window._commsOutcomeLoading=true; window._commsOutcomeAtBy[_cmActive]=Date.now();
+    fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+_cmActive).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes){ window._commsOutcomeCache[_cmActive]=_d.outcomes; var _cur=String(window._commsDateRange||'today'); if(window._commsOutcomeCache[_cur]) _setCmOut(window._commsOutcomeCache[_cur]); } window._commsOutcomeLoading=false; })
       .catch(function(){ window._commsOutcomeLoading=false; });
   }
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
