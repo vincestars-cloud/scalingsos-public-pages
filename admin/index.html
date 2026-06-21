@@ -1237,7 +1237,7 @@ async function fetchBusinesses() {
 async function loadAllData() {
   showLoading(true);
   const [businesses, leads, events, sms, calls] = await Promise.all([
-    fetchBusinesses(),
+    (window._bizCache && window._bizAt && (Date.now()-window._bizAt)<90000) ? Promise.resolve(window._bizCache) : fetchBusinesses().then(function(_b){ window._bizAt=Date.now(); window._bizCache=_b; return _b; }),
     fetchSheet(GIDS.leads),
     fetchSheet(GIDS.events),
     fetchSheet(GIDS.sms),
