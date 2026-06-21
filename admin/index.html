@@ -5025,6 +5025,20 @@ function openCommsForPhone(phone){
     else openPhoneDrawer(ph,'');
   },80);
 }
+(function(){
+  try{
+    function __dlGetPhone(){ try{ var sp=new URLSearchParams(location.search); var c=sp.get('conv')||sp.get('phone')||''; if(!c && location.hash){ var m=location.hash.match(/(?:conv|phone)[=\/]([+\d]+)/i); if(m) c=m[1]; } return String(c||'').replace(/\D/g,''); }catch(e){ return ''; } }
+    var __dlPhone=__dlGetPhone();
+    if(!__dlPhone) return;
+    var __dlTries=0;
+    var __dlIv=setInterval(function(){
+      __dlTries++;
+      var __ready=(window.data && data.conversations && data.conversations.length>0 && typeof openCommsForPhone==='function');
+      if(__ready){ clearInterval(__dlIv); try{ openCommsForPhone(__dlPhone); }catch(e){} }
+      else if(__dlTries>80){ clearInterval(__dlIv); if(typeof openCommsForPhone==='function'){ try{ openCommsForPhone(__dlPhone); }catch(e){} } }
+    }, 400);
+  }catch(e){}
+})();
 function latestSessionMediaUrls(s){
   var out=[], seen={};
   function add(v){
