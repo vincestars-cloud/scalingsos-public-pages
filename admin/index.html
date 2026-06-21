@@ -3470,7 +3470,7 @@ async function renderScraping(refetch) {
   var _scNow=Date.now();
   if (!window._scrapeRows) {
     try { window._scrapeRows = await fetchSheetByName('Prospects', { singleTokenHeaders: true }); window._scrapeRowsAt=_scNow; bumpPerfRev(); } catch (e) { window._scrapeRows = window._scrapeRows || []; }
-  } else if (refetch && (_scNow-(window._scrapeRowsAt||0)>60000) && !window._scrapeRowsLoading) {
+  } else if (refetch && (_scNow-(window._scrapeRowsAt||0)>300000) && !window._scrapeRowsLoading) {
     window._scrapeRowsLoading = true;
     fetchSheetByName('Prospects', { singleTokenHeaders: true }).then(function(rows){
       window._scrapeRows = rows || window._scrapeRows || [];
