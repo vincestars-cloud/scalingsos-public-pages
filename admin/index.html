@@ -1291,7 +1291,7 @@ async function checkDeliveryHealth(){
     if(banner){ if(h.status==='red'){ banner.style.cssText='display:block;position:fixed;top:10px;left:260px;right:20px;z-index:99999;background:#dc2626;color:#fff;padding:8px 12px;font-weight:700;font-size:.8rem;line-height:1.25;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.18);border-radius:6px;max-height:42px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none'; banner.textContent='\u26A0\uFE0F SMS DELIVERY ALERT \u2014 '+(h.reason||'high failures')+' ('+h.failed+' failed / '+h.total+' sent, last 30 min). SMS is paused; check Telnyx before resuming.'; } else { banner.style.display='none'; } }
   }catch(e){}
 }
-setInterval(checkDeliveryHealth,30000); try{ checkDeliveryHealth(); }catch(e){}
+setInterval(function(){if(!document.hidden)checkDeliveryHealth();},30000); try{ checkDeliveryHealth(); }catch(e){}
 
 function showLoading(on) {
   // Could show a global spinner — keeping it simple
@@ -6232,9 +6232,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => document.getElementById('notificationMenu')?.classList.remove('open'));
 
   // Main data refresh. Business list reads are cached so open tabs do not overload n8n.
-  autoRefreshTimer = setInterval(loadAllData, 30000);
-  callPollTimer = setInterval(pollIncomingCallRows, 5000);
-  setInterval(refreshProspectorConfigCache, 30000);
+  autoRefreshTimer = setInterval(function(){if(!document.hidden)loadAllData();}, 30000)
+  (function(){ if(window.__visGuardWired) return; window.__visGuardWired=true; var __lastVis=0; document.addEventListener('visibilitychange', function(){ if(!document.hidden){ var now=Date.now(); if(now-__lastVis>15000){ __lastVis=now; try{ loadAllData&&loadAllData(); }catch(e){} } } }); })();;
+  callPollTimer = setInterval(function(){if(!document.hidden)pollIncomingCallRows();}, 5000);
+  setInterval(function(){if(!document.hidden)refreshProspectorConfigCache();}, 30000);
 
   // Activity feed refreshes every 30s
   activityRefreshTimer = setInterval(() => {
