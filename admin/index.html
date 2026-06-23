@@ -4312,22 +4312,21 @@ function renderBuilds() {
 
 async function toggleProspector() {
   const next = !prospectorOn;
+  // toggle_null_safe_20260623: null-safe reads that fall back to the saved config, so the toggle works from ANY
+  // page even if the throttle/cap inputs are not rendered/populated. (Root cause: targetSlider.value threw with no
+  // null-guard -> the click silently did nothing.) Turning OFF is never blocked by validation.
+  var __cfg = prospectorConfigCache || {};
+  function __throttle(){ var v=parseInt((document.getElementById('targetSlider')||{}).value,10); if(!(v>=1)) v=parseInt(__cfg.outreach_per_minute,10); return (v>=1)?Math.min(60,v):5; }
+  function __cap(){ var v=parseInt((document.getElementById('dailyCapInput')||{}).value,10); if(!(v>=1)) v=parseInt(__cfg.daily_cap,10); return (v>=1)?v:0; }
   if (next) {
-    const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
-    const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
-    const target = parseInt(document.getElementById('targetSlider').value, 10);
-    const dailyCap = parseInt(document.getElementById('dailyCapInput')?.value, 10);
-    if (!target || target < 1 || !dailyCap || dailyCap < 1) {
-      showToast('Set an outreach throttle and a daily SMS cap before starting SMS outreach.', true);
-      return;
-    }
-    await saveProspectorConfig();
+    if (!(__cap() >= 1)) { showToast('Set a daily SMS cap in Settings before starting SMS outreach.', true); return; }
+    try { await saveProspectorConfig(); } catch(_e) {}
   }
   try {
     const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
     const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
-    const target = Math.max(1, Math.min(60, parseInt(document.getElementById('targetSlider').value, 10) || 1));
-    const dailyCap = Math.max(1, parseInt(document.getElementById('dailyCapInput')?.value, 10) || 1);
+    const target = __throttle();
+    const dailyCap = __cap() || 5000;
     const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: Object.assign({ enabled: next, outreach_enabled: next, outbound_paused: !next, states, industries, cities: citiesForStates(states), outreach_per_minute: target, daily_cap: dailyCap, limit: dailyCap, chase_time_zones: true }, operationalSettingsPayload()) }) });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json().catch(() => ({}));
