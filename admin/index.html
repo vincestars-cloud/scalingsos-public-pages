@@ -5586,16 +5586,32 @@ function resolveMessageTokens(template, ctx){
   };
   return String(template||'').replace(/\{work\/clients\/customers\}/g,dict.noun).replace(/\{([a-zA-Z0-9_]+)\}/g,function(all,key){ var k=String(key||'').toLowerCase(); return dict[k]!=null?dict[k]:all; });
 }
-function writeOfferMessage(){
+async function writeOfferMessage(){
   var mt=(prospectorConfigCache&&prospectorConfigCache.message_templates)||{};
   var template=String(mt.offer_template||'').trim();
   if(!template){ showToast('Add an Offer Template in Settings first', true); navigate('settings'); return; }
   var input=document.getElementById('chatInput');
   if(!input) return;
-  input.value=resolveMessageTokens(template,currentChatContext());
+  var ctx=currentChatContext();
+  input.value=resolveMessageTokens(template,ctx);
   if(window.autoGrowChat) autoGrowChat(input);
   input.focus();
-  showToast('Offer loaded into the message box');
+  // Option-b (20260623): render the ACTUAL demo screenshot and attach it to the draft for review; WAIT for manual Send.
+  var demo=String(ctx.demo_url||'').trim();
+  if(!demo){ showToast('Offer loaded. No demo built yet for this contact - build a demo first to attach a screenshot.', true); return; }
+  showToast('Offer loaded - rendering the demo screenshot to attach...');
+  try{
+    var resp=await fetch(N8N_BASE+'/scalingsos-admin-send-sms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({render_only:true,demo_url:demo,place_id:ctx.place_id||'',business_name:ctx.business_name||'',to_phone:currentChatPhone})});
+    var json=await resp.json().catch(function(){return {};});
+    if(json && json.media_url){
+      window._pendingChatMedia={url:json.media_url,preview_url:json.media_url,type:'image/jpeg',name:'demo-screenshot.jpg',size:0,uploading:false};
+      window._pendingMediaUrl=json.media_url;
+      if(typeof renderPendingChatMedia==='function') renderPendingChatMedia();
+      showToast('Screenshot attached - review it, tweak the text if needed, then hit Send.');
+    } else {
+      showToast('Offer loaded, but screenshot render failed'+(json&&json.error?(': '+json.error):'')+'. Use Attach file to add one manually.', true);
+    }
+  }catch(e){ showToast('Offer loaded; screenshot render error: '+(e&&e.message||e)+'. Attach a file manually if needed.', true); }
 }
 function setCallUiState(state, message) {
   const bar = document.getElementById('chatCallBar');
