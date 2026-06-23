@@ -5604,10 +5604,19 @@ async function writeOfferMessage(){
     var resp=await fetch(N8N_BASE+'/scalingsos-admin-send-sms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({render_only:true,demo_url:demo,place_id:ctx.place_id||'',business_name:ctx.business_name||'',to_phone:currentChatPhone})});
     var json=await resp.json().catch(function(){return {};});
     if(json && json.media_url){
-      window._pendingChatMedia={url:json.media_url,preview_url:json.media_url,type:'image/jpeg',name:'demo-screenshot.jpg',size:0,uploading:false};
-      window._pendingMediaUrl=json.media_url;
+      var rawUrl=String(json.media_url);
+      // Send uses the raw GitHub URL (live immediately + avoids the demo.scalingsos.com Telnyx block).
+      // The inline preview rewrites raw->demo.scalingsos.com (GitHub Pages), which lags ~30-90s behind the upload,
+      // so wait for it to publish before showing "ready" - otherwise the preview 404s.
+      var demoPreview=rawUrl.replace(/^https:\/\/raw\.githubusercontent\.com\/vincestars-cloud\/scalingsos-public-pages\/main\//i,'https://demo.scalingsos.com/');
+      var _imgLive=function(u){ return new Promise(function(res){ var im=new Image(); im.onload=function(){res(true);}; im.onerror=function(){res(false);}; im.src=u+(u.indexOf('?')>=0?'&':'?')+'_='+Date.now(); }); };
+      showToast('Screenshot rendered - publishing preview (a few seconds)...');
+      var live=false;
+      for(var _t=0;_t<30 && !live;_t++){ live=await _imgLive(demoPreview); if(!live) await new Promise(function(r){ setTimeout(r,3000); }); }
+      window._pendingChatMedia={url:rawUrl,preview_url:rawUrl,type:'image/jpeg',name:'demo-screenshot.jpg',size:0,uploading:false};
+      window._pendingMediaUrl=rawUrl;
       if(typeof renderPendingChatMedia==='function') renderPendingChatMedia();
-      showToast('Screenshot attached - review it, tweak the text if needed, then hit Send.');
+      showToast(live?'Screenshot attached - review it, tweak the text if needed, then hit Send.':'Screenshot attached. Preview still publishing - the send uses the live image, so it is safe to Send.', !live);
     } else {
       showToast('Offer loaded, but screenshot render failed'+(json&&json.error?(': '+json.error):'')+'. Use Attach file to add one manually.', true);
     }
