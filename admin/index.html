@@ -757,6 +757,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         <div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,240px);gap:12px;margin-top:12px;align-items:end">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 3 - 60 Sec After Msg 2<textarea id="settingsMsg3AfterMsg2" rows="3" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:8px;padding:10px 0 8px"><input id="settingsMsg3Enabled" type="checkbox" style="width:16px;height:16px"> Auto-send Msg 3</label>
+          <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 4 - Auto Offer (12 min after positive reply to Msg 3; screenshot follows 4 min later)<textarea id="settingsMsg4" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px;align-items:end">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Sender Numbers<textarea id="settingsSenderNumbers" rows="3" placeholder="+14702846486&#10;+14042324867" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
@@ -2806,6 +2807,7 @@ function fillSmsMessageTemplateFields(force){
   fill('settingsMsg2WebsiteB', findVariant(has,['B','HAS_B'],1) || legacyB || defaultHasB);
   fill('settingsMsg2WebsiteC', findVariant(has,['C','HAS_C'],2) || defaultHasC);
   if(o && (force || !o.dataset.loaded)){ o.value=mt.offer_template || ''; o.dataset.loaded='1'; }
+  var __m4El=document.getElementById('settingsMsg4'); if(__m4El && (force || !__m4El.dataset.loaded)){ __m4El.value=mt.followup_msg4_body || ''; __m4El.dataset.loaded='1'; }
   fill('settingsFollowup6h', mt.followup_sms_1a_body || '{name}, are you pretty busy at the moment?');
   fill('settingsFollowup24h', mt.followup_sms_1b_body || "No pressure if now's not the right time - just figured I'd reach out. Want me to send over details or leave it alone??");
   fill('settingsMsg3AfterMsg2', mt.msg3_after_msg2_body || 'I only charge a one time 99 if you want to keep it.');
@@ -2859,6 +2861,7 @@ async function saveSmsMessageTemplates(){
   ].filter(keep);
   mt.outreach_initial_variants=[{key:'A', text:mt.outreach_initial},{key:'B', text:mt.outreach_initial}];
   mt.offer_template=(document.getElementById('settingsOfferTemplate')?.value||'').trim();
+  mt.followup_msg4_body=(document.getElementById('settingsMsg4')?.value||'').trim();
   mt.followup_sms_1a_body=val('settingsFollowup6h');
   mt.followup_sms_1b_body=val('settingsFollowup24h');
   mt.msg3_after_msg2_body=val('settingsMsg3AfterMsg2') || 'I only charge a one time 99 if you want to keep it.';
