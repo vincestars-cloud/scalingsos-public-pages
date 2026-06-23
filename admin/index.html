@@ -5495,6 +5495,7 @@ function closeChat() {
 async function sendSMS() {
   if (currentEmailThread) { await sendEmail(); return; }
   if (window._smsSendInFlight) { showToast('Message is already sending', true); return; }
+  if (window._pendingChatMedia && window._pendingChatMedia.uploading) { showToast('Screenshot still rendering - one moment, then hit Send', true); return; }
   const input = document.getElementById('chatInput');
   const message = input.value.trim();
   if (!currentChatPhone) return;
@@ -5599,7 +5600,14 @@ async function writeOfferMessage(){
   // Option-b (20260623): render the ACTUAL demo screenshot and attach it to the draft for review; WAIT for manual Send.
   var demo=String(ctx.demo_url||'').trim();
   if(!demo){ showToast('Offer loaded. No demo built yet for this contact - build a demo first to attach a screenshot.', true); return; }
-  showToast('Offer loaded - rendering the demo screenshot to attach...');
+  // Lock Send (button + Enter) until the screenshot is attached, so the offer never goes out text-only.
+  var _sb=document.getElementById('chatSendOnlyBtn');
+  var _sbText=_sb?_sb.textContent:'';
+  if(_sb){ _sb.disabled=true; _sb.textContent='Rendering...'; }
+  window._pendingChatMedia={url:'',preview_url:'',type:'image/jpeg',name:'demo-screenshot.jpg (rendering...)',size:0,uploading:true};
+  window._pendingMediaUrl='';
+  if(typeof renderPendingChatMedia==='function') renderPendingChatMedia();
+  showToast('Offer loaded - rendering the demo screenshot (about 30s)...');
   try{
     var resp=await fetch(N8N_BASE+'/scalingsos-admin-send-sms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({render_only:true,demo_url:demo,place_id:ctx.place_id||'',business_name:ctx.business_name||'',to_phone:currentChatPhone})});
     var json=await resp.json().catch(function(){return {};});
@@ -5614,9 +5622,12 @@ async function writeOfferMessage(){
       try{ var pv=document.getElementById('chatMediaPreview'); if(pv && typeof mmsImgHtml==='function') pv.innerHTML=mmsImgHtml(rawUrl,'max-width:200px;border-radius:8px;margin-top:5px;display:block;background:#fff'); }catch(e){}
       showToast('Screenshot attached - review it, tweak the text if needed, then hit Send.');
     } else {
-      showToast('Offer loaded, but screenshot render failed'+(json&&json.error?(': '+json.error):'')+'. Use Attach file to add one manually.', true);
+      window._pendingChatMedia=null; window._pendingMediaUrl='';
+      if(typeof renderPendingChatMedia==='function') renderPendingChatMedia();
+      showToast('Offer loaded, but screenshot render failed'+(json&&json.error?(': '+json.error):'')+'. Use Attach file to add one manually, or Send text-only.', true);
     }
-  }catch(e){ showToast('Offer loaded; screenshot render error: '+(e&&e.message||e)+'. Attach a file manually if needed.', true); }
+  }catch(e){ window._pendingChatMedia=null; window._pendingMediaUrl=''; if(typeof renderPendingChatMedia==='function') renderPendingChatMedia(); showToast('Offer loaded; screenshot render error: '+(e&&e.message||e)+'. Attach a file manually if needed.', true); }
+  finally{ if(_sb){ _sb.disabled=false; _sb.textContent=_sbText||'Send'; } }
 }
 function setCallUiState(state, message) {
   const bar = document.getElementById('chatCallBar');
