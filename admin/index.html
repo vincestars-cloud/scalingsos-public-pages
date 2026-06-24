@@ -523,6 +523,11 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <button class="btn" type="button" id="smsTargetingRefreshBtn" onclick="refreshSmsTargetingCounts(true)" style="font-size:.78rem;padding:6px 12px;border:1px solid var(--border);background:#fff;color:#334155;font-weight:700">&#8635; Refresh Counts</button>
         </div>
         <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining pool in a sendable status (approximate &mdash; per-send LRN/DNC checks may drop a few more) &mdash; when a bucket you target nears zero, run Places Discovery again. Does not affect Places discovery or any message already queued.</p>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px;padding:10px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:8px">
+          <label for="smsMaxReviewCount" style="font-weight:800;font-size:.82rem;color:#0f172a;white-space:nowrap">Max Review Count</label>
+          <input type="number" id="smsMaxReviewCount" min="0" step="1" placeholder="0 = no cap" style="width:120px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:.82rem">
+          <span style="font-size:.72rem;color:var(--text-muted);flex:1;min-width:200px">Only text businesses with <b>at most this many Google reviews</b>. Businesses with no review data are still messaged. <b>0 or blank = no cap.</b> Applies on top of the per-industry rules below. Save to apply.</span>
+        </div>
         <div id="smsTargetingMeta" style="font-size:.72rem;color:var(--text-muted);margin:0 0 12px"></div>
         <div id="smsTargetingRows"></div>
         <button class="btn btn-primary" type="button" onclick="saveSmsTargeting()" style="margin-top:14px">Save SMS Targeting</button>
@@ -3982,13 +3987,18 @@ function renderPipelineMetrics(){
     const workingN = Number(bc.existing!=null?bc.existing:tot.existing);
     const skippedT = Number(bc.skipped!=null?bc.skipped:tot.skipped) + workingN;
     const sendableLeft = (ms.remaining_pool && typeof ms.remaining_pool==='object') ? Object.keys(ms.remaining_pool).reduce(function(a,k){return a+Number(ms.remaining_pool[k]||0);},0) : (Number(ms.remaining_pool||0) || (rem.no_website + rem.broken));
-    const messaged = Math.max(0, (tot.no_website + tot.broken) - (rem.no_website + rem.broken));
+    // contacts_messaged_fix_20260624: "Messaged" must be the real count of unique contacts we texted,
+    // NOT (no_website+broken total) - (remaining) — that bucket-subtraction counted every prospect that
+    // left the sendable set for ANY reason (skipped_modern, opted_out, dead, built, etc.) and read ~10,235
+    // vs the true ~4,884. ms.contacts_messaged is the unique-contacts-messaged figure (matches the Telnyx
+    // metrics sent_contacts). Fall back to the old proxy only if it is absent.
+    const messaged = (ms.contacts_messaged != null && ms.contacts_messaged !== '') ? Number(ms.contacts_messaged) : Math.max(0, (tot.no_website + tot.broken) - (rem.no_website + rem.broken));
     if(asof) asof.textContent = 'current (live)';
     host.innerHTML =
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:14px">'
       + card('Total scraped', ms.total)
       + card('Skipped (has site/other)', skippedT, 'not targets')
-      + card('Messaged', messaged, 'in conversation')
+      + card('Messaged', messaged, 'unique contacts texted')
       + card('Sendable left', sendableLeft, 'remaining pool')
       + '</div>'
       + '<div style="font-size:.8rem;font-weight:700;color:#0f172a;margin:4px 0 6px">Remaining pool by bucket (uncontacted)</div>'
@@ -4064,7 +4074,12 @@ function renderSmsTargeting(){
     const _ms = (cfg.metrics_snapshot && typeof cfg.metrics_snapshot==='object') ? cfg.metrics_snapshot : null;
     const _ca = _ms && (_ms.computed_at || _ms.as_of || _ms.updated_at);
     meta.textContent = _ms ? ('Total scraped ' + Number(_ms.total||0).toLocaleString() + ' prospects' + (_ca ? (' · as of ' + new Date(_ca).toLocaleString()) : '') + ' · "(N left)" = remaining uncontacted pool') : 'Counts not loaded yet.';
+    var __cap0 = Number(cfg.max_review_count||0);
+    if(__cap0>0){ var __ic0=cfg.industry_counts||{}; var __over0=(__ic0.totals&&__ic0.totals.over_review_cap); meta.textContent += ' · Review cap ' + __cap0 + (typeof __over0==='number' ? (' (~' + Number(__over0).toLocaleString() + ' scanned exceed it)') : ''); }
   }
+  // max_review_count_20260624: reflect the saved cap in the input (don't clobber while the user is typing)
+  var __mrcEl = document.getElementById('smsMaxReviewCount');
+  if(__mrcEl && document.activeElement!==__mrcEl){ var __mrcV=Number(cfg.max_review_count||0); __mrcEl.value = __mrcV>0 ? String(__mrcV) : ''; }
   host.innerHTML = _smsTgtIndustries().map(function(it){
     const c = snap[it.key] || { total:0, no_website:0, broken:0, existing:0, r_total:0, r_no_website:0, r_broken:0, r_existing:0 };
     const cur = String(filt[it.key] || 'all');
@@ -4092,16 +4107,21 @@ async function saveSmsTargeting(){
     const sel = document.querySelector('input[name="smstgt_'+it.key+'"]:checked');
     filter[it.key] = sel ? sel.value : 'all';
   });
+  // max_review_count_20260624: cap on Google review count (0/blank = no cap). Saved alongside the targeting rules.
+  var __mrcEl = document.getElementById('smsMaxReviewCount');
+  var __maxReview = __mrcEl ? Math.max(0, Math.floor(Number(__mrcEl.value||0))||0) : 0;
   try{
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:{ sms_industry_filter: filter } }) });
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config:{ sms_industry_filter: filter, max_review_count: __maxReview } }) });
     if(!resp.ok) throw new Error('HTTP ' + resp.status);
     const j = await resp.json().catch(function(){ return {}; });
     if(j && j.ok === false) throw new Error(j.error || 'rejected');
     if(j && j.sms_industry_filter) prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { sms_industry_filter: j.sms_industry_filter });
+    prospectorConfigCache = Object.assign({}, prospectorConfigCache||{}, { max_review_count: (typeof j.max_review_count !== 'undefined' ? j.max_review_count : __maxReview) });
     // count what the server actually stored (real buckets only), not the 'all' rows we sent
     const stored = (j && j.sms_industry_filter && typeof j.sms_industry_filter==='object') ? j.sms_industry_filter : filter;
     const n = Object.keys(stored).filter(function(k){ var v=String(stored[k]||''); return v && v!=='all'; }).length;
-    showToast(n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All');
+    var __capMsg = __maxReview>0 ? (' · max ' + __maxReview + ' reviews') : '';
+    showToast((n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All') + __capMsg);
     renderSmsTargeting();
   }catch(e){ showToast('SMS targeting save failed: ' + e.message, true); }
 }
