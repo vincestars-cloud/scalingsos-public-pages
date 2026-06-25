@@ -51,6 +51,11 @@ body.embed .wrap{padding-top:4px;}
 <header>
   <h1>ScalingSOS <span class="gold">·</span> Funnel Analytics</h1>
   <div class="right">
+    <select id="siteSel" onchange="_fpage=0;load()" title="Filter by site" style="background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600;cursor:pointer">
+      <option value="">All sites</option>
+      <option value="scalingsos">ScalingSOS</option>
+      <option value="solidbookedpro">SolidBookedPro</option>
+    </select>
     <span id="updated" class="muted"></span>
     <button onclick="load()">↻ Refresh</button>
     <a href="/admin/">← Admin home</a>
@@ -95,6 +100,7 @@ body.embed .wrap{padding-top:4px;}
 <script>
 var N8N='https://n8n.americanlifeteam.com/webhook';
 if(new URLSearchParams(location.search).get('embed')) document.body.classList.add('embed');
+(function(){var s=new URLSearchParams(location.search).get('site');var el=document.getElementById('siteSel');if(s&&el)el.value=s;})();
 function fmtTime(s){ s=Math.round(s||0); var m=Math.floor(s/60),x=s%60; return m+':'+(x<10?'0':'')+x; }
 function ago(iso){ if(!iso) return '—'; var d=new Date(iso),s=(Date.now()-d.getTime())/1000;
   if(s<60) return Math.round(s)+'s ago'; if(s<3600) return Math.round(s/60)+'m ago';
@@ -105,7 +111,7 @@ var _fpage=0, _flimit=20;
 function funnelPage(delta){ _fpage=Math.max(0,_fpage+delta); load(); }
 function load(){
   var err=document.getElementById('err'); err.style.display='none';
-  fetch(N8N+'/ssos-funnel-admin-analytics?p_offset='+(_fpage*_flimit)+'&p_limit='+_flimit).then(function(r){return r.json()}).then(function(d){
+  fetch(N8N+'/ssos-funnel-admin-analytics?p_offset='+(_fpage*_flimit)+'&p_limit='+_flimit+'&p_site='+encodeURIComponent((document.getElementById('siteSel')||{}).value||'')).then(function(r){return r.json()}).then(function(d){
     if(d.error){ throw new Error(d.error); }
     document.getElementById('k_visits').textContent = d.visits_total||0;
     document.getElementById('k_today').textContent  = d.visits_today||0;
