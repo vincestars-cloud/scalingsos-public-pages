@@ -1185,6 +1185,7 @@ async function loadProspectIndex(force) {
       };
     });
     window._scrapeCounts = counts;
+    try{ var __icf=(((prospectorConfigCache||{}).industry_counts)||{}).funnel||{}; if(__icf.total) counts.total=Number(__icf.total); }catch(_e){}  /* scraping_total_fix_20260627: true discovered total from industry_counts.funnel (~64,138), not the fetch-capped rows.length (~20k) */
     window._prospectsByName = byName;
     if (Object.keys(map).length) { window._prospectsByPhone = map; window._prospectIndexAt = Date.now(); }
   } catch (e) {}
