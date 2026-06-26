@@ -468,13 +468,24 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         <p>Configure one-time Places discovery and outbound SMS outreach</p>
       </div>
       <div class="control-panel">
-        <h3>SMS Outreach Status</h3>
+        <h3>Cold Outreach &mdash; Msg 1</h3>
         <div class="toggle-wrap">
           <div class="toggle" id="prospectorToggle" onclick="toggleProspector()"></div>
           <span class="toggle-label" id="prospectorLabel">SMS Paused</span>
         </div>
         <div class="prospector-status paused" id="prospectorStatus">
           SMS Paused
+        </div>
+      </div>
+      <div class="control-panel">
+        <h3>Reply / Follow-up SMS &mdash; Msg 2&ndash;4 + Screenshot</h3>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">Independent of cold outreach. Pauses replies, Msg 2/3/4 and the demo screenshot to prospects who already engaged. Inbound STOP/opt-out handling stays active.</p>
+        <div class="toggle-wrap">
+          <div class="toggle" id="warmToggle" onclick="toggleWarm()"></div>
+          <span class="toggle-label" id="warmLabel">Follow-ups Paused</span>
+        </div>
+        <div class="prospector-status paused" id="warmStatus">
+          Replies &amp; follow-ups paused
         </div>
       </div>
       <div class="control-panel">
@@ -3930,6 +3941,9 @@ async function loadProspectorState() {
       tog.classList.toggle('on', prospectorOn); lbl.textContent = prospectorOn ? 'SMS Sending' : 'SMS Paused';
       st.className = 'prospector-status ' + (prospectorOn ? 'scanning' : 'paused');
       st.innerHTML = prospectorOn ? '<span class="pipeline-dot"></span> SMS outreach enabled' : 'SMS outreach paused';
+      const warmOn = cfg.warm_outbound_paused !== true;
+      const wtog = document.getElementById('warmToggle'), wlbl = document.getElementById('warmLabel'), wst = document.getElementById('warmStatus');
+      if (wtog) { wtog.classList.toggle('on', warmOn); wlbl.textContent = warmOn ? 'Follow-ups Sending' : 'Follow-ups Paused'; wst.className = 'prospector-status ' + (warmOn ? 'scanning' : 'paused'); wst.innerHTML = warmOn ? '<span class="pipeline-dot"></span> Replies &amp; follow-ups enabled' : 'Replies &amp; follow-ups paused'; }
       const ds = document.getElementById('placesDiscoveryStatus');
       if (ds) {
         const last = cfg.discovery && cfg.discovery.last_started_at ? new Date(cfg.discovery.last_started_at).toLocaleString() : '';
@@ -3950,6 +3964,17 @@ async function toggleProspector() {
     loadProspectorState();
     setTimeout(loadN8nData, 1000);
   } catch(e) { showToast('Could not toggle prospector: ' + e.message, true); }
+}
+
+async function toggleWarm() {
+  const cur = (prospectorConfigCache && prospectorConfigCache.warm_outbound_paused !== true); // true = warm currently ON
+  const next = !cur; // next = warm ON
+  try {
+    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config: { warm_outbound_paused: !next } }) });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    showToast(next ? 'Reply/follow-up SMS enabled' : 'Reply/follow-up SMS paused');
+    loadProspectorState();
+  } catch(e) { showToast('Could not toggle follow-ups: ' + e.message, true); }
 }
 
 function buildProspectorJs(industries, cities, target) {
