@@ -762,6 +762,10 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         <div style="display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,240px);gap:12px;margin-top:12px;align-items:end">
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 3 - 60 Sec After Msg 2<textarea id="settingsMsg3AfterMsg2" rows="3" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:8px;padding:10px 0 8px"><input id="settingsMsg3Enabled" type="checkbox" style="width:16px;height:16px"> Auto-send Msg 3</label>
+          <div style="grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px dashed var(--border);padding-top:10px;margin-top:2px">
+            <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:8px"><input id="settingsMsg2cScreenshot" type="checkbox" style="width:16px;height:16px"> Version C &rarr; website screenshot 60s after Msg 2 (skips Msg 3 &amp; Msg 4)</label>
+            <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:6px">Delay (sec)<input id="settingsMsg2cDelay" type="number" min="10" max="600" value="60" style="width:80px;padding:7px 8px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>
+          </div>
           <label style="font-size:.75rem;font-weight:700;color:var(--text-secondary)">Msg 4 - Auto Offer · NO Website (12 min after positive reply to Msg 3; screenshot follows 4 min later)<textarea id="settingsMsg4" rows="5" style="width:100%;margin-top:6px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35"></textarea></label>
         </div>
         <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px">
@@ -2825,6 +2829,12 @@ function fillSmsMessageTemplateFields(force){
     msg3EnabledEl.checked = mt.msg3_after_msg2_enabled === true || mt.msg3_after_msg2_auto_send === true;
     msg3EnabledEl.dataset.loaded='1';
   }
+  var m2cScreenshotEl=$('settingsMsg2cScreenshot');
+  if(m2cScreenshotEl && (force || !m2cScreenshotEl.dataset.loaded)){
+    m2cScreenshotEl.checked = mt.msg2_variant_c_screenshot_enabled === true;
+    m2cScreenshotEl.dataset.loaded='1';
+  }
+  fill('settingsMsg2cDelay', mt.msg2_variant_c_screenshot_delay_seconds != null ? String(mt.msg2_variant_c_screenshot_delay_seconds) : '60');
   fill('settingsSenderNumbers', Array.isArray(cfg.sender_numbers) && cfg.sender_numbers.length ? cfg.sender_numbers.join('\n') : '+14702846486\n+14042324867');
   fill('settingsActiveSender', cfg.active_sender_number || cfg.telnyx_from_number || '+14702846486');
   fill('settingsSendStart', cfg.send_window_start != null ? String(cfg.send_window_start) : '9');
@@ -2878,6 +2888,9 @@ async function saveSmsMessageTemplates(){
   mt.msg3_after_msg2_enabled=settingsChecked('settingsMsg3Enabled');
   mt.msg3_after_msg2_auto_send=mt.msg3_after_msg2_enabled;
   mt.msg3_after_msg2_delay_seconds=60;
+  mt.msg2_variant_c_screenshot_enabled=settingsChecked('settingsMsg2cScreenshot');
+  mt.msg2_variant_c_screenshot_delay_seconds=Math.max(10,Math.min(600,Number(val('settingsMsg2cDelay'))||60));
+  mt.msg2_variant_c_branches='both';
   if(!mt.outreach_initial || !mt.followup_after_reply_has_website_variants.length || !mt.followup_after_reply_no_website_variants.length){ if(st){st.textContent='Msg 1 plus at least one Existing Website and No Website Msg 2 are required'; st.style.color='var(--red)';} return; }
   try{
     var resp=await fetch(N8N_BASE+'/scalingsos-prospector-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save',config:Object.assign({message_templates:mt}, operationalSettingsPayload())})});
