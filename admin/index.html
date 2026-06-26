@@ -1186,6 +1186,7 @@ async function loadProspectIndex(force) {
     });
     window._scrapeCounts = counts;
     try{ var __icf=(((prospectorConfigCache||{}).industry_counts)||{}).funnel||{}; if(__icf.total) counts.total=Number(__icf.total); }catch(_e){}  /* scraping_total_fix_20260627: true discovered total from industry_counts.funnel (~64,138), not the fetch-capped rows.length (~20k) */
+    try{ var __bl=((prospectorConfigCache||{}).by_lrn)||{}; if(__bl.landline_voip!=null) counts.lrn_landline=Number(__bl.landline_voip); if(__bl.mobile!=null) counts.lrn_mobile=Number(__bl.mobile); }catch(_e){}  /* scraping_lrn_fix_20260627: full-population Landline/VoIP + mobile from config by_lrn (~9,083 / ~7,042), not the fetch-capped client count */
     window._prospectsByName = byName;
     if (Object.keys(map).length) { window._prospectsByPhone = map; window._prospectIndexAt = Date.now(); }
   } catch (e) {}
@@ -1580,7 +1581,7 @@ function renderDashboardAnalytics(range, prospectRows) {
   var codeEntries = events.filter(function(e){ return String(field(e, ['event_type','eventType','type'], ['event_type','type'])).toLowerCase() === 'code_entered'; });
   var voiceCalls = calls.filter(function(c){ var s=String(field(c,['source'],['source'])||'').toLowerCase(); return s.indexOf('vapi')>=0 || /assistant|voice_assistant/.test(s); });
   var directCalls = calls.filter(function(c){ var s=String(field(c,['source'],['source'])||'').toLowerCase(); return s.indexOf('direct_line')>=0 || s.indexOf('forward')>=0 || s.indexOf('telnyx_inbound')>=0; });
-  renderBarChart('dbTopIndustries', countBy(rows, function(r){ return g(r,'industry') || g(r,'industry_key') || 'Unknown'; }), 'var(--green)');
+  renderBarChart('dbTopIndustries', countBy(rows, function(r){ return String(g(r,'industry') || g(r,'industry_key') || 'Unknown').toLowerCase().replace(/\s+/g,'_'); }), 'var(--green)');  /* top_industries_dedup_20260627: merge case-split dups (landscaping/Landscaping) */
   renderBarChart('dbReplyIndustries', repliesPerIndustry(), 'var(--blue)');
   renderBarChart('dbCodeUsage', countBy(codeEntries, function(e){ return field(e, ['business_name','businessName','slug','business_id','demo_code'], ['business_name','business','slug','demo_code']) || 'Unknown'; }), 'var(--red)');
   renderBarChart('dbVoiceCalls', countCallsByBusiness(voiceCalls), 'var(--gold)');
@@ -3254,7 +3255,7 @@ function applyTelnyxMessageMetrics(range, ids){
       if(typeof tm.reply2==='number'){ _ovSet('dbReply2',tm.reply2); var m2c=Number(tm.msg2_contacts||0); var r2s=document.getElementById('dbReply2Sub'); if(r2s) r2s.textContent=m2c?((tm.reply2*100/m2c).toFixed(2)+'% of '+m2c.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts'; }
       if(tm.outcomes){ _ovSet('dbNotInterested',Number(tm.outcomes.not_interested||0)); _ovSet('dbConsidering',Number(tm.outcomes.interested||0)); _ovSet('dbOfferSent',Number(tm.outcomes.offers||0)); _ovSet('dbClients',Number(tm.outcomes.clients||0)); }
       if(typeof renderBarChart==='function'){
-        if(Array.isArray(tm.top_industries)){ var _ti={}; tm.top_industries.forEach(function(x){ _ti[x.industry]=x.count; }); renderBarChart('dbTopIndustries',_ti,'var(--green)'); }
+        if(Array.isArray(tm.top_industries)){ var _ti={}; tm.top_industries.forEach(function(x){ var _k=String(x.industry||'').toLowerCase().replace(/\s+/g,'_'); _ti[_k]=(_ti[_k]||0)+Number(x.count||0); }); renderBarChart('dbTopIndustries',_ti,'var(--green)'); }  /* top_industries_dedup_20260627 */
         if(Array.isArray(tm.replies_per_industry)){ var _rpi={}; tm.replies_per_industry.forEach(function(x){ _rpi[x.industry]=x.replies; }); renderBarChart('dbReplyIndustries',_rpi,'var(--blue)'); }
       }
     }
