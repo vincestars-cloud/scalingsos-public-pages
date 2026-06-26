@@ -1795,33 +1795,6 @@ function renderProspector() {
   }
 }
 
-async function toggleProspector() {
-  const tog = document.getElementById('prospectorToggle');
-  const lbl = document.getElementById('prospectorLabel');
-  const st = document.getElementById('prospectorStatus');
-  const PROSPECTOR_WF_ID = MASTER_ROUTER_WORKFLOW_ID;
-
-  try {
-    const endpoint = prospectorOn ? '/workflows/' + PROSPECTOR_WF_ID + '/deactivate' : '/workflows/' + PROSPECTOR_WF_ID + '/activate';
-    const resp = await n8nFetch(endpoint.replace(/\?.*/, ''));
-    if (resp) {
-      prospectorOn = !prospectorOn;
-      localStorage.setItem('sos_prospector_enabled', prospectorOn ? 'true' : 'false');
-      tog.classList.toggle('on', prospectorOn);
-      lbl.textContent = prospectorOn ? 'Scanning' : 'Paused';
-      st.className = 'prospector-status ' + (prospectorOn ? 'scanning' : 'paused');
-      st.innerHTML = prospectorOn
-        ? '<span class="pipeline-dot"></span> Scanning...'
-        : 'Paused';
-      showToast(prospectorOn ? 'Prospector resumed' : 'Prospector paused');
-    } else {
-      showToast('Failed to toggle: HTTP ' + resp.status, true);
-    }
-  } catch (e) {
-    showToast('Could not reach prospector webhook', true);
-  }
-}
-
 async function loadProspectorState() {
   try {
     const PROSPECTOR_WF_ID = MASTER_ROUTER_WORKFLOW_ID;
@@ -1856,53 +1829,6 @@ async function loadProspectorState() {
     }
   } catch (e) {
     console.log('Could not load prospector state:', e);
-  }
-}
-
-async function saveProspectorConfig() {
-    // Persist to localStorage for refresh survival
-    var selStates = []; document.querySelectorAll('input[name="state"]:checked').forEach(function(cb){selStates.push(cb.value);});
-    var selInds = []; document.querySelectorAll('input[name="industry"]:checked').forEach(function(cb){selInds.push(cb.value);});
-    var targetVal = document.getElementById('targetSlider') ? document.getElementById('targetSlider').value : '500';
-    localStorage.setItem('sos_prospector_config', JSON.stringify({states:selStates, industries:selInds, target:targetVal}));
-
-  const states = [...document.querySelectorAll('input[name="state"]:checked')].map(c => c.value);
-  const industries = [...document.querySelectorAll('input[name="industry"]:checked')].map(c => c.value);
-  const target = parseInt(document.getElementById('targetSlider').value);
-
-  // Save config to n8n workflow directly
-  const PROSPECTOR_WF_ID = MASTER_ROUTER_WORKFLOW_ID;
-  const STATE_CITIES = {FL:['Miami FL','Orlando FL','Tampa FL','Jacksonville FL','Fort Lauderdale FL','Sarasota FL','Clearwater FL','Tallahassee FL','Cape Coral FL','Daytona Beach FL','Fort Myers FL'],GA:['Atlanta GA','Augusta GA','Savannah GA','Marietta GA'],TX:['Houston TX','Dallas TX','San Antonio TX','Austin TX','Fort Worth TX'],CA:['Los Angeles CA','San Diego CA','San Francisco CA','San Jose CA'],NC:['Charlotte NC','Raleigh NC','Greensboro NC'],TN:['Nashville TN','Memphis TN','Knoxville TN'],AZ:['Phoenix AZ','Scottsdale AZ','Tucson AZ'],CO:['Denver CO','Colorado Springs CO'],NV:['Las Vegas NV','Henderson NV'],WA:['Seattle WA','Tacoma WA','Spokane WA'],OR:['Portland OR','Salem OR'],NY:['New York NY','Buffalo NY'],PA:['Philadelphia PA','Pittsburgh PA'],OH:['Columbus OH','Cleveland OH','Cincinnati OH'],IL:['Chicago IL','Aurora IL'],SC:['Charleston SC','Columbia SC','Greenville SC'],AL:['Birmingham AL','Montgomery AL','Huntsville AL'],LA:['New Orleans LA','Baton Rouge LA'],VA:['Virginia Beach VA','Richmond VA']};
-  let cities = [];
-  states.forEach(function(st) { if (STATE_CITIES[st]) cities = cities.concat(STATE_CITIES[st]); });
-  if (!cities.length) cities = ['Miami FL','Orlando FL','Tampa FL','Atlanta GA'];
-
-  const IND_MAP = {Plumbing:'Plumbing',HVAC:'HVAC',Electrical:'Electrical',Roofing:'Roofing',Landscaping:'Landscaping',Painting:'Painting',Cleaning:'Cleaning Service','Home Care':'Home Care','Therapy/Counseling':'Therapy',Solar:'Solar','Pest Control':'Pest Control',Fencing:'Fencing',Flooring:'Flooring',Moving:'Moving',Remodeling:'Remodeling'};
-  const mappedInd = industries.map(function(i) { return IND_MAP[i] || i; });
-  if (!mappedInd.length) mappedInd.push('HVAC','Plumbing','Roofing');
-
-  try {
-    const wfData = await n8nFetch('/workflows/' + PROSPECTOR_WF_ID);
-    if (wfData && wfData.nodes) {
-      const codeNode = wfData.nodes.find(function(n) { return n.name === 'Build Search Queries'; });
-      if (codeNode) {
-        let code = codeNode.parameters.jsCode;
-        code = code.replace(/const INDUSTRIES = \[.*?\];/, 'const INDUSTRIES = [' + mappedInd.map(function(i){return "'" + i + "'";}).join(',') + '];');
-        code = code.replace(/const CITIES = \[.*?\];/, 'const CITIES = [' + cities.map(function(c){return "'" + c + "'";}).join(',') + '];');
-        codeNode.parameters.jsCode = code;
-        ['id','createdAt','updatedAt','triggerCount','versionId','activeVersionId','versionCounter','shared','tags','parentFolder','activeVersion','staticData','pinData','isArchived','description','meta','active'].forEach(function(k) { delete wfData[k]; });
-        const updateResp = await fetch(N8N_BASE + '/scalingsos-n8n-proxy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ endpoint: '/workflows/' + PROSPECTOR_WF_ID, apiKey: N8N_KEY, method: 'PUT', body: wfData })
-        });
-        if (updateResp.ok) { showToast('Prospector updated: ' + cities.length + ' cities, ' + mappedInd.length + ' industries'); }
-        else { showToast('Config saved locally but workflow update failed', true); }
-      }
-    }
-  } catch (e) {
-    console.error('Prospector update failed:', e);
-    showToast('Saved locally. Workflow error: ' + e.message, true);
   }
 }
 
@@ -3952,18 +3878,6 @@ async function loadProspectorState() {
       }
     }, 50);
   } catch(e) { console.log('Could not load prospector state:', e); }
-}
-
-async function toggleProspector() {
-  const next = !prospectorOn;
-  try {
-    const resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: next ? 'on' : 'off', config: Object.assign({ enabled: next, outreach_enabled: next, outbound_paused: !next }, operationalSettingsPayload()) }) });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    prospectorOn = next;
-    showToast(prospectorOn ? 'SMS outreach enabled' : 'SMS outreach paused');
-    loadProspectorState();
-    setTimeout(loadN8nData, 1000);
-  } catch(e) { showToast('Could not toggle prospector: ' + e.message, true); }
 }
 
 async function toggleWarm() {
