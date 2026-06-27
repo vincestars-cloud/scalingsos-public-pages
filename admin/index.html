@@ -5080,6 +5080,9 @@ function renderSmsComms() {
   items = items.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,''); if(ph.length<10||ph.length>11) return false; if(ph.slice(-10).slice(0,3)==='555') return false; if(/BATCH TEST|DEDUP CHECK|manual send test|continuous log|TEST retry/i.test(String(x.s.last_message||''))) return false; return true; });
   var _isAllTime=String(window._commsDateRange||'today')==='all';
   if(!_isAllTime){ items=items.filter(function(x){return ((x.s.history||[]).some(function(m){ return _msgDateInRange(m,window._commsDateRange); }) || _convInRange(x.s));}); }
+  /* records_sort_20260626 (#2): group the list by funnel stage - Clients > Considering > Interested > Offer Sent > Replied Msg2 > Called No Reply > Replied Msg1 > Sent > Not Interested, newest first within each */
+  var _rk=function(s){ var d=String(((typeof dispForPhone==='function'?dispForPhone(s.phone):null)||{}).disposition||'').toLowerCase(); if(d==='client')return 1; if(d==='considering')return 2; if(d==='interested_sms'||d==='interested')return 3; if(d==='offer_sent')return 4; if(/not_interest|undeliver|opted|do_not/.test(d))return 9; if(typeof _hasFollowupReply==='function'&&_hasFollowupReply(s))return 5; if(typeof _commsCalledNoReply==='function'&&_commsCalledNoReply(s))return 6; if(typeof _commsIsReplied==='function'&&_commsIsReplied(s))return 7; return 8; };
+  items.sort(function(a,b){ return _rk(a.s)-_rk(b.s) || (new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0)); });
   if(typeof renderMsg2VariantTallies==='function') renderMsg2VariantTallies(items.map(function(x){ return x.s; }));
   var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
@@ -6098,11 +6101,14 @@ function renderAnalytics() {
     + '<div class="stat-card green"><div class="label">SMS Delivered</div><div class="value" id="anDelivered">'+Number(msgStats.delivered||0).toLocaleString()+'</div><div class="sub" id="anDeliveredSub">'+Number(contactStats.deliveredContacts||0).toLocaleString()+' unique contacts</div></div>'
     + '<div class="stat-card green"><div class="label">Replied After Msg 1</div><div class="value">'+Number(reply1||0).toLocaleString()+'</div><div class="sub">'+(msgStats.delivered?((reply1*100/msgStats.delivered).toFixed(1)+'% reply rate'):'--')+'</div></div>'
     + '<div class="stat-card purple"><div class="label">Replied After Msg 2</div><div class="value" id="anReply2">'+Number(reply2||0).toLocaleString()+'</div><div class="sub" id="anReply2Sub">'+(msgStats.delivered?((reply2*100/msgStats.delivered).toFixed(2)+'% of delivered'):'--')+'</div></div>'
-    + '<div class="stat-card"><div class="label">Considering</div><div class="value" style="color:#ca8a04">'+Number(disp.considering||0).toLocaleString()+'</div><div class="sub">Interested - SMS + Called</div></div>'
-    + '<div class="stat-card"><div class="label">Not Interested</div><div class="value" style="color:#dc2626">'+Number(disp.ni||0).toLocaleString()+'</div></div>'
+    + '<div class="stat-card"><div class="label">Considering</div><div class="value" id="anConsidering" style="color:#ca8a04">'+Number(disp.considering||0).toLocaleString()+'</div><div class="sub">interested after offer</div></div>'
+    + '<div class="stat-card"><div class="label">Interested</div><div class="value" id="anInterested" style="color:#ca8a04">--</div><div class="sub">interest, no offer yet</div></div>'
+    + '<div class="stat-card"><div class="label">Not Interested</div><div class="value" id="anNotInt" style="color:#dc2626">'+Number(disp.ni||0).toLocaleString()+'</div></div>'
     + '<div class="stat-card gold"><div class="label">Direct Inbound Calls</div><div class="value">'+Number(directCalls||0).toLocaleString()+'</div><div class="sub">regular phone line</div></div>'
     + '<div class="stat-card gold"><div class="label">Voice Assistant Calls</div><div class="value">'+Number(voiceCalls||0).toLocaleString()+'</div><div class="sub">Vapi only</div></div>';
   if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics('all',{delivered:'anDelivered',deliveredSub:'anDeliveredSub',reply2:'anReply2',reply2Sub:'anReply2Sub'});
+  /* SSOT_20260626: Analytics outcome cards read the same cumulative RPC as Dashboard + Comms (was local disp heuristic) */
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period=all').then(function(r){return r.json();}).then(function(co){ var o=(co&&co.outcomes)||{}; var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('anConsidering',o.considering); _S('anInterested',o.interested_sms); _S('anNotInt',o.not_interested); }).catch(function(){});
   renderBarChart('chartIndustries', countBy(rows, r => r.industry || r.industry_key || 'Unknown'), 'var(--green)');
   renderBarChart('chartCodes', countBy(convs.filter(_hasFollowupReply), c => c.business_name || bizForPhone(c.phone) || 'Unknown'), 'var(--red)');
   renderBarChart('chartVapi', countBy(calls.filter(function(c){ var s=String(field(c,['source'],['source'])||'').toLowerCase(); return s.indexOf('vapi')>=0||/assistant|voice_assistant/.test(s); }), analyticsCallName), 'var(--gold)');
