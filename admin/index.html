@@ -588,13 +588,6 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <div class="stat-card"><div class="label">SMS Delivered</div><div class="value" id="cmDelivered" style="color:#0891b2">--</div><div class="sub" id="cmDeliveredSub"></div></div>
           <div class="stat-card"><div class="label">Contacts Messaged</div><div class="value" id="cmContactsMessaged" style="color:var(--blue)">--</div><div class="sub" id="cmContactsMessagedSub">unique / messages</div></div>
         </div>
-        <div id="msg2VariantTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px;display:none">
-          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
-            <div style="font-size:.88rem;font-weight:800;color:#0f172a">Msg 2 Variant Results</div>
-            <div id="msg2VariantTallySub" style="font-size:.73rem;color:var(--text-muted);font-weight:600"></div>
-          </div>
-          <div id="msg2VariantTallyBody" style="overflow-x:auto"></div>
-        </div>
         <div id="pathResultsTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
             <div style="font-size:.88rem;font-weight:800;color:#0f172a">Path Results <span style="font-weight:600;color:var(--text-muted);font-size:.72rem">(No Website sequences)</span></div>
@@ -1038,7 +1031,7 @@ function requestCommsRender() {
 }
 
 function primeAdminCaches() {
-  if (!window._scrapeRows && !window._scrapeRowsLoading) {
+  if (currentPageName && currentPageName() === 'scraping' && !window._scrapeRows && !window._scrapeRowsLoading) {
     window._scrapeRowsLoading = true;
     fetchSheetByName('Prospects', { singleTokenHeaders: true }).then(function(rows){
       window._scrapeRows = rows || [];
@@ -1299,15 +1292,28 @@ async function fetchBusinesses() {
 
 async function loadAllData() {
   showLoading(true);
-  const [businesses, leads, events, sms, calls] = await Promise.all([
+  const [businesses, leads, events] = await Promise.all([
     (window._bizCache && window._bizAt && (Date.now()-window._bizAt)<90000) ? Promise.resolve(window._bizCache) : fetchBusinesses().then(function(_b){ window._bizAt=Date.now(); window._bizCache=_b; return _b; }),
     fetchSheet(GIDS.leads),
-    fetchSheet(GIDS.events),
-    fetchSheet(GIDS.sms),
-    fetch(N8N_BASE + '/scalingsos-calls').then(r => r.json()).catch(() => [])
+    fetchSheet(GIDS.events)
   ]);
-  data = { businesses, leads, events, sms, conversations: (data&&data.conversations)||[], calls };
+  data = {
+    businesses,
+    leads,
+    events,
+    sms: (data&&data.sms)||[],
+    conversations: (data&&data.conversations)||[],
+    calls: (data&&data.calls)||[]
+  };
   if(!window._inboxAt || (Date.now()-window._inboxAt)>120000){ window._inboxAt=Date.now(); fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
+  if(!window._smsSheetAt || (Date.now()-window._smsSheetAt)>120000){
+    window._smsSheetAt=Date.now();
+    fetchSheet(GIDS.sms).then(function(rows){ data.sms=rows||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._smsSheetAt=0; });
+  }
+  if(!window._callsAt || (Date.now()-window._callsAt)>45000){
+    window._callsAt=Date.now();
+    fetch(N8N_BASE + '/scalingsos-calls').then(function(r){ return r.json(); }).then(function(rows){ data.calls=rows||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._callsAt=0; });
+  }
   bumpPerfRev();
   document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
   showLoading(false);
@@ -1496,7 +1502,7 @@ function _dashboardMetricRows(){ return window._scrapeRows || window._prospectsR
 function _dashboardInRange(ts){ var r=String(window._dashboardDateRange||'today'); if(r==='all') return true; if(typeof _tsInRangeOf==='function') return _tsInRangeOf(ts,r); var t=new Date(ts||'').getTime(); return !isNaN(t); }
 function renderDashboard() {
   if(window._msgLogRows==null && !window._msgLogLoading){ window._msgLogLoading=true; if(typeof loadMsgLog==='function') loadMsgLog(); }
-  if(!window._scrapeRows && !window._scrapeRowsLoading){ window._scrapeRowsLoading=true; fetchSheetByName('Prospects',{singleTokenHeaders:true}).then(function(rows){ window._scrapeRows=rows||[]; window._scrapeRowsAt=Date.now(); window._scrapeRowsLoading=false; renderDashboard(); }).catch(function(){ window._scrapeRowsLoading=false; }); }
+  /* perf_20260627: dashboard metrics use snapshots/RPCs; do not auto-load full Prospects on landing. */
   var range=String(window._dashboardDateRange||'today');
   var rows=_dashboardMetricRows();
   var g=function(r,k){ var lk=String(k).toLowerCase(); for(var kk in (r||{})){ if(kk.toLowerCase()===lk) return r[kk]||''; } return ''; };
@@ -5569,7 +5575,8 @@ function renderSmsComms() {
   const list = document.getElementById('smsList');
   if(!window._commsDispOverrideAt && !window._commsDispOverrideLoading){ window._commsDispOverrideLoading=true; window._commsDispOverrideAt=Date.now();
     fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-dispositions').then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.dispositions){ window._commsDispOverride=_d.dispositions; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); } window._commsDispOverrideLoading=false; }).catch(function(){ window._commsDispOverrideLoading=false; }); }
-  if(window._scrapeRows==null && !window._scrapeRowsLoading){ window._scrapeRowsLoading=true; try{ fetchSheetByName('Prospects',{singleTokenHeaders:true}).then(function(rows){ window._scrapeRows=rows||[]; window._scrapeRowsAt=Date.now(); window._scrapeRowsLoading=false; bumpPerfRev(); if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }).catch(function(){ window._scrapeRowsLoading=false; }); }catch(e){ window._scrapeRowsLoading=false; } }
+  /* perf_20260627: do not auto-fetch full Prospects from Communications. The inbox +
+     disposition snapshots are enough for this tab; full rows hydrate from dashboard/scraping. */
   var cachedSessions = getSmsSessionsCached();
   let sessions = cachedSessions.sessions;
   var calledPhones = cachedSessions.calledPhones || {};
@@ -5581,7 +5588,6 @@ function renderSmsComms() {
   /* records_sort_20260626 (#2): group the list by funnel stage - Clients > Considering > Interested > Offer Sent > Replied Msg2 > Called No Reply > Replied Msg1 > Sent > Not Interested, newest first within each */
   var _rk=function(s){ var d=String(((typeof dispForPhone==='function'?dispForPhone(s.phone):null)||{}).disposition||'').toLowerCase(); if(d==='client')return 1; if(d==='considering')return 2; if(d==='interested_sms'||d==='interested')return 3; if(d==='offer_sent')return 4; if(/not_interest|undeliver|opted|do_not/.test(d))return 9; if(typeof _hasFollowupReply==='function'&&_hasFollowupReply(s))return 5; if(typeof _commsCalledNoReply==='function'&&_commsCalledNoReply(s))return 6; if(typeof _commsIsReplied==='function'&&_commsIsReplied(s))return 7; return 8; };
   items.sort(function(a,b){ return _rk(a.s)-_rk(b.s) || (new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0)); });
-  if(typeof renderMsg2VariantTallies==='function') renderMsg2VariantTallies(items.map(function(x){ return x.s; }));
   if(typeof loadPathResults==='function' && (!window._pathResultsAt || Date.now()-window._pathResultsAt>60000)){ window._pathResultsAt=Date.now(); try{ loadPathResults(); }catch(e){} }
   var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
@@ -5915,7 +5921,7 @@ function openChat(i) {
       if (!s.industry && _m.industry) s.industry = _m.industry;
       if ((s.rating == null || s.rating === '') && _m.rating != null) s.rating = _m.rating;
       if ((s.review_count == null || s.review_count === '') && _m.review_count != null) s.review_count = _m.review_count;
-    } else if (!(window._prospectsByPhone || {})[_ph]) { try { loadProspectIndex(true); } catch (e) {} }
+    }
   }
   if (s.industry && !s.noun) { const _NN = {'home care':'clients','home_care':'clients','mold remediation':'jobs','tree service':'jobs','tree repair':'jobs','plumbing':'jobs','hvac':'jobs','electrical':'jobs','roofing':'jobs','moving':'customers','remodeling':'projects','fencing':'projects','therapy/counseling':'clients','cleaning':'clients'}; s.noun = _NN[String(s.industry).toLowerCase().trim()] || 'customers'; }
   s.demo_url = s.demo_url || demoUrlFromSession(s);
