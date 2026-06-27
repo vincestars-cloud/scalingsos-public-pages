@@ -6818,7 +6818,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => document.getElementById('notificationMenu')?.classList.remove('open'));
 
   // Main data refresh. Business list reads are cached so open tabs do not overload n8n.
-  autoRefreshTimer = setInterval(function(){if(!document.hidden)loadAllData();}, 30000)
+  autoRefreshTimer = setInterval(function(){if(!document.hidden)loadAllData();}, 30000);
   (function(){ if(window.__visGuardWired) return; window.__visGuardWired=true; var __lastVis=0; document.addEventListener('visibilitychange', function(){ if(!document.hidden){ var now=Date.now(); if(now-__lastVis>15000){ __lastVis=now; try{ loadAllData&&loadAllData(); }catch(e){} } } }); })();;
   callPollTimer = setInterval(function(){if(!document.hidden)pollIncomingCallRows();}, 5000);
   setInterval(function(){if(!document.hidden)refreshProspectorConfigCache();}, 30000);
