@@ -4623,7 +4623,7 @@ function _commsRangeBounds(){ var now=new Date(); var r=String(window._commsDate
   return {start:s,end:e}; }
 function _tsInRange(ts){ if(!ts) return false; var t=new Date(ts).getTime(); if(isNaN(t)) return false; var b=_commsRangeBounds(); return t>=b.start && t<b.end; }
 function _convInRange(s){ if(String(window._commsDateRange||'all')==='all') return true; var h=(s&&s.history)||[]; for(var i=0;i<h.length;i++){ if(_tsInRange(h[i].timestamp||h[i].time)) return true; } return _tsInRange(s&&s.last_active); }
-var DISP_GROUPS={ni:['not_interested','not_interested_called'],co:['considering','interested_sms','interested_called'],intr:['interested'],offer:['offer_sent'],client:['client']};
+var DISP_GROUPS={ni:['not_interested','not_interested_called'],co:['considering','interested_sms','interested_called'],considering:['considering'],interested:['interested_sms','interested_called','interested'],intr:['interested'],offer:['offer_sent'],client:['client']};
 function _rangeBoundsOf(range){ var now=new Date(); var r=String(range||'all'); var s, e=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime(); if(r==='today')s=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(); else if(r==='yesterday'){s=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1).getTime();e=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();} else if(r==='7d')s=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6).getTime(); else if(r==='month')s=new Date(now.getFullYear(),now.getMonth(),1).getTime(); else {s=0;e=Infinity;} return {start:s,end:e}; }
 function _tsInRangeOf(ts,range){ if(!ts)return false; var t=new Date(ts).getTime(); if(isNaN(t))return false; var b=_rangeBoundsOf(range); return t>=b.start&&t<b.end; }
 function _hasFollowupReplyIn(s,range){ if(String(range||'all')==='all') return _hasFollowupReply(s); var h=((s&&s.history)||[]).slice().sort(function(a,b){return new Date(a.timestamp||a.time||0)-new Date(b.timestamp||b.time||0);}); var fuTime=null; for(var k=0;k<h.length;k++){ var m=h[k]; var dir=String(m.direction||m.role||m.type||'').toLowerCase(); var c=String(m.content||m.text||m.body||''); var isOut=dir.indexOf('out')>=0||dir.indexOf('assistant')>=0||dir.indexOf('admin')>=0; var isFU=_isDemoFollowupText(c); if(isOut&&isFU){fuTime=new Date(m.timestamp||m.time||0);} else if(fuTime&&_isInboundMsg(m)){var rt=new Date(m.timestamp||m.time||0); if(rt>=fuTime&&_tsInRangeOf(m.timestamp||m.time,range))return true;} } return false; }
@@ -4753,7 +4753,7 @@ function normalizeScrapeStatsLayout(){
 window._scrapeDateRange = window._scrapeDateRange || 'today';
 function setScrapeRange(r){ window._scrapeDateRange=r; var bs=document.querySelectorAll('[data-srange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-srange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestScrapeRender==='function') requestScrapeRender(); else if(typeof renderScraping==='function') renderScraping(); }
 function toggleScrapeDisp(grp){ var f='dispg:'+grp; window._scrapePage=0; if(typeof setScrapingFilter==='function') setScrapingFilter(_scrapingFilter===f?'all':f); }
-function toggleCommsDisp(grp){ window._commsDispFilter=(window._commsDispFilter===grp?'':grp); window._commsPage=0; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+function toggleCommsDisp(grp){ window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; try{ var _co=(window._commsOutcomeCache||{})['all']; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
   var range=String(window._commsDateRange||'today');
@@ -4778,7 +4778,7 @@ function _hasFollowupReplyInPeriod(s){
   }
   return false;
 }
-function setCommsFilter(f){ window._commsFilter=f; if(f==='all'){ window._commsDispFilter=''; } window._commsPage=0; [['all','commsFltAll'],['replied','commsFltReplied'],['replied2','commsFltReplied2']].forEach(function(pp){ var b=document.getElementById(pp[1]); if(b){ var on=(f===pp[0]); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
+function setCommsFilter(f){ window._commsFilter=f; window._commsDispFilter=''; window._commsPage=0; [['all','commsFltAll'],['replied','commsFltReplied'],['replied2','commsFltReplied2']].forEach(function(pp){ var b=document.getElementById(pp[1]); if(b){ var on=(f===pp[0]); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function _msgObjMeta(m){
   var meta=(m&&m.meta)||{};
   if(typeof meta==='string' && meta.trim()){
@@ -5078,6 +5078,7 @@ function renderSmsComms() {
   var calledPhones = cachedSessions.calledPhones || {};
   let items = sessions.map(function(s,i){ return {s:s,i:i}; });
   items = items.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,''); if(ph.length<10||ph.length>11) return false; if(ph.slice(-10).slice(0,3)==='555') return false; if(/BATCH TEST|DEDUP CHECK|manual send test|continuous log|TEST retry/i.test(String(x.s.last_message||''))) return false; return true; });
+  var _allItems = items.slice(); /* filter_scope_20260627: disposition + called cards are cumulative (all-time); their filters read _allItems so the records match the card count regardless of the period selector */
   var _isAllTime=String(window._commsDateRange||'today')==='all';
   if(!_isAllTime){ items=items.filter(function(x){return ((x.s.history||[]).some(function(m){ return _msgDateInRange(m,window._commsDateRange); }) || _convInRange(x.s));}); }
   /* records_sort_20260626 (#2): group the list by funnel stage - Clients > Considering > Interested > Offer Sent > Replied Msg2 > Called No Reply > Replied Msg1 > Sent > Not Interested, newest first within each */
@@ -5087,7 +5088,7 @@ function renderSmsComms() {
   var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
   var replied2=items.filter(function(x){return _hasFollowupReplyInPeriod(x.s);}).length;
-  var calledNoReply=Object.keys(calledPhones).length;
+  var _seenCN={}; var calledNoReply=_allItems.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCN[ph]; if(keep)_seenCN[ph]=1; return keep; }).length;
   var _ca=document.getElementById('commsCntAll'); if(_ca) _ca.textContent=items.length;
   var _cr=document.getElementById('commsCntReplied'); if(_cr) _cr.textContent=inboundReplyCount;
   var _MSGST=['sms_sent','replied','responded','awaiting_reply','contacted','handed_off','both_sent','email_sent','outreach_sent','interested'];
@@ -5135,8 +5136,8 @@ function renderSmsComms() {
   var _cnr=document.getElementById('cmCalledNoReply'); if(_cnr) _cnr.textContent=Number(calledNoReply).toLocaleString();
   if (window._commsFilter==='replied') items=items.filter(function(x){return _commsHasInboundInPeriod(x.s);});
   else if (window._commsFilter==='replied2') items=items.filter(function(x){return _hasFollowupReply(x.s);});
-  else if (window._commsFilter==='called') { var _seenCalled={}; items=items.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
-  if (window._commsDispFilter) { var _dg=DISP_GROUPS[window._commsDispFilter]||[]; items=items.filter(function(x){ return _dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; }); }
+  else if (window._commsFilter==='called') { var _seenCalled={}; items=_allItems.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
+  if (window._commsDispFilter) { var _dg=DISP_GROUPS[window._commsDispFilter]||[]; var _seenD={}; items=_allItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(_seenD[ph])return false; var ok=_dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; if(ok)_seenD[ph]=1; return ok; }); items.sort(function(a,b){ return new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0); }); }
   var searchEl=document.getElementById('commsSearch');
   if(searchEl && !searchEl.value && window._commsSearch && document.activeElement!==searchEl) window._commsSearch='';
   var q=String(window._commsSearch||'').toLowerCase().trim();
