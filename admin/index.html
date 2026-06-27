@@ -3073,7 +3073,7 @@ function msgLogMessagesForPhone(phone){
 }
 function callMessagesForPhone(phone){
   var nph=_normPh10(phone); if(!nph) return [];
-  return (data.calls||[]).filter(function(c){ return _normPh10(field(c,['caller_phone','lead_phone'],['caller','phone'])||phoneFromText(field(c,['summary','transcript'],['summary','transcript'])||''))===nph; }).map(function(c){ var src=String(field(c,['source'],['source'])||'').toLowerCase(); var dir=(src.indexOf('outbound')>=0&&src.indexOf('vapi')<0)?'Outbound call':'Inbound call'; var t=field(c,['created_at','timestamp'],['created','timestamp']); var rec=field(c,['recording_url'],['recording']); var tr=field(c,['transcript'],['transcript']); var sm=field(c,['summary'],['summary']); return {direction:'system', type:'call', timestamp:t, content:dir+' logged'+(sm?': '+sm:''), recording_url:rec, transcript:tr}; });
+  return (data.calls||[]).filter(function(c){ return _normPh10(field(c,['caller_phone','lead_phone'],['caller','phone'])||phoneFromText(field(c,['summary','transcript'],['summary','transcript'])||''))===nph; }).map(function(c){ var src=String(field(c,['source'],['source'])||'').toLowerCase(); var dir=(src.indexOf('outbound')>=0&&src.indexOf('vapi')<0)?'Outbound call':'Inbound call'; var t=field(c,['created_at','timestamp'],['created','timestamp']); var rec=field(c,['recording_archived_url','recording_url'],['recording_archived_url','recording']); var tr=field(c,['transcript'],['transcript']); var sm=field(c,['summary'],['summary']); return {direction:'system', type:'call', timestamp:t, content:dir+' logged'+(sm?': '+sm:''), recording_url:rec, transcript:tr}; });
 }
 function mergeContactTimeline(phone, messages){
   var nph=_normPh10(phone);
@@ -5324,7 +5324,7 @@ function renderCallsComms() {
     const summary = transcript || field(c, ['summary', 'call_reason', 'service_needed'], ['summary', 'reason', 'service']) || '';
     const phone = field(c, ['caller_phone', 'lead_phone'], ['caller', 'phone']) || phoneFromText(summary);
     const matched = phoneMap[norm(phone)];
-    const _rec = field(c, ['recording_url'], ['recording']);
+    const _rec = field(c, ['recording_archived_url', 'recording_url'], ['recording_archived_url', 'recording']);
     const _vid = field(c, ['vapi_call_id'], ['vapi']);
     const _isVoice = _callDir(c)==='voice'; 
     const _code = field(c, ['demo_code', 'access_code'], ['demo_code', 'access_code']);
@@ -5360,7 +5360,7 @@ function openCallDetail(phone, rowKey) {
   const latestCall = (rowKey ? callRows.find(function(c){return callRowId(c)===rowKey;}) : null) || callRows[0] || null;
   const callTranscript = latestCall ? field(latestCall, ['transcript'], ['transcript']) : '';
   const callSummary = latestCall ? field(latestCall, ['summary'], ['summary']) : '';
-  const callRecording = latestCall ? field(latestCall, ['recording_url'], ['recording']) : '';
+  const callRecording = latestCall ? field(latestCall, ['recording_archived_url', 'recording_url'], ['recording_archived_url', 'recording']) : '';
   let hist = '<div class="msg system">Inbound call from ' + esc(formatPhone(phone)) + '</div>';
   if (latestCall) {
     hist += '<div class="msg system" style="text-align:left;white-space:normal">'
@@ -6065,7 +6065,7 @@ function renderActivity() {
     items.push({ type, business: field(e, ['business_name','businessName','slug','business_id'], ['business_name','business','slug']) || d.business_name || '--', detail, time: field(e, ['timestamp','created_at'], ['timestamp','created']), data: d });
   });
   cleanLeadRows(data.leads || []).forEach(l => items.push({ type:'lead_form', business: field(l, ['business_name','businessName','business_id','slug'], ['business_name','business','slug']) || '--', detail: ('Lead: ' + field(l, ['name','lead_name'], ['name']) + ' ' + formatPhone(field(l, ['phone','lead_phone'], ['phone'])) + ' ' + field(l, ['email','lead_email'], ['email'])).trim(), time: field(l, ['created_at','timestamp'], ['created','timestamp']), data:{} }));
-  (data.calls || []).forEach(c => { var src=String(field(c,['source'],['source'])||'').toLowerCase(); var typ=(src.indexOf('vapi')>=0||/assistant|voice_assistant/.test(src))?'vapi_call':(src.indexOf('outbound')>=0?'call_outbound':'call_inbound'); items.push({ type:typ, business: field(c, ['business_id','business_name','lead_name'], ['business','name']) || '--', detail: (typ==='vapi_call'?'Voice assistant call from ':typ==='call_outbound'?'Outbound call to ':'Inbound call from ') + formatPhone(field(c, ['caller_phone','lead_phone'], ['caller','phone'])), time: field(c, ['created_at'], ['created']), data: { recording_url: field(c, ['recording_url'], ['recording']), transcript: field(c, ['transcript'], ['transcript']), summary: field(c, ['summary'], ['summary']) } }); });
+  (data.calls || []).forEach(c => { var src=String(field(c,['source'],['source'])||'').toLowerCase(); var typ=(src.indexOf('vapi')>=0||/assistant|voice_assistant/.test(src))?'vapi_call':(src.indexOf('outbound')>=0?'call_outbound':'call_inbound'); items.push({ type:typ, business: field(c, ['business_id','business_name','lead_name'], ['business','name']) || '--', detail: (typ==='vapi_call'?'Voice assistant call from ':typ==='call_outbound'?'Outbound call to ':'Inbound call from ') + formatPhone(field(c, ['caller_phone','lead_phone'], ['caller','phone'])), time: field(c, ['created_at'], ['created']), data: { recording_url: field(c, ['recording_archived_url', 'recording_url'], ['recording_archived_url', 'recording']), transcript: field(c, ['transcript'], ['transcript']), summary: field(c, ['summary'], ['summary']) } }); });
   (data.conversations || []).forEach(c => { var media=(typeof latestSessionMediaUrls==='function')?latestSessionMediaUrls(c):[]; items.push({ type: c.has_unread || /user|inbound/i.test(c.last_role || '') ? 'sms_inbound' : 'sms_outbound', business:c.business_name || '--', detail:(c.has_unread || /user|inbound/i.test(c.last_role || '') ? 'SMS from ' : 'SMS to ') + formatPhone(c.phone) + (c.last_message ? ': ' + c.last_message : ''), time:c.last_active, data:{ phone:c.phone, media_urls:media } }); });
   items.sort((a,b) => (parseDate(b.time) || new Date(0)) - (parseDate(a.time) || new Date(0)));
   const recent = items.slice(0, 100);
