@@ -538,7 +538,7 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <h3 style="margin:0">SMS Industry Targeting</h3>
           <button class="btn" type="button" id="smsTargetingRefreshBtn" onclick="refreshSmsTargetingCounts(true)" style="font-size:.78rem;padding:6px 12px;border:1px solid var(--border);background:#fff;color:#334155;font-weight:700">&#8635; Refresh Counts</button>
         </div>
-        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining pool in a sendable status (approximate &mdash; per-send LRN/DNC checks may drop a few more) &mdash; when a bucket you target nears zero, run Places Discovery again. Does not affect Places discovery or any message already queued.</p>
+        <p style="font-size:.8rem;color:var(--text-muted);margin:0 0 4px">Per industry, choose which website bucket gets SMS&nbsp;1 (and the downstream flow). Counts are the remaining pool in a sendable status (approximate &mdash; per-send LRN/DNC checks may drop a few more) &mdash; when a bucket you target nears zero, run Places Discovery again. Saving clears pending SMS&nbsp;1 / held first-touch sequence rows that no longer match the saved rules; it does not affect Places discovery or already-engaged conversations.</p>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px;padding:10px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:8px">
           <label for="smsMaxReviewCount" style="font-weight:800;font-size:.82rem;color:#0f172a;white-space:nowrap">Max Review Count</label>
           <input type="number" id="smsMaxReviewCount" min="0" step="1" placeholder="0 = no cap" style="width:120px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:.82rem">
@@ -4641,7 +4641,11 @@ async function saveSmsTargeting(){
     const stored = (j && j.sms_industry_filter && typeof j.sms_industry_filter==='object') ? j.sms_industry_filter : filter;
     const n = Object.keys(stored).filter(function(k){ var v=String(stored[k]||''); return v && v!=='all'; }).length;
     var __capMsg = __maxReview>0 ? (' · max ' + __maxReview + ' reviews') : '';
-    showToast((n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All') + __capMsg);
+    var __cleanup = (j && j.targeting_cleanup && typeof j.targeting_cleanup==='object') ? j.targeting_cleanup : {};
+    var __cleared = (Number(__cleanup.cancelled_queue||0) + Number(__cleanup.cancelled_sequence||0));
+    var __clearMsg = __cleared ? (' · cleared ' + __cleared + ' pending') : ' · pending clear checked';
+    if(Array.isArray(__cleanup.errors) && __cleanup.errors.length) __clearMsg += ' · cleanup warning';
+    showToast((n ? ('SMS targeting saved — ' + n + ' industr' + (n===1?'y':'ies') + ' filtered') : 'SMS targeting saved — all industries set to All') + __capMsg + __clearMsg);
     renderSmsTargeting();
   }catch(e){ showToast('SMS targeting save failed: ' + e.message, true); }
 }
