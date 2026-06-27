@@ -340,6 +340,9 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
     <div class="nav-item" data-page="settings" onclick="navigate('settings')">
       <span class="nav-icon">&#9961;</span> Settings
     </div>
+    <div class="nav-item" data-page="sequences" onclick="navigate('sequences')">
+      <span class="nav-icon">&#9776;</span> Message Sequences
+    </div>
     <a class="nav-item" href="editor.html" style="text-decoration:none;color:inherit;display:block">
       <span class="nav-icon">&#9998;</span> AI Page Editor
     </a>
@@ -812,6 +815,30 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <div class="detail-item"><div class="dlabel">Sheet ID</div><div class="dval" style="font-family:monospace;font-size:.72rem" id="settingsSheetId">--</div></div>
           <div class="detail-item"><div class="dlabel">Admin Version</div><div class="dval">v3.0 — Command Center</div></div>
         </div>
+      </div>
+    </div>
+
+    <!-- MESSAGE SEQUENCES (Phase 1: UI + config only; does NOT change live sending) -->
+    <div class="page" id="page-sequences">
+      <div class="section-header">
+        <h2>Message Sequences</h2>
+        <p>Define multi-step SMS outreach paths. Phase 1 &mdash; saves to config only; does not change live sending yet.</p>
+      </div>
+
+      <div class="control-panel" style="margin-bottom:16px;background:#fffbeb;border-color:#fde68a">
+        <p style="font-size:.8rem;color:#92400e;line-height:1.5;margin:0">
+          <b>Builder only.</b> These sequences save to a new <code>sequences</code> config key and are <b>not yet read by any live workflow</b>.
+          Current SMS sending still uses the Settings &rarr; SMS Message Templates. A future phase will wire an interpreter to run these paths.
+        </p>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="seqCatTabs">
+        <button class="btn btn-primary btn-sm" id="seqTabNoWebsite" onclick="seqSwitchCategory('no_website')">No Website</button>
+        <button class="btn btn-outline btn-sm" id="seqTabExistingWebsite" onclick="seqSwitchCategory('existing_website')">Existing Website</button>
+      </div>
+
+      <div id="seqEditorRoot">
+        <!-- populated by renderSequences() -->
       </div>
     </div>
 
@@ -1348,7 +1375,8 @@ function navigate(page) {
     analytics: 'Analytics',
     funnel: 'Funnel Analytics',
     system: 'System Monitor',
-    settings: 'Settings'
+    settings: 'Settings',
+    sequences: 'Message Sequences'
   }[page];
   closeSidebar();
   setTimeout(renderCurrentPage, 0);
@@ -1370,6 +1398,7 @@ function renderCurrentPage() {
     else if (page === 'analytics') renderAnalytics();
     else if (page === 'system') loadN8nData();
     else if (page === 'settings') renderSettings();
+    else if (page === 'sequences') renderSequences();
   } catch(e) {
     console.warn('render current page failed', page, e);
   }
@@ -2840,6 +2869,435 @@ async function saveSmsMessageTemplates(){
     if(st){st.textContent='Saved to SSOT'; st.style.color='var(--green)';}
     showToast('SMS templates saved');
   }catch(e){ if(st){st.textContent='Failed: '+e.message; st.style.color='var(--red)';} showToast('Template save failed: '+e.message,true); }
+}
+
+/* ============================================================
+   MESSAGE SEQUENCES (Phase 1 — UI + config key only)
+   Builder for multi-step SMS outreach paths. Saves to a NEW
+   top-level config key `sequences` via read-modify-write.
+   This does NOT change any live sending behavior — Phase 2 will
+   build the n8n interpreter that reads this config.
+   ============================================================ */
+
+// Tokens reused from the existing template editor (single-brace).
+var SEQ_TOKENS = ['business','business_name','raw_business_name','name','trade','search_term','city','noun','link','demo_url','website','website_url','maps_url','phone'];
+
+// Step types and their human labels.
+var SEQ_STEP_TYPES = [
+  { type:'send',       label:'Send SMS' },
+  { type:'wait',       label:'Wait (timed)' },
+  { type:'wait_reply', label:'Wait for reply' },
+  { type:'build_demo', label:'Build demo' },
+  { type:'screenshot', label:'Send screenshot' }
+];
+
+// In-memory working copy of the sequences config. Never auto-saved.
+var seqState = null;            // { no_website:{...}, existing_website:{...} }
+var seqActiveCategory = 'no_website';
+
+function seqSlug(s){
+  return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || ('path-' + Date.now().toString(36));
+}
+
+// Seed paths so the builder is populated on first view (NOT auto-saved).
+function seqSeedDefault(){
+  function noWebsitePaths(){
+    return [
+      { id:'fast-nudge', name:'Fast nudge', weight:34, steps:[
+        { type:'send', template:'Hi {name}, this is from ScalingSOS. I put together a quick site for {business} so you can stop losing {noun} to competitors. Want to see it?' },
+        { type:'wait', seconds:45 },
+        { type:'send', template:'No pressure {name} — here is the preview for {business}: {demo_url}' },
+        { type:'wait_reply', sentiment:'positive' },
+        { type:'send', template:'Awesome. It is yours for a one-time 99 if you want to keep it live. Want me to send the link to publish?' }
+      ]},
+      { id:'demo-first', name:'Demo-first', weight:33, steps:[
+        { type:'build_demo' },
+        { type:'wait', seconds:360 },
+        { type:'send', template:'Hi {name}, I built a live demo site for {business} in {city}: {demo_url}. Take a look when you have a sec.' },
+        { type:'screenshot' }
+      ]},
+      { id:'reply-paced', name:'Reply-paced', weight:33, steps:[
+        { type:'send', template:'Hi {name}, quick one about {business} — I built a {trade} site that could bring you more {noun}. Interested?' },
+        { type:'wait_reply', sentiment:'positive' },
+        { type:'wait', seconds:360 },
+        { type:'send', template:'Great — here it is: {demo_url}. Only a one-time 99 to keep it.' }
+      ]}
+    ];
+  }
+  function existingWebsitePaths(){
+    return [
+      { id:'fast-nudge', name:'Fast nudge', weight:34, steps:[
+        { type:'send', template:'Hi {name}, I rebuilt {business}’s site to convert better than {website}. Want a peek?' },
+        { type:'wait', seconds:45 },
+        { type:'send', template:'Here is the upgraded version {name}: {demo_url}' },
+        { type:'wait_reply', sentiment:'positive' },
+        { type:'send', template:'Glad you like it. One-time 99 and I switch it on for {business}. Want it?' }
+      ]},
+      { id:'demo-first', name:'Demo-first', weight:33, steps:[
+        { type:'build_demo' },
+        { type:'wait', seconds:360 },
+        { type:'send', template:'Hi {name}, I built a sharper version of {business}’s site in {city}: {demo_url}. Compare it to {website}.' },
+        { type:'screenshot' }
+      ]},
+      { id:'reply-paced', name:'Reply-paced', weight:33, steps:[
+        { type:'send', template:'Hi {name}, your {trade} site at {website} is leaving {noun} on the table. Mind if I show you a better version?' },
+        { type:'wait_reply', sentiment:'positive' },
+        { type:'wait', seconds:360 },
+        { type:'send', template:'Here is the rebuild: {demo_url}. One-time 99 to make it live.' }
+      ]}
+    ];
+  }
+  return {
+    no_website:       { enabled:true, msg1:'Hi {name}, this is ScalingSOS. I noticed {business} in {city} does not have a website. I can build one that brings in more {noun}. Mind if I send a preview?', paths: noWebsitePaths() },
+    existing_website: { enabled:true, msg1:'Hi {name}, this is ScalingSOS. I took a look at {business}’s site at {website} and put together a higher-converting version. Mind if I send it over?', paths: existingWebsitePaths() }
+  };
+}
+
+// Normalize whatever is in config into the strict in-memory shape.
+function seqNormalize(raw){
+  function normStep(s){
+    s = s || {};
+    var t = String(s.type||'');
+    if(t==='send')        return { type:'send', template: String(s.template!=null?s.template:'') };
+    if(t==='wait')        return { type:'wait', seconds: Math.max(0, parseInt(s.seconds,10) || 0) };
+    if(t==='wait_reply')  return { type:'wait_reply', sentiment: (s.sentiment==='positive'?'positive':'any') };
+    if(t==='build_demo')  return { type:'build_demo' };
+    if(t==='screenshot')  return { type:'screenshot' };
+    return null;
+  }
+  function normPath(p, i){
+    p = p || {};
+    var steps = Array.isArray(p.steps) ? p.steps.map(normStep).filter(function(x){return x;}) : [];
+    return {
+      id: p.id ? seqSlug(p.id) : seqSlug(p.name || ('path-' + (i+1))),
+      name: String(p.name || ('Path ' + (i+1))),
+      weight: Math.max(0, Math.min(100, parseInt(p.weight,10))) || 0,
+      steps: steps
+    };
+  }
+  function normCat(c){
+    c = c || {};
+    var paths = Array.isArray(c.paths) ? c.paths.map(normPath).slice(0,4) : [];
+    return {
+      enabled: c.enabled !== false,
+      msg1: String(c.msg1 != null ? c.msg1 : ''),
+      paths: paths
+    };
+  }
+  raw = raw || {};
+  return { no_website: normCat(raw.no_website), existing_website: normCat(raw.existing_website) };
+}
+
+// Even-split default weights across paths in a category.
+function seqEvenWeights(cat){
+  var n = (cat.paths||[]).length; if(!n) return;
+  var base = Math.floor(100/n), rem = 100 - base*n;
+  cat.paths.forEach(function(p,i){ p.weight = base + (i < rem ? 1 : 0); });
+}
+
+// Load sequences from the prospector config (read-only GET) into seqState.
+async function seqLoadFromConfig(){
+  var hadSequences = false;
+  try{
+    var cfg = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'get'}) }).then(function(r){ return r.json(); });
+    if(cfg && cfg.ok !== false){ prospectorConfigCache = cfg; }
+    if(cfg && cfg.sequences && (cfg.sequences.no_website || cfg.sequences.existing_website)){
+      hadSequences = true;
+      seqState = seqNormalize(cfg.sequences);
+    }
+  }catch(e){ /* fall through to seed */ }
+  if(!hadSequences){
+    // Defensive: not present in config — seed in-memory so the builder is populated. Do NOT auto-save.
+    seqState = seqNormalize(seqSeedDefault());
+  }
+  return seqState;
+}
+
+function renderSequences(){
+  var root = document.getElementById('seqEditorRoot');
+  if(!root) return;
+  if(!seqState){
+    root.innerHTML = '<div class="control-panel"><p style="color:var(--text-muted);font-size:.85rem">Loading sequences…</p></div>';
+    seqLoadFromConfig().then(function(){ seqRenderCategory(); }).catch(function(){ seqState = seqNormalize(seqSeedDefault()); seqRenderCategory(); });
+    return;
+  }
+  seqRenderCategory();
+}
+
+function seqSwitchCategory(cat){
+  seqActiveCategory = (cat === 'existing_website') ? 'existing_website' : 'no_website';
+  var t1 = document.getElementById('seqTabNoWebsite'), t2 = document.getElementById('seqTabExistingWebsite');
+  if(t1) t1.className = 'btn btn-sm ' + (seqActiveCategory==='no_website' ? 'btn-primary' : 'btn-outline');
+  if(t2) t2.className = 'btn btn-sm ' + (seqActiveCategory==='existing_website' ? 'btn-primary' : 'btn-outline');
+  if(!seqState){ renderSequences(); return; }
+  seqRenderCategory();
+}
+
+function seqTokenChipsHtml(pathIdx, stepIdx){
+  return SEQ_TOKENS.map(function(tok){
+    return '<button type="button" class="btn btn-outline btn-sm" style="font-family:monospace;font-size:.68rem;padding:2px 7px" onclick="seqInsertToken('+pathIdx+','+stepIdx+',\''+tok+'\')">{'+tok+'}</button>';
+  }).join(' ');
+}
+
+function seqStepRowHtml(step, pathIdx, stepIdx, lastIdx){
+  var typeLabel = ({send:'Send SMS', wait:'Wait (timed)', wait_reply:'Wait for reply', build_demo:'Build demo', screenshot:'Send screenshot'})[step.type] || step.type;
+  var body = '';
+  if(step.type === 'send'){
+    body =
+      '<div style="margin-top:8px">' +
+        '<textarea id="seqStep_'+pathIdx+'_'+stepIdx+'" rows="3" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'template\',this.value)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.82rem;line-height:1.35">'+esc(step.template||'')+'</textarea>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">'+seqTokenChipsHtml(pathIdx, stepIdx)+'</div>' +
+      '</div>';
+  } else if(step.type === 'wait'){
+    body =
+      '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+        '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">Wait</span>' +
+        '<input type="number" min="0" id="seqStep_'+pathIdx+'_'+stepIdx+'" value="'+(parseInt(step.seconds,10)||0)+'" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'seconds\',this.value)" style="width:110px;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:.82rem">' +
+        '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">seconds</span>' +
+        '<span style="font-size:.72rem;color:var(--text-muted)">('+seqHumanSeconds(parseInt(step.seconds,10)||0)+')</span>' +
+      '</div>';
+  } else if(step.type === 'wait_reply'){
+    var pos = step.sentiment === 'positive';
+    body =
+      '<div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+        '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">Continue on:</span>' +
+        '<label style="font-size:.78rem;display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="seqWR_'+pathIdx+'_'+stepIdx+'" '+(!pos?'checked':'')+' onchange="seqOnStepInput('+pathIdx+','+stepIdx+',\'sentiment\',\'any\')"> Any reply</label>' +
+        '<label style="font-size:.78rem;display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="seqWR_'+pathIdx+'_'+stepIdx+'" '+(pos?'checked':'')+' onchange="seqOnStepInput('+pathIdx+','+stepIdx+',\'sentiment\',\'positive\')"> Positive only</label>' +
+        '<span style="font-size:.72rem;color:var(--text-muted)">Pauses until the prospect replies.</span>' +
+      '</div>';
+  } else {
+    body = '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">No parameters.</div>';
+  }
+  var up   = stepIdx > 0       ? '<button type="button" class="btn btn-outline btn-sm" title="Move up" onclick="seqMoveStep('+pathIdx+','+stepIdx+',-1)">&#9650;</button>' : '<button type="button" class="btn btn-outline btn-sm" disabled style="opacity:.35">&#9650;</button>';
+  var down = stepIdx < lastIdx ? '<button type="button" class="btn btn-outline btn-sm" title="Move down" onclick="seqMoveStep('+pathIdx+','+stepIdx+',1)">&#9660;</button>' : '<button type="button" class="btn btn-outline btn-sm" disabled style="opacity:.35">&#9660;</button>';
+  return '' +
+    '<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#fcfcfd">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' +
+        '<span style="display:inline-flex;align-items:center;gap:8px">' +
+          '<span style="background:var(--blue-light);color:var(--blue);font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:20px">'+(stepIdx+1)+'</span>' +
+          '<b style="font-size:.82rem">'+esc(typeLabel)+'</b>' +
+        '</span>' +
+        '<span style="display:inline-flex;gap:4px">'+up+down+'<button type="button" class="btn btn-outline btn-sm" title="Delete step" style="color:var(--red);border-color:#fecaca" onclick="seqDeleteStep('+pathIdx+','+stepIdx+')">&times;</button></span>' +
+      '</div>' +
+      body +
+    '</div>';
+}
+
+function seqHumanSeconds(s){
+  s = parseInt(s,10) || 0;
+  if(s < 60) return s + 's';
+  if(s < 3600) return (Math.round(s/60*10)/10) + ' min';
+  return (Math.round(s/3600*10)/10) + ' hr';
+}
+
+function seqAddStepMenuHtml(pathIdx){
+  return SEQ_STEP_TYPES.map(function(st){
+    return '<button type="button" class="btn btn-outline btn-sm" onclick="seqAddStep('+pathIdx+',\''+st.type+'\')">+ '+esc(st.label)+'</button>';
+  }).join(' ');
+}
+
+function seqPathCardHtml(path, pathIdx){
+  var steps = (path.steps||[]).map(function(s,i){ return seqStepRowHtml(s, pathIdx, i, path.steps.length-1); }).join('') ||
+    '<div style="font-size:.78rem;color:var(--text-muted);padding:8px 0">No steps yet. Add one below.</div>';
+  return '' +
+    '<div class="control-panel" style="margin-bottom:16px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+          '<label style="font-size:.7rem;font-weight:700;color:var(--text-secondary)">Path name<input type="text" value="'+esc(path.name||'')+'" oninput="seqOnPathInput('+pathIdx+',\'name\',this.value)" style="display:block;margin-top:4px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:600;min-width:200px"></label>' +
+          '<label style="font-size:.7rem;font-weight:700;color:var(--text-secondary)">Rotation weight (%)<input type="number" min="0" max="100" value="'+(parseInt(path.weight,10)||0)+'" oninput="seqOnPathInput('+pathIdx+',\'weight\',this.value)" style="display:block;margin-top:4px;width:110px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem"></label>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick="seqDuplicatePath('+pathIdx+')">Duplicate path</button>' +
+          '<button type="button" class="btn btn-outline btn-sm" style="color:var(--red);border-color:#fecaca" onclick="seqDeletePath('+pathIdx+')">Delete path</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:.68rem;color:var(--text-muted);font-family:monospace;margin-bottom:10px">id: '+esc(path.id||'')+'</div>' +
+      '<div>'+steps+'</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;border-top:1px dashed var(--border);padding-top:10px"><span style="font-size:.72rem;font-weight:700;color:var(--text-secondary);align-self:center;margin-right:4px">Add step:</span>'+seqAddStepMenuHtml(pathIdx)+'</div>' +
+    '</div>';
+}
+
+function seqRenderCategory(){
+  var root = document.getElementById('seqEditorRoot');
+  if(!root || !seqState) return;
+  var cat = seqState[seqActiveCategory];
+  var catName = seqActiveCategory === 'no_website' ? 'No Website' : 'Existing Website';
+  var weightSum = (cat.paths||[]).reduce(function(a,p){ return a + (parseInt(p.weight,10)||0); }, 0);
+  var weightNote = weightSum === 100 ? '<span style="color:var(--green)">Weights total 100%</span>' : '<span style="color:var(--gold)">Weights total '+weightSum+'% (not 100% &mdash; rotation will normalize)</span>';
+  var tokenHelp = SEQ_TOKENS.map(function(t){ return '<code style="font-size:.7rem;background:#f1f5f9;padding:1px 5px;border-radius:4px">{'+t+'}</code>'; }).join(' ');
+
+  var html = '';
+  html += '<div class="control-panel" style="margin-bottom:16px">';
+  html +=   '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">';
+  html +=     '<div>';
+  html +=       '<h3>'+esc(catName)+' &mdash; Shared Msg 1</h3>';
+  html +=       '<p style="font-size:.76rem;color:var(--text-muted);margin-top:4px">Sent first for every path in this category. '+weightNote+'</p>';
+  html +=     '</div>';
+  html +=     '<label style="font-size:.78rem;font-weight:700;color:var(--text-secondary);display:inline-flex;align-items:center;gap:8px"><input type="checkbox" '+(cat.enabled!==false?'checked':'')+' onchange="seqOnCategoryToggle(this.checked)" style="width:16px;height:16px"> Category enabled</label>';
+  html +=   '</div>';
+  html +=   '<textarea id="seqMsg1" rows="3" oninput="seqOnMsg1Input(this.value)" style="width:100%;margin-top:10px;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.35">'+esc(cat.msg1||'')+'</textarea>';
+  html +=   '<div style="font-size:.72rem;color:var(--text-secondary);margin-top:8px;line-height:1.7">Tokens: '+tokenHelp+'</div>';
+  html += '</div>';
+
+  html += (cat.paths||[]).map(function(p,i){ return seqPathCardHtml(p, i); }).join('');
+
+  var canAdd = (cat.paths||[]).length < 4;
+  html += '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
+  html +=   (canAdd ? '<button type="button" class="btn btn-outline" onclick="seqAddPath()">+ Add path</button>' : '<span style="font-size:.78rem;color:var(--text-muted)">Maximum of 4 paths per category.</span>');
+  html +=   '<button type="button" class="btn btn-outline btn-sm" onclick="seqResetWeights()">Even-split weights</button>';
+  html += '</div>';
+
+  html += '<div class="control-panel" style="position:sticky;bottom:0;display:flex;align-items:center;gap:14px;flex-wrap:wrap">';
+  html +=   '<button type="button" class="btn btn-primary" onclick="saveSequences()">Save sequences</button>';
+  html +=   '<span id="seqSaveStatus" style="font-size:.8rem;color:var(--text-muted)"></span>';
+  html +=   '<span style="font-size:.72rem;color:var(--text-muted);margin-left:auto">Saves both categories (No Website + Existing Website) to the <code>sequences</code> config key.</span>';
+  html += '</div>';
+
+  root.innerHTML = html;
+}
+
+/* ---- in-memory mutations (no save) ---- */
+function seqCat(){ return seqState ? seqState[seqActiveCategory] : null; }
+
+function seqOnMsg1Input(v){ var c=seqCat(); if(c) c.msg1 = String(v); }
+function seqOnCategoryToggle(on){ var c=seqCat(); if(c) c.enabled = !!on; }
+
+function seqOnPathInput(pathIdx, field, value){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  if(field === 'name'){ c.paths[pathIdx].name = String(value); }
+  else if(field === 'weight'){ c.paths[pathIdx].weight = Math.max(0, Math.min(100, parseInt(value,10) || 0)); }
+}
+
+function seqOnStepInput(pathIdx, stepIdx, field, value){
+  var c=seqCat(); if(!c || !c.paths[pathIdx] || !c.paths[pathIdx].steps[stepIdx]) return;
+  var step = c.paths[pathIdx].steps[stepIdx];
+  if(field === 'template'){ step.template = String(value); }
+  else if(field === 'seconds'){
+    step.seconds = Math.max(0, parseInt(value,10) || 0);
+    // live-update the human-readable hint without a full re-render (keeps cursor in field)
+    var row = document.getElementById('seqStep_'+pathIdx+'_'+stepIdx);
+    if(row){ var hint = row.parentNode.querySelector('span:last-child'); if(hint) hint.textContent = '('+seqHumanSeconds(step.seconds)+')'; }
+  }
+  else if(field === 'sentiment'){ step.sentiment = (value==='positive'?'positive':'any'); }
+}
+
+function seqInsertToken(pathIdx, stepIdx, tok){
+  var ta = document.getElementById('seqStep_'+pathIdx+'_'+stepIdx);
+  if(!ta) return;
+  var token = '{'+tok+'}';
+  var start = (typeof ta.selectionStart === 'number') ? ta.selectionStart : ta.value.length;
+  var end = (typeof ta.selectionEnd === 'number') ? ta.selectionEnd : ta.value.length;
+  ta.value = ta.value.slice(0, start) + token + ta.value.slice(end);
+  seqOnStepInput(pathIdx, stepIdx, 'template', ta.value);
+  ta.focus();
+  var pos = start + token.length;
+  try{ ta.setSelectionRange(pos, pos); }catch(e){}
+}
+
+function seqAddStep(pathIdx, type){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  var step;
+  if(type==='send')            step = { type:'send', template:'' };
+  else if(type==='wait')       step = { type:'wait', seconds:60 };
+  else if(type==='wait_reply') step = { type:'wait_reply', sentiment:'any' };
+  else if(type==='build_demo') step = { type:'build_demo' };
+  else if(type==='screenshot') step = { type:'screenshot' };
+  else return;
+  c.paths[pathIdx].steps.push(step);
+  seqRenderCategory();
+}
+
+function seqDeleteStep(pathIdx, stepIdx){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  c.paths[pathIdx].steps.splice(stepIdx, 1);
+  seqRenderCategory();
+}
+
+function seqMoveStep(pathIdx, stepIdx, dir){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  var steps = c.paths[pathIdx].steps;
+  var j = stepIdx + dir;
+  if(j < 0 || j >= steps.length) return;
+  var tmp = steps[stepIdx]; steps[stepIdx] = steps[j]; steps[j] = tmp;
+  seqRenderCategory();
+}
+
+function seqAddPath(){
+  var c=seqCat(); if(!c) return;
+  if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
+  var n = c.paths.length + 1;
+  c.paths.push({ id: seqSlug('path-' + n + '-' + Date.now().toString(36)), name: 'Path ' + n, weight: 0, steps: [] });
+  seqEvenWeights(c);
+  seqRenderCategory();
+}
+
+function seqDuplicatePath(pathIdx){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
+  var src = c.paths[pathIdx];
+  var copy = JSON.parse(JSON.stringify(src));
+  copy.name = src.name + ' (copy)';
+  copy.id = seqSlug(copy.name + '-' + Date.now().toString(36));
+  c.paths.splice(pathIdx + 1, 0, copy);
+  seqRenderCategory();
+}
+
+function seqDeletePath(pathIdx){
+  var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
+  if(!confirm('Delete path "' + (c.paths[pathIdx].name||'') + '"? This is in-memory until you click Save.')) return;
+  c.paths.splice(pathIdx, 1);
+  seqRenderCategory();
+}
+
+function seqResetWeights(){ var c=seqCat(); if(c){ seqEvenWeights(c); seqRenderCategory(); } }
+
+// Build the clean payload object from in-memory state.
+function seqBuildPayload(){
+  return seqNormalize(seqState);
+}
+
+/* ---- SAVE (read-modify-write — preserves all other config keys) ---- */
+async function saveSequences(){
+  var st = document.getElementById('seqSaveStatus');
+  function setStatus(msg, color){ if(st){ st.textContent = msg; st.style.color = color || 'var(--text-muted)'; } }
+  setStatus('Loading current config…');
+  if(!seqState){ setStatus('Not loaded yet', 'var(--red)'); return; }
+  var payload = seqBuildPayload();
+  try{
+    // 1) READ: pull the full, latest config so we never drop sibling keys.
+    var current = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'get'}) }).then(function(r){ return r.json(); });
+    if(!current || current.ok === false){ throw new Error('could not read current config'); }
+    // Strip transport-only fields that should not be written back.
+    var base = Object.assign({}, current);
+    delete base.ok;
+    // 2) MODIFY: add/replace ONLY the sequences key.
+    base.sequences = payload;
+    setStatus('Saving…');
+    // 3) WRITE: save the whole object back.
+    var resp = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'save', config: base }) });
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    var json = await resp.json().catch(function(){ return {}; });
+    if(json && json.ok === false) throw new Error(json.error || 'config rejected');
+    // 4) VERIFY: re-GET and confirm sequences saved AND pre-existing keys survived.
+    var after = await fetch(N8N_BASE + '/scalingsos-prospector-config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'get'}) }).then(function(r){ return r.json(); });
+    var hadTemplates = ('message_templates' in current);
+    var stillTemplates = !!(after && after.message_templates);
+    var seqOk = !!(after && after.sequences && after.sequences[seqActiveCategory]);
+    if(after && after.ok !== false){ prospectorConfigCache = after; }
+    if(seqOk && (!hadTemplates || stillTemplates)){
+      setStatus('Saved to config. Verified: sequences stored, existing keys intact.', 'var(--green)');
+      showToast('Message sequences saved');
+    } else if(!stillTemplates && hadTemplates){
+      setStatus('Saved, but message_templates not seen on re-read — verify Settings.', 'var(--red)');
+      showToast('Saved, but verify Settings templates', true);
+    } else {
+      setStatus('Saved, but could not verify sequences on re-read.', 'var(--gold)');
+      showToast('Saved (verify on reload)', true);
+    }
+  }catch(e){
+    setStatus('Save failed: ' + e.message, 'var(--red)');
+    showToast('Sequence save failed: ' + e.message, true);
+  }
 }
 
 async function testN8nApi() {
