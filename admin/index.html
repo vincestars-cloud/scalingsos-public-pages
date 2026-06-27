@@ -758,6 +758,10 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <div><b>{link}</b> / <b>{demo_url}</b> -> https://demo.scalingsos.com/cutler-bay-plumbing/</div>
           <div><b>{website}</b> / <b>{website_url}</b> -> their current website, if captured</div>
           <div><b>{maps_url}</b> -> their Google Maps profile URL</div>
+          <div><b>{reviewer_name}</b> -> newest usable Google reviewer name, when enriched</div>
+          <div><b>{review_summary}</b> -> short summary of that review's text</div>
+          <div><b>{review_age}</b> -> today, yesterday, 3 weeks ago, etc. from the review publish time</div>
+          <div><b>{review_personalized_opener}</b> / <b>{review_opener}</b> -> review-based opener, with fallback copy if no review exists</div>
           <div><b>{phone}</b> -> the contact phone number</div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
@@ -844,6 +848,10 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           <div><b>{link}</b> / <b>{demo_url}</b> -> https://demo.scalingsos.com/cutler-bay-plumbing/</div>
           <div><b>{website}</b> / <b>{website_url}</b> -> their current website, if captured</div>
           <div><b>{maps_url}</b> -> their Google Maps profile URL</div>
+          <div><b>{reviewer_name}</b> -> newest usable Google reviewer name, when enriched</div>
+          <div><b>{review_summary}</b> -> short summary of that review's text</div>
+          <div><b>{review_age}</b> -> today, yesterday, 3 weeks ago, etc. from the review publish time</div>
+          <div><b>{review_personalized_opener}</b> / <b>{review_opener}</b> -> review-based opener, with fallback copy if no review exists</div>
           <div><b>{phone}</b> -> the contact phone number</div>
         </div>
       </div>
