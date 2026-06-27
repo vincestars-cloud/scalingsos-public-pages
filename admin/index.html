@@ -1041,7 +1041,7 @@ function primeAdminCaches() {
     }).catch(function(){ window._scrapeRowsLoading = false; });
   }
   var page = currentPageName ? currentPageName() : 'dashboard';
-  if ((page === 'comms' || page === 'analytics' || page === 'scraping') && window._msgLogRows == null && !window._msgLogLoading && typeof loadMsgLog === 'function') {
+  if ((page === 'analytics' || page === 'scraping') && window._msgLogRows == null && !window._msgLogLoading && typeof loadMsgLog === 'function') {
     window._msgLogLoading = true;
     loadMsgLog().finally(function(){ window._msgLogLoading = false; });
   }
@@ -1435,6 +1435,10 @@ function navigate(page) {
     window._inboxAt=Date.now();
     fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{ renderCurrentPage(); }catch(e){} }).catch(function(){ window._inboxAt=0; });
   }
+  if (page === 'prospector' && typeof loadProspectorState === 'function' && (!window._prospectorStateAt || Date.now()-window._prospectorStateAt>120000) && !window._prospectorStateLoading) {
+    window._prospectorStateLoading=true;
+    Promise.resolve(loadProspectorState()).finally(function(){ window._prospectorStateAt=Date.now(); window._prospectorStateLoading=false; });
+  }
   setTimeout(renderCurrentPage, 0);
 }
 
@@ -1543,8 +1547,8 @@ function setDashboardRange(r){
 function _dashboardMetricRows(){ return window._scrapeRows || window._prospectsRaw || []; }
 function _dashboardInRange(ts){ var r=String(window._dashboardDateRange||'today'); if(r==='all') return true; if(typeof _tsInRangeOf==='function') return _tsInRangeOf(ts,r); var t=new Date(ts||'').getTime(); return !isNaN(t); }
 function renderDashboard() {
-  if(window._msgLogRows==null && !window._msgLogLoading){ window._msgLogLoading=true; if(typeof loadMsgLog==='function') loadMsgLog(); }
-  /* perf_20260627: dashboard metrics use snapshots/RPCs; do not auto-load full Prospects on landing. */
+  /* speed_20260627c: dashboard metrics use Telnyx/outcome RPCs + config snapshots.
+     Do not auto-load full MsgLog on landing; that stays lazy for Analytics/Scraping. */
   var range=String(window._dashboardDateRange||'today');
   var rows=_dashboardMetricRows();
   var g=function(r,k){ var lk=String(k).toLowerCase(); for(var kk in (r||{})){ if(kk.toLowerCase()===lk) return r[kk]||''; } return ''; };
@@ -6831,8 +6835,7 @@ document.addEventListener('DOMContentLoaded', () => {
   installUxStyles();
   loadAllData();
   setTimeout(primeAdminCaches, 1800);
-  refreshProspectorConfigCache();
-  loadProspectorState();
+  // loadAllData hydrates config for the dashboard; Prospector performs its own refresh on tab open.
   startIncomingCallListener();
   pollIncomingCallRows();
 
