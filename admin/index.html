@@ -2964,7 +2964,9 @@ var SEQ_STEP_TYPES = [
   { type:'wait_no_reply', label:'Wait for no reply' },
   { type:'wait_reply', label:'Wait for reply' },
   { type:'build_demo', label:'Build demo' },
-  { type:'screenshot', label:'Send screenshot' }
+  { type:'screenshot', label:'Send screenshot' },
+  { type:'comparison_screenshot', label:'Send Old+New Screenshot' },
+  { type:'audio_mms', label:'Send audio MMS' }
 ];
 
 // In-memory working copy of the sequences config. Never auto-saved.
@@ -3053,6 +3055,8 @@ function seqNormalize(raw){
     if(t==='wait_reply')  return { type:'wait_reply', sentiment: (s.sentiment==='positive'?'positive':'any') };
     if(t==='build_demo')  return { type:'build_demo' };
     if(t==='screenshot')  return { type:'screenshot' };
+    if(t==='comparison_screenshot') return { type:'comparison_screenshot' };
+    if(t==='audio_mms') return { type:'audio_mms', media_url: String(s.media_url || s.audio_url || ''), template: String(s.template || s.caption || '') };
     return null;
   }
   function normPath(p, i){
@@ -3134,7 +3138,7 @@ function seqTokenChipsHtml(pathIdx, stepIdx){
 }
 
 function seqStepRowHtml(step, pathIdx, stepIdx, lastIdx){
-  var typeLabel = ({send:'Send SMS', wait:'Wait (timed)', wait_no_reply:'Wait for no reply', wait_reply:'Wait for reply', build_demo:'Build demo', screenshot:'Send screenshot'})[step.type] || step.type;
+  var typeLabel = ({send:'Send SMS', wait:'Wait (timed)', wait_no_reply:'Wait for no reply', wait_reply:'Wait for reply', build_demo:'Build demo', screenshot:'Send screenshot', comparison_screenshot:'Send Old+New Screenshot', audio_mms:'Send audio MMS'})[step.type] || step.type;
   var body = '';
   if(step.type === 'send'){
     body =
@@ -3166,6 +3170,18 @@ function seqStepRowHtml(step, pathIdx, stepIdx, lastIdx){
         '<label style="font-size:.78rem;display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="seqWR_'+pathIdx+'_'+stepIdx+'" '+(!pos?'checked':'')+' onchange="seqOnStepInput('+pathIdx+','+stepIdx+',\'sentiment\',\'any\')"> Any reply</label>' +
         '<label style="font-size:.78rem;display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="seqWR_'+pathIdx+'_'+stepIdx+'" '+(pos?'checked':'')+' onchange="seqOnStepInput('+pathIdx+','+stepIdx+',\'sentiment\',\'positive\')"> Positive only</label>' +
         '<span style="font-size:.72rem;color:var(--text-muted)">Pauses until the prospect replies.</span>' +
+      '</div>';
+  } else if(step.type === 'comparison_screenshot'){
+    body =
+      '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted);line-height:1.45">Renders one MMS image with the prospect’s current website on the left and the ScalingSOS rebuilt demo on the right. Requires both <code>{website}</code> and <code>{demo_url}</code>.</div>';
+  } else if(step.type === 'audio_mms'){
+    body =
+      '<div style="margin-top:8px">' +
+        '<label style="display:block;font-size:.72rem;font-weight:700;color:var(--text-secondary);margin-bottom:4px">Public audio URL (.mp3 or .m4a)</label>' +
+        '<input type="url" id="seqStepMedia_'+pathIdx+'_'+stepIdx+'" value="'+esc(step.media_url||'')+'" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'media_url\',this.value)" placeholder="https://..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.82rem;line-height:1.35">' +
+        '<label style="display:block;font-size:.72rem;font-weight:700;color:var(--text-secondary);margin:8px 0 4px">Optional caption</label>' +
+        '<textarea id="seqStep_'+pathIdx+'_'+stepIdx+'" rows="2" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'template\',this.value)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:.82rem;line-height:1.35">'+esc(step.template||'')+'</textarea>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">'+seqTokenChipsHtml(pathIdx, stepIdx)+'</div>' +
       '</div>';
   } else {
     body = '<div style="margin-top:6px;font-size:.74rem;color:var(--text-muted)">No parameters.</div>';
@@ -3274,6 +3290,7 @@ function seqOnStepInput(pathIdx, stepIdx, field, value){
   var c=seqCat(); if(!c || !c.paths[pathIdx] || !c.paths[pathIdx].steps[stepIdx]) return;
   var step = c.paths[pathIdx].steps[stepIdx];
   if(field === 'template'){ step.template = String(value); }
+  else if(field === 'media_url'){ step.media_url = String(value); }
   else if(field === 'seconds'){
     step.seconds = Math.max(0, parseInt(value,10) || 0);
     // live-update the human-readable hint without a full re-render (keeps cursor in field)
@@ -3305,6 +3322,8 @@ function seqAddStep(pathIdx, type){
   else if(type==='wait_reply') step = { type:'wait_reply', sentiment:'any' };
   else if(type==='build_demo') step = { type:'build_demo' };
   else if(type==='screenshot') step = { type:'screenshot' };
+  else if(type==='comparison_screenshot') step = { type:'comparison_screenshot' };
+  else if(type==='audio_mms') step = { type:'audio_mms', media_url:'', template:'' };
   else return;
   c.paths[pathIdx].steps.push(step);
   seqRenderCategory();
