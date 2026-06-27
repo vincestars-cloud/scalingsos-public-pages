@@ -833,6 +833,21 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
         </p>
       </div>
 
+      <div class="control-panel" id="seqSupportedTokensPanel" style="margin-bottom:16px">
+        <div style="font-size:.76rem;color:var(--text-secondary);line-height:1.45;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+          <div style="font-weight:800;color:var(--text-primary);margin-bottom:4px">Supported tokens with examples</div>
+          <div><b>{name}</b>, <b>{business}</b>, <b>{business_name}</b> -> Cutler Bay Plumbing (humanized from the business name; LLC/Inc/etc removed)</div>
+          <div><b>{raw_business_name}</b> -> CUTLER BAY PLUMBING LLC</div>
+          <div><b>{trade}</b> / <b>{search_term}</b> -> Plumbing from the sheet search_term</div>
+          <div><b>{city}</b> -> Cutler Bay from the sheet city</div>
+          <div><b>{noun}</b> -> jobs, customers, clients, or projects based on industry</div>
+          <div><b>{link}</b> / <b>{demo_url}</b> -> https://demo.scalingsos.com/cutler-bay-plumbing/</div>
+          <div><b>{website}</b> / <b>{website_url}</b> -> their current website, if captured</div>
+          <div><b>{maps_url}</b> -> their Google Maps profile URL</div>
+          <div><b>{phone}</b> -> the contact phone number</div>
+        </div>
+      </div>
+
       <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="seqCatTabs">
         <button class="btn btn-primary btn-sm" id="seqTabNoWebsite" onclick="seqSwitchCategory('no_website')">No Website</button>
         <button class="btn btn-outline btn-sm" id="seqTabExistingWebsite" onclick="seqSwitchCategory('existing_website')">Existing Website</button>
