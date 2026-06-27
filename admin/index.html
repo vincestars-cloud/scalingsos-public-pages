@@ -2975,6 +2975,19 @@ function seqSlug(s){
   return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || ('path-' + Date.now().toString(36));
 }
 
+function seqNextVariationId(cat){
+  var paths = (cat && Array.isArray(cat.paths)) ? cat.paths : [];
+  var max = paths.length;
+  paths.forEach(function(p, i){
+    max = Math.max(max, i + 1);
+    var m = String((p && p.id) || '').match(/^variation-(\d+)$/);
+    if(m) max = Math.max(max, parseInt(m[1], 10) || 0);
+  });
+  var n = max + 1;
+  while(paths.some(function(p){ return String((p && p.id) || '') === ('variation-' + n); })) n++;
+  return 'variation-' + n;
+}
+
 // Seed paths so the builder is populated on first view (NOT auto-saved).
 function seqSeedDefault(){
   function noWebsitePaths(){
@@ -3315,8 +3328,9 @@ function seqMoveStep(pathIdx, stepIdx, dir){
 function seqAddPath(){
   var c=seqCat(); if(!c) return;
   if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
-  var n = c.paths.length + 1;
-  c.paths.push({ id: seqSlug('path-' + n + '-' + Date.now().toString(36)), name: 'Path ' + n, weight: 0, steps: [] });
+  var id = seqNextVariationId(c);
+  var n = id.replace(/^variation-/, '');
+  c.paths.push({ id: id, name: 'Variation ' + n, weight: 0, steps: [] });
   seqEvenWeights(c);
   seqRenderCategory();
 }
@@ -3326,8 +3340,8 @@ function seqDuplicatePath(pathIdx){
   if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
   var src = c.paths[pathIdx];
   var copy = JSON.parse(JSON.stringify(src));
-  copy.name = src.name + ' (copy)';
-  copy.id = seqSlug(copy.name + '-' + Date.now().toString(36));
+  copy.id = seqNextVariationId(c);
+  copy.name = 'Variation ' + copy.id.replace(/^variation-/, '');
   c.paths.splice(pathIdx + 1, 0, copy);
   seqRenderCategory();
 }
