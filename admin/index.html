@@ -3588,6 +3588,8 @@ function openChat(i) {
   let messages = mergeContactTimeline(s.phone, (s.history || []).slice());
   try { const _lp = String(s.phone || '').replace(/\D/g, '').replace(/^1(\d{10})$/, '$1'); ((window._localMsgs || {})[_lp] || []).forEach(function (lm) { if (!messages.some(function (m) { return (m.body || m.content || m.message || m.text || '') === lm.text; })) messages.push({ direction: 'outbound', body: lm.text, timestamp: lm.time }); }); } catch (e) {}
   if (!messages.length && (s.last_message || s.lastMessage)) { messages.push({ direction: (/in|reply|user/i.test(s.last_role || '') ? 'inbound' : 'outbound'), body: (s.last_message || s.lastMessage), timestamp: s.last_active || '' }); }
+  // hide render-fail / empty placeholder bubbles (clutter): explicit render_failed, or an outbound row with no text and no media
+  messages = messages.filter(function(m){ if(/render[_ ]?fail/i.test(String(m.status||m.intent||''))) return false; var _t=String(m.body||m.content||m.message||m.text||'').trim(); var _hm=(m.media&&m.media.length); var _d=String(m.direction||m.role||m.type||'').toLowerCase(); var _o=_d.includes('out')||_d.includes('admin')||_d.includes('assistant'); if(_o&&!_t&&!_hm) return false; return true; });
   body.innerHTML = messages.map(m => {
     const rawDir = String(m.direction || m.role || m.type || '').toLowerCase();
     const dir = rawDir.includes('out') || rawDir.includes('admin') || rawDir.includes('assistant') ? 'outbound' : 'inbound';
