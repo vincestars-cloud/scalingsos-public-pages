@@ -826,17 +826,17 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
       </div>
     </div>
 
-    <!-- MESSAGE SEQUENCES (Phase 1: UI + config only; does NOT change live sending) -->
+    <!-- MESSAGE SEQUENCES -->
     <div class="page" id="page-sequences">
       <div class="section-header">
         <h2>Message Sequences</h2>
-        <p>Define multi-step SMS outreach paths. Phase 1 &mdash; saves to config only; does not change live sending yet.</p>
+        <p>Define multi-step SMS outreach paths. The Sequence Interpreter reads this config for allowlisted/live-armed runs.</p>
       </div>
 
       <div class="control-panel" style="margin-bottom:16px;background:#fffbeb;border-color:#fde68a">
         <p style="font-size:.8rem;color:#92400e;line-height:1.5;margin:0">
-          <b>Builder only.</b> These sequences save to a new <code>sequences</code> config key and are <b>not yet read by any live workflow</b>.
-          Current SMS sending still uses the Settings &rarr; SMS Message Templates. A future phase will wire an interpreter to run these paths.
+          <b>Controlled rollout.</b> These sequences save to the <code>sequences</code> config key and are read by the Sequence Interpreter.
+          Existing SMS workflows still run their current paths; sequence sends require the interpreter safety flags and allowlist/live settings.
         </p>
       </div>
 
