@@ -1490,12 +1490,10 @@ function renderDashboard() {
   var msg1Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg1Message,range):contactedUnique;
   var msg2Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg2Message,range):contactedUnique;
   var dashItems=convs.filter(function(s){ var ph=_normPh10(s&&s.phone); return ph && ph.slice(0,3)!=='555' && (typeof _sessionInRangeOf!=='function' || _sessionInRangeOf(s,range)); });
-  var dashDisp={ni:0,co:0,offer:0,client:0};
-  dashItems.forEach(function(s){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(s):''; if(b==='not_interested')dashDisp.ni++; else if(b==='interested')dashDisp.co++; else if(b==='offer')dashDisp.offer++; else if(b==='client')dashDisp.client++; });
-  notInterested=dashDisp.ni; considering=dashDisp.co; offers=dashDisp.offer; clients=dashDisp.client;
+  /* flicker_fix_20260626: removed the local _conversationOutcomeBucket heuristic (it gave a stale/broad count e.g. 517 that fought the RPC). Outcome cards are set ONLY by applyTelnyxMessageMetrics (outcomes_by_period RPC) below. */
 	  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
 	  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
-	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); set('dbOfferSent',offers); set('dbNotInterested',notInterested); set('dbConsidering',considering); set('dbClients',clients);
+	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); /* flicker_fix_20260626: dbOfferSent/dbNotInterested/dbConsidering/dbClients are set ONLY by applyTelnyxMessageMetrics (outcomes_by_period RPC) - single source of truth, no local override. */
 	  set('dbReply1Sub', msg1Denom ? ((reply1*100/msg1Denom).toFixed(1)+'% of '+msg1Denom.toLocaleString()+' Msg1 contacts') : '0 Msg1 contacts in period');
 	  set('dbReply2Sub', msg2Denom ? ((reply2*100/msg2Denom).toFixed(2)+'% of '+msg2Denom.toLocaleString()+' Msg2 contacts') : '0 Msg2 contacts in period');
   set('dbOfferSentSub', reply2 ? ((offers*100/reply2).toFixed(1)+'% of Msg 2 replies') : '-- of Msg 2');
@@ -3253,7 +3251,8 @@ function applyTelnyxMessageMetrics(range, ids){
       function _ovSet(id,v){ var el=document.getElementById(id); if(el!=null) el.textContent=(typeof v==='number'?v.toLocaleString():v); }
       if(typeof tm.reply1==='number'){ _ovSet('dbReply1',tm.reply1); var m1c=Number(tm.msg1_contacts||0); var r1s=document.getElementById('dbReply1Sub'); if(r1s) r1s.textContent=m1c?((tm.reply1*100/m1c).toFixed(1)+'% of '+m1c.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts'; }
       if(typeof tm.reply2==='number'){ _ovSet('dbReply2',tm.reply2); var m2c=Number(tm.msg2_contacts||0); var r2s=document.getElementById('dbReply2Sub'); if(r2s) r2s.textContent=m2c?((tm.reply2*100/m2c).toFixed(2)+'% of '+m2c.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts'; }
-      if(tm.outcomes){ _ovSet('dbNotInterested',Number(tm.outcomes.not_interested||0)); _ovSet('dbConsidering',Number(tm.outcomes.interested||0)); _ovSet('dbOfferSent',Number(tm.outcomes.offers||0)); _ovSet('dbClients',Number(tm.outcomes.clients||0)); }
+      /* outcomes_cumulative_20260626: outcome cards = pipeline STATE, always all-time (single source = outcomes_by_period RPC). Period selector only affects activity cards. Prevents period/timezone gaps + the 517<->56 flicker. */
+      loadTelnyxMessageMetrics('all').then(function(tmA){ if(tmA&&tmA.outcomes){ _ovSet('dbNotInterested',Number(tmA.outcomes.not_interested||0)); _ovSet('dbConsidering',Number(tmA.outcomes.interested||0)); _ovSet('dbOfferSent',Number(tmA.outcomes.offers||0)); _ovSet('dbClients',Number(tmA.outcomes.clients||0)); } });
       if(typeof renderBarChart==='function'){
         if(Array.isArray(tm.top_industries)){ var _ti={}; tm.top_industries.forEach(function(x){ var _k=String(x.industry||'').toLowerCase().replace(/\s+/g,'_'); _ti[_k]=(_ti[_k]||0)+Number(x.count||0); }); renderBarChart('dbTopIndustries',_ti,'var(--green)'); }  /* top_industries_dedup_20260627 */
         if(Array.isArray(tm.replies_per_industry)){ var _rpi={}; tm.replies_per_industry.forEach(function(x){ _rpi[x.industry]=x.replies; }); renderBarChart('dbReplyIndustries',_rpi,'var(--blue)'); }
