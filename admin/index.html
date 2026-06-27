@@ -2961,6 +2961,7 @@ var SEQ_TOKENS = ['business','business_name','raw_business_name','name','trade',
 var SEQ_STEP_TYPES = [
   { type:'send',       label:'Send SMS' },
   { type:'wait',       label:'Wait (timed)' },
+  { type:'wait_no_reply', label:'Wait for no reply' },
   { type:'wait_reply', label:'Wait for reply' },
   { type:'build_demo', label:'Build demo' },
   { type:'screenshot', label:'Send screenshot' }
@@ -3035,6 +3036,7 @@ function seqNormalize(raw){
     var t = String(s.type||'');
     if(t==='send')        return { type:'send', template: String(s.template!=null?s.template:'') };
     if(t==='wait')        return { type:'wait', seconds: Math.max(0, parseInt(s.seconds,10) || 0) };
+    if(t==='wait_no_reply') return { type:'wait_no_reply', seconds: Math.max(0, parseInt(s.seconds,10) || 0) };
     if(t==='wait_reply')  return { type:'wait_reply', sentiment: (s.sentiment==='positive'?'positive':'any') };
     if(t==='build_demo')  return { type:'build_demo' };
     if(t==='screenshot')  return { type:'screenshot' };
@@ -3119,7 +3121,7 @@ function seqTokenChipsHtml(pathIdx, stepIdx){
 }
 
 function seqStepRowHtml(step, pathIdx, stepIdx, lastIdx){
-  var typeLabel = ({send:'Send SMS', wait:'Wait (timed)', wait_reply:'Wait for reply', build_demo:'Build demo', screenshot:'Send screenshot'})[step.type] || step.type;
+  var typeLabel = ({send:'Send SMS', wait:'Wait (timed)', wait_no_reply:'Wait for no reply', wait_reply:'Wait for reply', build_demo:'Build demo', screenshot:'Send screenshot'})[step.type] || step.type;
   var body = '';
   if(step.type === 'send'){
     body =
@@ -3134,6 +3136,14 @@ function seqStepRowHtml(step, pathIdx, stepIdx, lastIdx){
         '<input type="number" min="0" id="seqStep_'+pathIdx+'_'+stepIdx+'" value="'+(parseInt(step.seconds,10)||0)+'" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'seconds\',this.value)" style="width:110px;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:.82rem">' +
         '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">seconds</span>' +
         '<span style="font-size:.72rem;color:var(--text-muted)">('+seqHumanSeconds(parseInt(step.seconds,10)||0)+')</span>' +
+      '</div>';
+  } else if(step.type === 'wait_no_reply'){
+    body =
+      '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+        '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">Wait up to</span>' +
+        '<input type="number" min="0" id="seqStep_'+pathIdx+'_'+stepIdx+'" value="'+(parseInt(step.seconds,10)||0)+'" oninput="seqOnStepInput('+pathIdx+','+stepIdx+',\'seconds\',this.value)" style="width:110px;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:.82rem">' +
+        '<span style="font-size:.78rem;font-weight:700;color:var(--text-secondary)">seconds</span>' +
+        '<span style="font-size:.72rem;color:var(--text-muted)">('+seqHumanSeconds(parseInt(step.seconds,10)||0)+'); continues only if no inbound reply arrived after the last sequence send.</span>' +
       '</div>';
   } else if(step.type === 'wait_reply'){
     var pos = step.sentiment === 'positive';
@@ -3255,7 +3265,7 @@ function seqOnStepInput(pathIdx, stepIdx, field, value){
     step.seconds = Math.max(0, parseInt(value,10) || 0);
     // live-update the human-readable hint without a full re-render (keeps cursor in field)
     var row = document.getElementById('seqStep_'+pathIdx+'_'+stepIdx);
-    if(row){ var hint = row.parentNode.querySelector('span:last-child'); if(hint) hint.textContent = '('+seqHumanSeconds(step.seconds)+')'; }
+    if(row){ var hint = row.parentNode.querySelector('span:last-child'); if(hint) hint.textContent = step.type==='wait_no_reply' ? ('('+seqHumanSeconds(step.seconds)+'); continues only if no inbound reply arrived after the last sequence send.') : ('('+seqHumanSeconds(step.seconds)+')'); }
   }
   else if(field === 'sentiment'){ step.sentiment = (value==='positive'?'positive':'any'); }
 }
@@ -3278,6 +3288,7 @@ function seqAddStep(pathIdx, type){
   var step;
   if(type==='send')            step = { type:'send', template:'' };
   else if(type==='wait')       step = { type:'wait', seconds:60 };
+  else if(type==='wait_no_reply') step = { type:'wait_no_reply', seconds:21600 };
   else if(type==='wait_reply') step = { type:'wait_reply', sentiment:'any' };
   else if(type==='build_demo') step = { type:'build_demo' };
   else if(type==='screenshot') step = { type:'screenshot' };
@@ -5299,7 +5310,47 @@ function normalizeScrapeStatsLayout(){
 window._scrapeDateRange = window._scrapeDateRange || 'today';
 function setScrapeRange(r){ window._scrapeDateRange=r; var bs=document.querySelectorAll('[data-srange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-srange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestScrapeRender==='function') requestScrapeRender(); else if(typeof renderScraping==='function') renderScraping(); }
 function toggleScrapeDisp(grp){ var f='dispg:'+grp; window._scrapePage=0; if(typeof setScrapingFilter==='function') setScrapingFilter(_scrapingFilter===f?'all':f); }
-function toggleCommsDisp(grp){ window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+window._commsDispServerCache = window._commsDispServerCache || {};
+function commsMergeServerConversations(convs){
+  data.conversations = data.conversations || [];
+  var byPhone={};
+  data.conversations.forEach(function(c,i){ var ph=_normPhone(c&&c.phone); if(ph) byPhone[ph]=i; });
+  return (convs||[]).map(function(c){
+    var ph=_normPhone(c&&c.phone); if(!ph) return null;
+    var idx=byPhone[ph];
+    if(idx==null){
+      data.conversations.push(c);
+      idx=data.conversations.length-1;
+      byPhone[ph]=idx;
+    } else {
+      var old=data.conversations[idx]||{};
+      data.conversations[idx]=Object.assign({}, old, c, { history: (c.history&&c.history.length)?c.history:(old.history||[]) });
+    }
+    return {s:data.conversations[idx],i:idx};
+  }).filter(Boolean);
+}
+function ensureCommsDispositionConversations(grp){
+  grp=String(grp||'').toLowerCase();
+  if(!grp) return;
+  var cache=window._commsDispServerCache[grp];
+  if(cache && Date.now()-cache.at<300000) return;
+  if(window._commsDispServerLoading===grp) return;
+  window._commsDispServerLoading=grp;
+  fetch(N8N_BASE+'/scalingsos-admin-inbox?disposition='+encodeURIComponent(grp)+'&limit=1200&message_limit=12000')
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(j && Array.isArray(j.conversations)){
+        window._commsDispServerCache[grp]={at:Date.now(),total:Number(j.total||j.conversations.length)||j.conversations.length,conversations:j.conversations};
+        commsMergeServerConversations(j.conversations);
+        if(window._dispByPhone) window._dispMapLen=-1;
+        bumpPerfRev();
+        if(window._commsDispFilter===grp){ if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+      }
+      window._commsDispServerLoading='';
+    })
+    .catch(function(){ window._commsDispServerLoading=''; });
+}
+function toggleCommsDisp(grp){ window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ensureCommsDispositionConversations(window._commsDispFilter); ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; try{ var _co=(window._commsOutcomeCache||{})['all']; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
   var range=String(window._commsDateRange||'today');
@@ -5725,8 +5776,19 @@ function renderSmsComms() {
   var _cnr=document.getElementById('cmCalledNoReply'); if(_cnr) _cnr.textContent=Number(calledNoReply).toLocaleString();
   if (window._commsFilter==='replied') items=items.filter(function(x){return _commsHasInboundInPeriod(x.s);});
   else if (window._commsFilter==='replied2') items=items.filter(function(x){return _hasFollowupReply(x.s);});
-  else if (window._commsFilter==='called') { var _seenCalled={}; items=_allItems.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
-  if (window._commsDispFilter) { var _dg=DISP_GROUPS[window._commsDispFilter]||[]; var _seenD={}; items=_allItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(_seenD[ph])return false; var ok=_dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; if(ok)_seenD[ph]=1; return ok; }); items.sort(function(a,b){ return new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0); }); }
+  else if (window._commsFilter==='called') { var _seenCalled={}; items=items.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
+  if (window._commsDispFilter) {
+    var _sf=String(window._commsDispFilter||'').toLowerCase();
+    var _server=(window._commsDispServerCache||{})[_sf];
+    if(_server && Array.isArray(_server.conversations)){
+      items=commsMergeServerConversations(_server.conversations);
+    } else {
+      ensureCommsDispositionConversations(_sf);
+      var _dg=DISP_GROUPS[_sf]||[]; var _seenD={};
+      items=_allItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(_seenD[ph])return false; var ok=_dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; if(ok)_seenD[ph]=1; return ok; });
+    }
+    items.sort(function(a,b){ return new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0); });
+  }
   var searchEl=document.getElementById('commsSearch');
   if(searchEl && !searchEl.value && window._commsSearch && document.activeElement!==searchEl) window._commsSearch='';
   var q=String(window._commsSearch||'').toLowerCase().trim();
