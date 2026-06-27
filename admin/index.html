@@ -594,6 +594,13 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
           </div>
           <div id="msg2VariantTallyBody" style="overflow-x:auto"></div>
         </div>
+        <div id="pathResultsTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
+            <div style="font-size:.88rem;font-weight:800;color:#0f172a">Path Results <span style="font-weight:600;color:var(--text-muted);font-size:.72rem">(No Website sequences)</span></div>
+            <div id="pathResultsSub" style="font-size:.73rem;color:var(--text-muted);font-weight:600"></div>
+          </div>
+          <div id="pathResultsBody" style="overflow-x:auto"></div>
+        </div>
         <div id="commsControls" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
           <input id="commsSearch" placeholder="Search business or phone..." oninput="window._commsSearch=this.value;window._commsPage=0;requestCommsRender()" style="flex:1;min-width:200px;max-width:340px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:.85rem">
           <button id="commsFltAll" onclick="setCommsFilter('all')" style="padding:6px 13px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:700;background:#0f172a;color:#fff">All (<span id="commsCntAll">0</span>)</button>
@@ -5453,6 +5460,37 @@ function renderMsg2VariantTallies(sessions){
     }).catch(function(){});
   }
 }
+function loadPathResults(){
+  var bodyEl=document.getElementById('pathResultsBody'); if(!bodyEl) return;
+  var subEl=document.getElementById('pathResultsSub'); if(subEl) subEl.textContent='Cumulative pipeline state per sequence path (same disposition source as the outcome cards)';
+  var seqNames={};
+  try{ var sc=(window.prospectorConfigCache&&prospectorConfigCache.sequences&&prospectorConfigCache.sequences.no_website&&prospectorConfigCache.sequences.no_website.paths)||[]; sc.forEach(function(p){ if(p&&p.id) seqNames[p.id]=p.name||p.id; }); }catch(e){}
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-path-results?category=no_website').then(function(r){return r.json();}).then(function(d){
+    var arr=(d&&d.ok&&Array.isArray(d.paths))?d.paths:[];
+    if(!arr.length){ bodyEl.innerHTML='<div style="font-size:.78rem;color:var(--text-muted);padding:4px 0">No leads assigned to a sequence path yet. Populates once the Sequence Interpreter runs live.</div>'; return; }
+    var pct=function(n,dn){ dn=Number(dn||0); return dn>0?Math.round(100*Number(n||0)/dn)+'%':'0%'; };
+    var esc=(typeof escapeHtml==='function')?escapeHtml:function(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+    bodyEl.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.8rem"><thead><tr style="text-align:left;color:var(--text-muted);border-bottom:1px solid #e2e8f0">'
+      +'<th style="padding:7px 8px">Path</th><th style="padding:7px 8px;text-align:right">Leads</th><th style="padding:7px 8px;text-align:right">Sent</th><th style="padding:7px 8px;text-align:right">Delivered</th><th style="padding:7px 8px;text-align:right">Replied</th><th style="padding:7px 8px;text-align:right">Interested</th><th style="padding:7px 8px;text-align:right">Offers</th><th style="padding:7px 8px;text-align:right">Clients</th><th style="padding:7px 8px;text-align:right">Not interested</th><th style="padding:7px 8px;text-align:right">Positive</th>'
+      +'</tr></thead><tbody>'
+      +arr.map(function(r){
+        var label=seqNames[r.path]?(seqNames[r.path]+' ('+r.path+')'):r.path;
+        return '<tr style="border-bottom:1px solid #eef2f7">'
+          +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(label)+'</td>'
+          +'<td style="padding:8px;text-align:right;font-weight:700">'+Number(r.leads||0)+'</td>'
+          +'<td style="padding:8px;text-align:right">'+Number(r.sent||0)+'</td>'
+          +'<td style="padding:8px;text-align:right">'+Number(r.delivered||0)+'</td>'
+          +'<td style="padding:8px;text-align:right">'+Number(r.replied||0)+'</td>'
+          +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:700">'+Number(r.interested||0)+'</td>'
+          +'<td style="padding:8px;text-align:right;color:#b45309;font-weight:700">'+Number(r.offers||0)+'</td>'
+          +'<td style="padding:8px;text-align:right;color:#16a34a;font-weight:700">'+Number(r.clients||0)+'</td>'
+          +'<td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">'+Number(r.not_interested||0)+'</td>'
+          +'<td style="padding:8px;text-align:right;font-weight:800;color:#2563eb">'+(r.positive_pct!=null?(Number(r.positive_pct)+'%'):pct(Number(r.interested||0)+Number(r.offers||0)+Number(r.clients||0),r.sent))+'</td>'
+        +'</tr>';
+      }).join('')
+      +'</tbody></table>';
+  }).catch(function(){ bodyEl.innerHTML='<div style="font-size:.78rem;color:var(--text-muted);padding:4px 0">Path Results unavailable.</div>'; });
+}
 function commsGoPage(p){ window._commsPage=Math.max(0,p); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
 function openCommsForPhone(phone){
   var ph=String(phone||'').replace(/\D/g,'').replace(/^1(\d{10})$/,'$1').slice(-10);
@@ -5543,6 +5581,7 @@ function renderSmsComms() {
   var _rk=function(s){ var d=String(((typeof dispForPhone==='function'?dispForPhone(s.phone):null)||{}).disposition||'').toLowerCase(); if(d==='client')return 1; if(d==='considering')return 2; if(d==='interested_sms'||d==='interested')return 3; if(d==='offer_sent')return 4; if(/not_interest|undeliver|opted|do_not/.test(d))return 9; if(typeof _hasFollowupReply==='function'&&_hasFollowupReply(s))return 5; if(typeof _commsCalledNoReply==='function'&&_commsCalledNoReply(s))return 6; if(typeof _commsIsReplied==='function'&&_commsIsReplied(s))return 7; return 8; };
   items.sort(function(a,b){ return _rk(a.s)-_rk(b.s) || (new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0)); });
   if(typeof renderMsg2VariantTallies==='function') renderMsg2VariantTallies(items.map(function(x){ return x.s; }));
+  if(typeof loadPathResults==='function' && (!window._pathResultsAt || Date.now()-window._pathResultsAt>60000)){ window._pathResultsAt=Date.now(); try{ loadPathResults(); }catch(e){} }
   var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
   var repliedCount = items.filter(function(x){return _commsIsRepliedInPeriod(x.s);}).length;
   var replied2=items.filter(function(x){return _hasFollowupReplyInPeriod(x.s);}).length;
