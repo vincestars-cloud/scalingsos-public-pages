@@ -1040,7 +1040,8 @@ function primeAdminCaches() {
       bumpPerfRev();
     }).catch(function(){ window._scrapeRowsLoading = false; });
   }
-  if (window._msgLogRows == null && !window._msgLogLoading && typeof loadMsgLog === 'function') {
+  var page = currentPageName ? currentPageName() : 'dashboard';
+  if ((page === 'comms' || page === 'analytics' || page === 'scraping') && window._msgLogRows == null && !window._msgLogLoading && typeof loadMsgLog === 'function') {
     window._msgLogLoading = true;
     loadMsgLog().finally(function(){ window._msgLogLoading = false; });
   }
@@ -1292,28 +1293,30 @@ async function fetchBusinesses() {
 
 async function loadAllData() {
   showLoading(true);
-  const [businesses, leads, events] = await Promise.all([
-    (window._bizCache && window._bizAt && (Date.now()-window._bizAt)<90000) ? Promise.resolve(window._bizCache) : fetchBusinesses().then(function(_b){ window._bizAt=Date.now(); window._bizCache=_b; return _b; }),
-    fetchSheet(GIDS.leads),
-    fetchSheet(GIDS.events)
-  ]);
+  const businesses = await ((window._bizCache && window._bizAt && (Date.now()-window._bizAt)<90000) ? Promise.resolve(window._bizCache) : fetchBusinesses().then(function(_b){ window._bizAt=Date.now(); window._bizCache=_b; return _b; }));
   data = {
     businesses,
-    leads,
-    events,
+    leads: (data&&data.leads)||[],
+    events: (data&&data.events)||[],
     sms: (data&&data.sms)||[],
     conversations: (data&&data.conversations)||[],
     calls: (data&&data.calls)||[]
   };
-  if(!window._inboxAt || (Date.now()-window._inboxAt)>120000){ window._inboxAt=Date.now(); fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
-  if(!window._smsSheetAt || (Date.now()-window._smsSheetAt)>120000){
+  if(!prospectorConfigCache && !window._prospectorConfigLoading){
+    window._prospectorConfigLoading=true;
+    refreshProspectorConfigCache().then(function(){ bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).finally(function(){ window._prospectorConfigLoading=false; });
+  }
+  var page = currentPageName ? currentPageName() : 'dashboard';
+  if((page==='comms'||page==='activity'||page==='analytics') && (!window._inboxAt || (Date.now()-window._inboxAt)>120000)){ window._inboxAt=Date.now(); fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
+  if((page==='comms'||page==='analytics'||page==='scraping') && (!window._smsSheetAt || (Date.now()-window._smsSheetAt)>120000)){
     window._smsSheetAt=Date.now();
     fetchSheet(GIDS.sms).then(function(rows){ data.sms=rows||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._smsSheetAt=0; });
   }
-  if(!window._callsAt || (Date.now()-window._callsAt)>45000){
+  if((page==='activity'||page==='analytics'||page==='comms') && (!window._callsAt || (Date.now()-window._callsAt)>45000)){
     window._callsAt=Date.now();
     fetch(N8N_BASE + '/scalingsos-calls').then(function(r){ return r.json(); }).then(function(rows){ data.calls=rows||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._callsAt=0; });
   }
+  if((page==='activity'||page==='analytics') && typeof ensureActivityData==='function') ensureActivityData();
   bumpPerfRev();
   document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
   showLoading(false);
@@ -1322,6 +1325,31 @@ async function loadAllData() {
     try { if(typeof updateNotificationBell==='function') updateNotificationBell(); } catch(e) {}
     if(currentPageName()==='system' && typeof loadN8nData==='function') try{loadN8nData();}catch(e){}
   }, 0);
+}
+
+async function ensureActivityData(force) {
+  const fresh = !force && window._activityDataAt && (Date.now() - window._activityDataAt) < 120000;
+  if (fresh || window._activityDataLoading) return window._activityDataPromise || Promise.resolve(data);
+  window._activityDataLoading = true;
+  window._activityDataPromise = Promise.all([
+    fetchSheet(GIDS.leads),
+    fetchSheet(GIDS.events),
+    (!window._callsAt || (Date.now()-window._callsAt)>45000) ? fetch(N8N_BASE + '/scalingsos-calls').then(function(r){ return r.json(); }).catch(function(){ return data.calls || []; }) : Promise.resolve(data.calls || [])
+  ]).then(function(res){
+    data.leads = res[0] || [];
+    data.events = res[1] || [];
+    data.calls = res[2] || [];
+    window._activityDataAt = Date.now();
+    window._callsAt = Date.now();
+    bumpPerfRev();
+    return data;
+  }).catch(function(e){
+    console.warn('activity data unavailable', e);
+    return data;
+  }).finally(function(){
+    window._activityDataLoading = false;
+  });
+  return window._activityDataPromise;
 }
 
 async function refreshProspectorConfigCache() {
@@ -1393,6 +1421,13 @@ function navigate(page) {
     sequences: 'Message Sequences'
   }[page];
   closeSidebar();
+  if ((page === 'activity' || page === 'analytics') && typeof ensureActivityData === 'function') {
+    ensureActivityData().then(function(){ try{ renderCurrentPage(); }catch(e){} });
+  }
+  if (page === 'comms' && (!window._inboxAt || (Date.now()-window._inboxAt)>120000)) {
+    window._inboxAt=Date.now();
+    fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{ renderCurrentPage(); }catch(e){} }).catch(function(){ window._inboxAt=0; });
+  }
   setTimeout(renderCurrentPage, 0);
 }
 
@@ -3440,7 +3475,7 @@ function isRealBusiness(b) {
 
 async function fetchInbox() {
   try {
-    const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox');
+    const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000');
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
     return json.conversations || [];
@@ -3448,6 +3483,15 @@ async function fetchInbox() {
     console.warn('Admin inbox unavailable, falling back to SMS sheet:', e);
     return buildConversationsFromSheet(data.sms || []);
   }
+}
+
+async function fetchInboxThread(phone) {
+  const ph = String(phone || '').replace(/\D/g, '');
+  if (!ph) return null;
+  const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox?phone=' + encodeURIComponent(ph) + '&thread_limit=300');
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  const json = await resp.json();
+  return json && Array.isArray(json.conversations) ? (json.conversations[0] || null) : null;
 }
 
 function buildConversationsFromSheet(rows) {
@@ -5967,6 +6011,19 @@ function openChat(i) {
   { var _bb = document.getElementById('chatBuildBtn'); if (_bb) { _bb.style.display = 'inline-block'; _bb.disabled = false; _bb.textContent = s.demo_url ? 'Rebuild demo' : 'Build demo'; } var _ob = document.getElementById('chatOfferBtn'); if (_ob) _ob.style.display = 'inline-block'; }
   setCallUiState('idle', currentChatPhone ? 'Ready to call ' + formatPhone(currentChatPhone) : 'No phone selected');
   document.getElementById('chatModal').classList.add('open');
+  if (s.phone && !s._threadHydrated && !s._threadHydrating && typeof fetchInboxThread === 'function') {
+    s._threadHydrating = true;
+    fetchInboxThread(s.phone).then(function(full){
+      s._threadHydrating = false;
+      if (!full) return;
+      Object.assign(s, full);
+      s._threadHydrated = true;
+      if (_normPhone(currentChatPhone) === _normPhone(s.phone)) {
+        var idx = (data.conversations || []).findIndex(function(c){ return _normPhone(c.phone) === _normPhone(s.phone); });
+        if (idx >= 0) openChat(idx);
+      }
+    }).catch(function(){ s._threadHydrating = false; });
+  }
   if (s.has_unread) { s.has_unread = false; renderSmsComms(); updateNotificationBell(); }
 }
 
