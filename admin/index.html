@@ -576,17 +576,16 @@ if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').
       <div id="commsSMS">
         <div id="commsDateBar" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;font-size:.8rem"><span style="color:var(--text-muted);font-weight:600;margin-right:2px">Period:</span><button data-crange="today" onclick="setCommsRange('today')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:#0f172a;color:#fff">Today</button><button data-crange="yesterday" onclick="setCommsRange('yesterday')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:#fff;color:#334155">Yesterday</button><button data-crange="7d" onclick="setCommsRange('7d')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:#fff;color:#334155">Last 7 days</button><button data-crange="month" onclick="setCommsRange('month')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:#fff;color:#334155">This month</button><button data-crange="all" onclick="setCommsRange('all')" style="padding:5px 11px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:#fff;color:#334155">All time</button></div>
         <div id="commsStats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px">
-          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('client')" title="Filter Clients"><div class="label">Clients</div><div class="value" id="cmClients" style="color:#16a34a">--</div><div class="sub" id="cmClientsSub"></div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('considering')" title="Filter Considering"><div class="label">Considering</div><div class="value" id="cmConsidering" style="color:#ca8a04">--</div><div class="sub">interested after offer</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('interested')" title="Filter Interested"><div class="label">Interested</div><div class="value" id="cmInterested" style="color:#ca8a04">--</div><div class="sub">interest, no offer yet</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('offer')" title="Filter Offers Sent"><div class="label">Offers Sent</div><div class="value" id="cmOfferSent" style="color:#b45309">--</div><div class="sub" id="cmOfferSentSub"></div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('replied2')"><div class="label">Replied after msg 2</div><div class="value" id="cmReplied2" style="color:var(--purple)">--</div><div class="sub" id="cmReplied2Sub">got demo + replied</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('called')" title="Filter called but no SMS reply"><div class="label">Called No Reply</div><div class="value" id="cmCalledNoReply" style="color:#b45309">--</div><div class="sub">calls are separate from SMS replies</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('all')" title="Show all SMS conversations"><div class="label">Contacts Messaged</div><div class="value" id="cmContactsMessaged" style="color:var(--blue)">--</div><div class="sub" id="cmContactsMessagedSub">unique contacts attempted</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('all')" title="Show all SMS conversations"><div class="label">SMS Delivered</div><div class="value" id="cmDelivered" style="color:#0891b2">--</div><div class="sub" id="cmDeliveredSub">delivered message rows</div></div>
           <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('replied')"><div class="label">Replied after msg 1</div><div class="value" id="cmReplied1" style="color:var(--green)">--</div><div class="sub" id="cmReplied1Rate"></div></div>
-          <div class="stat-card"><div class="label">Outbound Msgs</div><div class="value" id="cmSent" style="color:var(--blue)">--</div><div class="sub" id="cmSentSub">message rows, not people</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('called')" title="Filter called but no SMS reply"><div class="label">Called No Reply</div><div class="value" id="cmCalledNoReply" style="color:#b45309">--</div><div class="sub">calls are separate from SMS replies</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="setCommsFilter('replied2')"><div class="label">Replied after msg 2</div><div class="value" id="cmReplied2" style="color:var(--purple)">--</div><div class="sub" id="cmReplied2Sub">got demo + replied</div></div>
           <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('ni')" title="Filter Not Interested"><div class="label">Not Interested</div><div class="value" id="cmNotInt" style="color:#dc2626">--</div></div>
-          <div class="stat-card"><div class="label">Delivered Msgs</div><div class="value" id="cmDelivered" style="color:#0891b2">--</div><div class="sub" id="cmDeliveredSub">delivered message rows</div></div>
-          <div class="stat-card"><div class="label">Contacts Attempted</div><div class="value" id="cmContactsMessaged" style="color:var(--blue)">--</div><div class="sub" id="cmContactsMessagedSub">unique contacts attempted</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('offer')" title="Filter Offers Sent"><div class="label">Offers Sent</div><div class="value" id="cmOfferSent" style="color:#b45309">--</div><div class="sub" id="cmOfferSentSub"></div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('interested')" title="Filter Interested"><div class="label">Interested</div><div class="value" id="cmInterested" style="color:#ca8a04">--</div><div class="sub">interest, no offer yet</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('considering')" title="Filter Considering"><div class="label">Considering</div><div class="value" id="cmConsidering" style="color:#ca8a04">--</div><div class="sub">interested after offer</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('client')" title="Filter Clients"><div class="label">Clients</div><div class="value" id="cmClients" style="color:#16a34a">--</div><div class="sub" id="cmClientsSub"></div></div>
         </div>
         <div id="pathResultsTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
@@ -3799,7 +3798,11 @@ function applyTelnyxMessageMetrics(range, ids){
     }
     if(ids.deliveredSub){
       var delSub=document.getElementById(ids.deliveredSub);
-      if(delSub) delSub.textContent=Number(tm.delivered||0).toLocaleString()+' delivered rows / '+Number(tm.failed||0).toLocaleString()+' failed rows';
+      if(delSub){
+        var delText=Number(tm.delivered||0).toLocaleString()+' delivered rows / '+Number(tm.failed||0).toLocaleString()+' failed rows';
+        if(ids.deliveredCost) delText+=' | Cost: '+money((Number(tm.delivered||0))*rate);
+        delSub.textContent=delText;
+      }
     }
     if(ids.contacts){
       var telnyxContacts=Number(tm.sent_contacts||0);
@@ -5803,7 +5806,7 @@ function renderSmsComms() {
     if(_m1r) _m1r.textContent=sentTotal?(Math.round(100*repliedCount/sentTotal)+'% reply rate'):'';
   }
   var _cmd=document.getElementById('cmDelivered'); if(_cmd)_cmd.textContent=_cmst?Number(_cmst.delivered).toLocaleString():'—';
-  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub'});
+  if(typeof applyTelnyxMessageMetrics==='function') applyTelnyxMessageMetrics(_cmRange,{sent:'cmSent',sentSub:'cmSentSub',delivered:'cmDelivered',deliveredSub:'cmDeliveredSub',deliveredCost:true,contacts:'cmContactsMessaged',contactsSub:'cmContactsMessagedSub',reply1:'cmReplied1',reply1Sub:'cmReplied1Rate',reply2:'cmReplied2',reply2Sub:'cmReplied2Sub'});
   var _contactStats=(window._msgLogRows!=null&&typeof computeContactMsgStats==='function')?computeContactMsgStats(_cmRange==='all', _cmRange):null;
   var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&_contactStats&&!telnyxCached(_cmRange))_ccm.textContent=Number(_contactStats.contacts||0).toLocaleString();
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
