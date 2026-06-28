@@ -2980,6 +2980,7 @@ var SEQ_STEP_TYPES = [
 // In-memory working copy of the sequences config. Never auto-saved.
 var seqState = null;            // { no_website:{...}, existing_website:{...} }
 var seqActiveCategory = 'no_website';
+var SEQ_MAX_PATHS = 10;
 
 function seqSlug(s){
   return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48) || ('path-' + Date.now().toString(36));
@@ -3079,7 +3080,7 @@ function seqNormalize(raw){
   }
   function normCat(c, category){
     c = c || {};
-    var paths = Array.isArray(c.paths) ? c.paths.map(normPath).slice(0,4) : [];
+    var paths = Array.isArray(c.paths) ? c.paths.map(normPath).slice(0,SEQ_MAX_PATHS) : [];
     if(category === 'existing_website'){
       var idMap = {'fast-nudge':'website-fast-nudge','demo-first':'website-demo-first','reply-paced':'website-reply-paced'};
       paths.forEach(function(p){ if(p && idMap[p.id]) p.id = idMap[p.id]; });
@@ -3267,9 +3268,9 @@ function seqRenderCategory(){
 
   html += (cat.paths||[]).map(function(p,i){ return seqPathCardHtml(p, i); }).join('');
 
-  var canAdd = (cat.paths||[]).length < 4;
+  var canAdd = (cat.paths||[]).length < SEQ_MAX_PATHS;
   html += '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
-  html +=   (canAdd ? '<button type="button" class="btn btn-outline" onclick="seqAddPath()">+ Add path</button>' : '<span style="font-size:.78rem;color:var(--text-muted)">Maximum of 4 paths per category.</span>');
+  html +=   (canAdd ? '<button type="button" class="btn btn-outline" onclick="seqAddPath()">+ Add path</button>' : '<span style="font-size:.78rem;color:var(--text-muted)">Maximum of '+SEQ_MAX_PATHS+' paths per category.</span>');
   html +=   '<button type="button" class="btn btn-outline btn-sm" onclick="seqResetWeights()">Even-split weights</button>';
   html += '</div>';
 
@@ -3354,7 +3355,7 @@ function seqMoveStep(pathIdx, stepIdx, dir){
 
 function seqAddPath(){
   var c=seqCat(); if(!c) return;
-  if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
+  if((c.paths||[]).length >= SEQ_MAX_PATHS){ showToast('Maximum of '+SEQ_MAX_PATHS+' paths per category', true); return; }
   var id = seqNextVariationId(c);
   var n = id.replace(/^variation-/, '');
   c.paths.push({ id: id, name: 'Variation ' + n, weight: 0, steps: [] });
@@ -3364,7 +3365,7 @@ function seqAddPath(){
 
 function seqDuplicatePath(pathIdx){
   var c=seqCat(); if(!c || !c.paths[pathIdx]) return;
-  if((c.paths||[]).length >= 4){ showToast('Maximum of 4 paths per category', true); return; }
+  if((c.paths||[]).length >= SEQ_MAX_PATHS){ showToast('Maximum of '+SEQ_MAX_PATHS+' paths per category', true); return; }
   var src = c.paths[pathIdx];
   var copy = JSON.parse(JSON.stringify(src));
   copy.id = seqNextVariationId(c);
