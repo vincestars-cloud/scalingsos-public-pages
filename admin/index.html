@@ -1670,9 +1670,11 @@ function toggleCommsPathFilter(category,path){
   window._commsFilter='all'; window._commsDispFilter=''; window._commsPage=0; window._commsSearch='';
   var searchEl=document.getElementById('commsSearch'); if(searchEl) searchEl.value='';
   _setCommsFilterButtonState('all');
+  if(!same && typeof ensureCommsPathConversations==='function') ensureCommsPathConversations(category,path);
   if(typeof loadPathResults==='function') loadPathResults();
   if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms();
 }
+window.toggleCommsPathFilter=toggleCommsPathFilter;
 
 function renderDashboardAnalytics(range, prospectRows) {
   if (typeof renderBarChart !== 'function') return;
@@ -5417,6 +5419,7 @@ window._scrapeDateRange = window._scrapeDateRange || 'today';
 function setScrapeRange(r){ window._scrapeDateRange=r; var bs=document.querySelectorAll('[data-srange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-srange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestScrapeRender==='function') requestScrapeRender(); else if(typeof renderScraping==='function') renderScraping(); }
 function toggleScrapeDisp(grp){ var f='dispg:'+grp; window._scrapePage=0; if(typeof setScrapingFilter==='function') setScrapingFilter(_scrapingFilter===f?'all':f); }
 window._commsDispServerCache = window._commsDispServerCache || {};
+window._commsPathServerCache = window._commsPathServerCache || {};
 function commsMergeServerConversations(convs){
   data.conversations = data.conversations || [];
   var byPhone={};
@@ -5434,6 +5437,33 @@ function commsMergeServerConversations(convs){
     }
     return {s:data.conversations[idx],i:idx};
   }).filter(Boolean);
+}
+function _commsPathCacheKey(category,path){
+  return String(category||'')+'|'+String(path||'');
+}
+function ensureCommsPathConversations(category,path){
+  category=String(category||'').trim();
+  path=String(path||'').trim();
+  if(!path) return;
+  var key=_commsPathCacheKey(category,path);
+  var cache=window._commsPathServerCache[key];
+  if(cache && Date.now()-cache.at<300000) return;
+  if(window._commsPathServerLoading===key) return;
+  window._commsPathServerLoading=key;
+  fetch(N8N_BASE+'/scalingsos-admin-inbox?seq_category='+encodeURIComponent(category)+'&seq_path='+encodeURIComponent(path)+'&limit=1200&message_limit=12000')
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(j && Array.isArray(j.conversations)){
+        window._commsPathServerCache[key]={at:Date.now(),total:Number(j.total||j.conversations.length)||j.conversations.length,conversations:j.conversations};
+        commsMergeServerConversations(j.conversations);
+        if(window._dispByPhone) window._dispMapLen=-1;
+        bumpPerfRev();
+        var active=window._commsPathFilter||{};
+        if(active.category===category && active.path===path){ if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+      }
+      window._commsPathServerLoading='';
+    })
+    .catch(function(){ window._commsPathServerLoading=''; });
 }
 function ensureCommsDispositionConversations(grp){
   grp=String(grp||'').toLowerCase();
@@ -5909,7 +5939,14 @@ function renderSmsComms() {
 	  }
 	  var pathFilter=window._commsPathFilter||null;
 	  if(pathFilter&&pathFilter.path){
-	    items=items.filter(function(x){ return _sessionHasSeqPath(x.s,pathFilter.category,pathFilter.path); });
+	    var pathKey=(typeof _commsPathCacheKey==='function')?_commsPathCacheKey(pathFilter.category,pathFilter.path):(String(pathFilter.category||'')+'|'+String(pathFilter.path||''));
+	    var pathServer=(window._commsPathServerCache||{})[pathKey];
+	    if(pathServer && Array.isArray(pathServer.conversations)){
+	      items=commsMergeServerConversations(pathServer.conversations);
+	    } else {
+	      if(typeof ensureCommsPathConversations==='function') ensureCommsPathConversations(pathFilter.category,pathFilter.path);
+	      items=items.filter(function(x){ return _sessionHasSeqPath(x.s,pathFilter.category,pathFilter.path); });
+	    }
 	  }
 	  var searchEl=document.getElementById('commsSearch');
   if(searchEl && !searchEl.value && window._commsSearch && document.activeElement!==searchEl) window._commsSearch='';
