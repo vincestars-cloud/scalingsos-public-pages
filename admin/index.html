@@ -5733,7 +5733,7 @@ function loadPathResults(){
   var bodyEl=document.getElementById('pathResultsBody'); if(!bodyEl) return;
   var subEl=document.getElementById('pathResultsSub');
   var activeFilter=window._commsPathFilter||null;
-  if(subEl) subEl.textContent=activeFilter&&activeFilter.path?('Filtering conversations by '+activeFilter.path+'; click the row again to clear.'):'Click a path row to filter the conversation list.';
+  if(subEl) subEl.textContent=activeFilter&&activeFilter.path?('Filtering conversations by '+activeFilter.path+'; click the row again to clear.'):'Click a path row to filter the conversation list. Rates after Replied use the replied-after-Msg-1 cohort.';
   var seqNames={no_website:{},existing_website:{}};
   try{
     var seq=(window.prospectorConfigCache&&prospectorConfigCache.sequences)||{};
@@ -5758,28 +5758,37 @@ function loadPathResults(){
 	        var delivered=Number(r.delivered||0);
 	        var replied=Number(r.replied||0);
 	        var msg2Replied=Number(r.msg2_replied||0);
-	        var msg2Contacts=Number(r.msg2_contacts||0);
 	        var interested=Number(r.interested||0);
 	        var notInterested=Number(r.not_interested||0);
 	        var active=activeFilter&&activeFilter.category===cat&&activeFilter.path===r.path;
 	        var rowStyle='border-bottom:1px solid #eef2f7;cursor:pointer;background:'+(active?'#eff6ff':'transparent');
-	        return '<tr data-seq-category="'+esc(encodeURIComponent(cat))+'" data-seq-path="'+esc(encodeURIComponent(String(r.path||'')))+'" onclick="toggleCommsPathFilter(decodeURIComponent(this.getAttribute(\'data-seq-category\')||\'\'),decodeURIComponent(this.getAttribute(\'data-seq-path\')||\'\'))" title="Filter conversations to '+esc(label)+'" style="'+rowStyle+'">'
+	        return '<tr data-path-filter-row="1" data-seq-category="'+esc(encodeURIComponent(cat))+'" data-seq-path="'+esc(encodeURIComponent(String(r.path||'')))+'" title="Filter conversations to '+esc(label)+'" style="'+rowStyle+'">'
 	          +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(label)+'</td>'
 	          +'<td style="padding:8px;text-align:right">'+delivered+'</td>'
 	          +'<td style="padding:8px;text-align:right">'+replied+'</td>'
 	          +'<td style="padding:8px;text-align:right;font-weight:800;color:#2563eb">'+pctField(r.replied_pct,replied,delivered)+'</td>'
-	          +'<td style="padding:8px;text-align:right;font-weight:800;color:#7c3aed">'+pctField(r.msg2_reply_pct,msg2Replied,msg2Contacts)+'</td>'
+	          +'<td style="padding:8px;text-align:right;font-weight:800;color:#7c3aed" title="Msg 2 replies / contacts who replied after Msg 1">'+pct(msg2Replied,replied)+'</td>'
 	          +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:700">'+interested+'</td>'
-	          +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:800">'+pctField(r.interested_pct,interested,replied)+'</td>'
+	          +'<td style="padding:8px;text-align:right;color:#ca8a04;font-weight:800" title="Interested / contacts who replied after Msg 1">'+pct(interested,replied)+'</td>'
 	          +'<td style="padding:8px;text-align:right;color:#b45309;font-weight:700">'+Number(r.offers||0)+'</td>'
 	          +'<td style="padding:8px;text-align:right;color:#16a34a;font-weight:700">'+Number(r.clients||0)+'</td>'
 	          +'<td style="padding:8px;text-align:right;color:#dc2626;font-weight:700">'+notInterested+'</td>'
-	          +'<td style="padding:8px;text-align:right;font-weight:800;color:#dc2626">'+pctField(r.not_interested_pct,notInterested,replied)+'</td>'
+	          +'<td style="padding:8px;text-align:right;font-weight:800;color:#dc2626" title="Not interested / contacts who replied after Msg 1">'+pct(notInterested,replied)+'</td>'
 	        +'</tr>';
       }).join('')
       +'</tbody></table></div>';
     }).join('');
     bodyEl.innerHTML=sections || '<div style="font-size:.78rem;color:var(--text-muted);padding:4px 0">No sequence path results yet.</div>';
+    if(!bodyEl.dataset.pathClickBound){
+      bodyEl.dataset.pathClickBound='1';
+      bodyEl.addEventListener('click',function(ev){
+        var row=ev.target&&ev.target.closest?ev.target.closest('tr[data-path-filter-row="1"]'):null;
+        if(!row || !bodyEl.contains(row)) return;
+        var cat=decodeURIComponent(row.getAttribute('data-seq-category')||'');
+        var path=decodeURIComponent(row.getAttribute('data-seq-path')||'');
+        if(path && typeof toggleCommsPathFilter==='function') toggleCommsPathFilter(cat,path);
+      });
+    }
   }).catch(function(){ bodyEl.innerHTML='<div style="font-size:.78rem;color:var(--text-muted);padding:4px 0">Path Results unavailable.</div>'; });
 }
 function commsGoPage(p){ window._commsPage=Math.max(0,p); if(typeof requestCommsRender==='function') requestCommsRender(); else renderSmsComms(); }
