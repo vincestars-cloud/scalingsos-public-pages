@@ -299,8 +299,9 @@ onkeypress="if(event.key==='Enter')doAuth()">
 <script>
 function _h(s){var h=0;for(var i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return'h'+Math.abs(h).toString(36);}
 var _C=_h('scalingsos2026');
-function doAuth(){var pw=document.getElementById('auth-pw').value;if(_h(pw)===_C){localStorage.setItem('sos_admin',_C);document.getElementById('auth-gate').style.display='none';if(typeof loadAllData==='function')loadAllData();else if(typeof fetchBusinesses==='function')fetchBusinesses();}else{document.getElementById('auth-err').style.display='block';}}
-if(localStorage.getItem('sos_admin')===_C){document.getElementById('auth-gate').style.display='none';}
+function hideAuthGate(){var g=document.getElementById('auth-gate');if(g){g.style.display='none';g.style.pointerEvents='none';}}
+function doAuth(){var pw=document.getElementById('auth-pw').value;if(_h(pw)===_C){localStorage.setItem('sos_admin',_C);hideAuthGate();if(typeof loadAllData==='function')loadAllData();else if(typeof fetchBusinesses==='function')fetchBusinesses();}else{document.getElementById('auth-err').style.display='block';}}
+if(localStorage.getItem('sos_admin')===_C){hideAuthGate();}
 </script>
 
 <!-- OVERLAY -->
@@ -5762,7 +5763,7 @@ function loadPathResults(){
 	        var notInterested=Number(r.not_interested||0);
 	        var active=activeFilter&&activeFilter.category===cat&&activeFilter.path===r.path;
 	        var rowStyle='border-bottom:1px solid #eef2f7;cursor:pointer;background:'+(active?'#eff6ff':'transparent');
-	        return '<tr onclick="toggleCommsPathFilter('+JSON.stringify(cat)+','+JSON.stringify(String(r.path||''))+')" title="Filter conversations to '+esc(label)+'" style="'+rowStyle+'">'
+	        return '<tr data-seq-category="'+esc(encodeURIComponent(cat))+'" data-seq-path="'+esc(encodeURIComponent(String(r.path||'')))+'" onclick="toggleCommsPathFilter(decodeURIComponent(this.getAttribute(\'data-seq-category\')||\'\'),decodeURIComponent(this.getAttribute(\'data-seq-path\')||\'\'))" title="Filter conversations to '+esc(label)+'" style="'+rowStyle+'">'
 	          +'<td style="padding:8px;font-weight:800;color:#0f172a">'+esc(label)+'</td>'
 	          +'<td style="padding:8px;text-align:right">'+delivered+'</td>'
 	          +'<td style="padding:8px;text-align:right">'+replied+'</td>'
