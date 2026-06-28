@@ -4470,18 +4470,30 @@ async function loadProspectorState() {
       const rate = Math.max(1, Math.min(60, parseInt(cfg.outreach_per_minute) || 1));
       const sl = document.getElementById('targetSlider'); if (sl) sl.value = rate;
       const lb = document.getElementById('targetVal'); if (lb) lb.textContent = rate;
-      const ledgerSent = Number(
-        (cfg.metrics_snapshot && (cfg.metrics_snapshot.sent_today || cfg.metrics_snapshot.outbound_today || cfg.metrics_snapshot.seq_send_today)) ||
-        (cfg.metrics_cache && (cfg.metrics_cache.sent_today || cfg.metrics_cache.outbound_today || cfg.metrics_cache.seq_send_today)) ||
-        (cfg.cached_metrics && (cfg.cached_metrics.sent_today || cfg.cached_metrics.outbound_today || cfg.cached_metrics.seq_send_today)) ||
+      const msg1SentInitial = Number(
+        (cfg.metrics_snapshot && (cfg.metrics_snapshot.sms1_sent_today || cfg.metrics_snapshot.msg1_contacts_today || cfg.metrics_snapshot.msg1_today)) ||
+        (cfg.metrics_cache && (cfg.metrics_cache.sms1_sent_today || cfg.metrics_cache.msg1_contacts_today || cfg.metrics_cache.msg1_today)) ||
+        (cfg.cached_metrics && (cfg.cached_metrics.sms1_sent_today || cfg.cached_metrics.msg1_contacts_today || cfg.cached_metrics.msg1_today)) ||
+        (cfg.outreach && cfg.outreach.sms_today) ||
+        cfg.daily_sent_today ||
         0
       );
-      const legacySent = Number((cfg.outreach && cfg.outreach.sms_today) || cfg.daily_sent_today || 0);
-      const sent = ledgerSent || legacySent || 0;
+      const sent = msg1SentInitial || 0;
       const cap = cfg.daily_cap || 2500;
       const capInput = document.getElementById('dailyCapInput'); if (capInput) capInput.value = Math.max(1, parseInt(cap, 10) || 5000);
       const stEl = document.getElementById('statSentToday'); if (stEl) stEl.textContent = Number(sent).toLocaleString() + ' / ' + Number(cap).toLocaleString();
-      const stSub = document.getElementById('statSentSub'); if (stSub) stSub.textContent = (prospectorOn ? 'SMS sending' : 'SMS paused') + (sent >= cap ? ' \u2014 daily cap reached' : ' \u2014 auto-pauses at ' + Number(cap).toLocaleString());
+      const stSub = document.getElementById('statSentSub'); if (stSub) stSub.textContent = (prospectorOn ? 'Msg 1 sending' : 'Msg 1 paused') + ' \u2014 follow-ups excluded' + (sent >= cap ? ' \u2014 daily cap reached' : ' \u2014 auto-pauses at ' + Number(cap).toLocaleString());
+      try{
+        if(typeof loadTelnyxMessageMetrics==='function'){
+          loadTelnyxMessageMetrics('today').then(function(tm){
+            if(!tm || !tm.ok) return;
+            var msg1Only=Number(tm.msg1_contacts!=null?tm.msg1_contacts:(tm.sms1_sent_today!=null?tm.sms1_sent_today:(tm.sms1_contacts!=null?tm.sms1_contacts:0)))||0;
+            var capNow=Number((document.getElementById('dailyCapInput')||{}).value||cap)||cap;
+            var el=document.getElementById('statSentToday'); if(el) el.textContent=msg1Only.toLocaleString()+' / '+Number(capNow).toLocaleString();
+            var sub=document.getElementById('statSentSub'); if(sub) sub.textContent=(prospectorOn?'Msg 1 sending':'Msg 1 paused')+' \u2014 follow-ups excluded'+(msg1Only>=capNow?' \u2014 daily cap reached':' \u2014 auto-pauses at '+Number(capNow).toLocaleString());
+          }).catch(function(){});
+        }
+      }catch(_e){}
       const tog = document.getElementById('prospectorToggle'), lbl = document.getElementById('prospectorLabel'), st = document.getElementById('prospectorStatus');
       tog.classList.toggle('on', prospectorOn); lbl.textContent = prospectorOn ? 'SMS Sending' : 'SMS Paused';
       st.className = 'prospector-status ' + (prospectorOn ? 'scanning' : 'paused');
