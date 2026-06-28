@@ -3780,8 +3780,12 @@ function applyTelnyxMessageMetrics(range, ids){
   var _applyTM=function(tm){
     if(!tm || !tm.ok) return;
     var rate=0.0129;
+    var lrnRate=0.0015;
     var delivered=Number(tm.delivered||0);
-    var cost=delivered*rate;
+    var deliveryCost=delivered*rate;
+    var lrnContacts=Number(tm.lrn_contacts!=null?tm.lrn_contacts:(tm.sent_contacts!=null?tm.sent_contacts:(tm.delivered_contacts!=null?tm.delivered_contacts:delivered)))||0;
+    var lrnCost=lrnContacts*lrnRate;
+    var cost=deliveryCost+lrnCost;
     function money(n){ return '$'+Number(n||0).toFixed(2); }
     function num(id){ var el=id&&document.getElementById(id); return Number(String((el&&el.textContent)||'').replace(/[^0-9.-]/g,''))||0; }
     if(ids.sent){
@@ -3800,7 +3804,7 @@ function applyTelnyxMessageMetrics(range, ids){
       var delSub=document.getElementById(ids.deliveredSub);
       if(delSub){
         var delText=Number(tm.delivered||0).toLocaleString()+' delivered rows / '+Number(tm.failed||0).toLocaleString()+' failed rows';
-        if(ids.deliveredCost) delText+=' | Cost: '+money((Number(tm.delivered||0))*rate);
+        if(ids.deliveredCost) delText+=' | Cost: '+money(cost)+' (delivery '+money(deliveryCost)+' + LRN '+money(lrnCost)+')';
         delSub.textContent=delText;
       }
     }
