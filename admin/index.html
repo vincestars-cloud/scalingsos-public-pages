@@ -3592,9 +3592,12 @@ function isRealBusiness(b) {
 }
 
 
-async function fetchInbox() {
+async function fetchInbox(opts) {
   try {
-    const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000');
+    opts = opts || {};
+    const fresh = opts.fresh || opts.no_cache || opts.refresh;
+    const cacheBust = fresh ? ('&refresh=1&_ts=' + Date.now()) : '';
+    const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000' + cacheBust);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
     return json.conversations || [];
@@ -3991,6 +3994,13 @@ function dispForPhone(phone){ if(!window._dispByPhone || window._dispMapLen!==((
 	    });
 	    var json=await resp.json().catch(function(){ return {}; });
 	    if(!resp.ok || (json&&json.ok===false)) throw new Error((json&&json.error)||('HTTP '+resp.status));
+	    var blocked = (json && (json.blocked_disposition || (json.sheet && json.sheet.blocked_disposition))) || '';
+	    if(blocked){
+	      showToast('Status not saved: Interested/Considering requires a reply after Msg 2.', true);
+	      window._inboxAt=0;
+	      fetchInbox({fresh:true}).then(function(c){ data.conversations=c||[]; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }).catch(function(){});
+	      return;
+	    }
 	  }catch(e){
 	    showToast('Failed to save phone status: '+e.message, true);
 	    return;
@@ -4007,6 +4017,8 @@ function dispForPhone(phone){ if(!window._dispByPhone || window._dispMapLen!==((
 	  showToast('Status: '+(dispLabel(value)||'cleared'));
 	  if(typeof loadPathResults==='function') loadPathResults();
 	  if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms();
+	  window._inboxAt=0;
+	  fetchInbox({fresh:true}).then(function(c){ data.conversations=c||[]; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }).catch(function(){});
 	  var sp=document.getElementById('page-scraping'); if(sp&&sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping();
 	}
 async function updateScrapeDisposition(placeId, disposition, notes) {
@@ -5870,6 +5882,15 @@ function latestSessionMediaUrls(s){
   add(s&&s.media_urls);
   return out;
 }
+function latestSessionMediaStatus(s){
+  var hist=(s&&Array.isArray(s.history))?s.history:[];
+  for(var i=hist.length-1;i>=0;i--){
+    var m=hist[i]||{};
+    var urls=(typeof timelineMediaUrls==='function')?timelineMediaUrls(m):[];
+    if(urls&&urls.length) return String(m.status||m.delivery_status||'').toLowerCase();
+  }
+  return String((s&&s.status)||'').toLowerCase();
+}
 function normalizeMmsMediaUrl(url){
   var u=String(url||'').trim();
   if(!u) return '';
@@ -5900,6 +5921,10 @@ function mediaThumbHtml(url){
 function smsListMediaThumbs(s){
   var urls=latestSessionMediaUrls(s).slice(0,2);
   if(!urls.length) return '';
+  var st=latestSessionMediaStatus(s);
+  if(/fail|failed|undeliver|reject|cancel|error/.test(st)){
+    return '<div class="sms-media-thumbs" style="margin-top:6px;color:#dc2626;font-weight:800;font-size:.78rem">MMS attachment failed - queued for retry</div>';
+  }
   return '<div class="sms-media-thumbs" style="display:flex;flex-wrap:wrap;align-items:center;gap:0;margin-top:1px">'+urls.map(mediaThumbHtml).join('')+'</div>';
 }
 function renderSmsComms() {
