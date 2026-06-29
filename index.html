@@ -33,7 +33,7 @@ h1.display .ln1,h1.display .ln2{display:block;}
   position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;
   box-shadow:0 20px 60px rgba(10,31,58,.22),0 0 0 1px rgba(0,0,0,.08);user-select:none;
 }
-.player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:block;}
 
 /* thin deceptive load bar pinned to very top — feels like a short video, no time shown */
 .loadbar{position:absolute;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,.14);z-index:7;pointer-events:none;}
@@ -192,42 +192,14 @@ window.SSOS = {
   </div>
 
   <!-- PLAYER -->
-  <div class="player paused" id="player">
-    <video id="v" playsinline preload="auto" autoplay muted loop poster="" onclick="SP.toggle()"></video>
-    <div class="loadbar"><div class="lfill" id="lfill"></div></div>
-
-    <div class="tap-sound" id="tapSound" onclick="SP.unmute()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
-      Enable sound
-    </div>
-
-    <div class="bigplay" id="bigplay" onclick="SP.toggle()">
-      <div class="circle"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      <span class="label">Play Video</span>
-    </div>
-
-    <div class="controls" id="controls">
-      <div class="seek" id="seek" onclick="SP.seekClick(event)">
-        <div class="ch-tip" id="chtip"></div>
-      </div>
-      <div class="ctrlrow">
-        <button onclick="SP.toggle()" id="ppBtn" aria-label="Play/Pause"><svg id="ppIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <button onclick="SP.toggleMute()" id="muteBtn" aria-label="Mute"><svg id="muteIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg></button>
-        <div class="spacer"></div>
-        <div class="setwrap">
-          <button onclick="SP.toggleSettings(event)" id="setBtn" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
-          <div class="setmenu" id="setmenu" onclick="event.stopPropagation()">
-            <div class="grp"><div class="glabel">Speed</div><div class="spdrow" id="spdrow"></div></div>
-            <div class="setdiv"></div>
-            <div class="grp"><div class="glabel">Volume</div><div class="volrow">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
-              <input type="range" id="volr" min="0" max="1" step="0.05" value="1"/>
-            </div></div>
-          </div>
-        </div>
-        <button onclick="SP.fullscreen()" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-      </div>
-    </div>
+  <div class="player" id="player">
+    <iframe
+      src="https://docs.google.com/presentation/d/e/2PACX-1vSg_aUEMGwbVlLSZ-F5pjnhhs319u2oi7tKQ_16UjhSRyWwcOzfZQQhdhdpXJ55OLgkiL6RtLbhEx9f/pubembed?start=false&loop=false&delayms=3000"
+      title="ScalingSOS website presentation"
+      loading="lazy"
+      allowfullscreen="true"
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"></iframe>
   </div>
 
   <!-- BENEFIT STRIP -->
@@ -316,98 +288,17 @@ window.SSOS = {
 <script>
 (function(){
   var C=window.SSOS, N8N=C.N8N;
-  var v=document.getElementById('v'), player=document.getElementById('player');
-  var bigplay=document.getElementById('bigplay'), tapSound=document.getElementById('tapSound'), lfill=document.getElementById('lfill');
-  var seek=document.getElementById('seek'), chtip=document.getElementById('chtip');
-  var DEFAULT_RATE=1.2, SPEEDS=[0.5,0.75,1,1.2,1.5,1.75,2];
-  var DOTS_AFTER=(C.DOTS_AFTER!=null?C.DOTS_AFTER:5); // reveal chapter dots after this many seconds of play
-  var gifMode=true; // true while video is autoplaying muted (GIF mode); first unmute restarts from 0
-
-  v.src=C.VIDEO_URL; if(C.POSTER) v.setAttribute('poster',C.POSTER);
-
-  // visitor + session
   function uid(){ try{var a=new Uint8Array(8);(crypto||window.msCrypto).getRandomValues(a);return Array.prototype.map.call(a,function(b){return('0'+b.toString(16)).slice(-2)}).join('');}catch(e){return 't'+(performance.now()|0);} }
   var visitorId=localStorage.getItem('ssos_vid'); if(!visitorId){visitorId=uid();localStorage.setItem('ssos_vid',visitorId);}
   var sessionId=sessionStorage.getItem('ssos_sid'); if(!sessionId){sessionId=uid();sessionStorage.setItem('ssos_sid',sessionId);}
   function utm(){var p=new URLSearchParams(location.search),o={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){if(p.get(k))o[k]=p.get(k)});return o;}
-
-  // analytics
-  var maxPct=0, reachedCta=false, lastSent=0;
+  var reachedCta=false;
   function post(url,body,beacon){try{var data=JSON.stringify(body);if(beacon&&navigator.sendBeacon){navigator.sendBeacon(url,new Blob([data],{type:'application/json'}));return;}fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:data,keepalive:!!beacon}).catch(function(){});}catch(e){}}
   post(C.TRACK_URL,{kind:'visit',visitor_id:visitorId,session_id:sessionId,path:location.pathname,referrer:document.referrer,user_agent:navigator.userAgent,utm:utm(),tz:(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(_e){return ''}})(),lang:(navigator.language||'')});
-  function sendProgress(beacon){var d=v.duration||0;post(C.TRACK_URL,{kind:'video',visitor_id:visitorId,session_id:sessionId,video_id:'main',duration_seconds:Math.round(d),watched_seconds:Math.round(v.currentTime||0),max_pct:Math.round(maxPct),last_pct:Math.round(d?(v.currentTime/d*100):0),completed:maxPct>=95,reached_cta:reachedCta,utm:utm()},beacon);}
-
-  // deceptive bar curve
-  function feel(real){return Math.min(1,Math.pow(Math.max(0,Math.min(1,real)),C.FEEL_EXP));}
-  function feelInv(disp){return Math.pow(Math.max(0,Math.min(1,disp)),1/C.FEEL_EXP);}
-
-  // chapter dots (sit ON the seek bar)
-  function buildDots(){
-    var d=v.duration||(C.CHAPTERS[C.CHAPTERS.length-1].t+30);
-    Array.prototype.slice.call(seek.querySelectorAll('.dot')).forEach(function(el){ el.parentNode.removeChild(el); });
-    C.CHAPTERS.forEach(function(ch,i){
-      if(ch.t<=0.5 && i===0) return; // no dot at the very start
-      var el=document.createElement('div'); el.className='dot'; el.dataset.i=i;
-      el.style.left=(feel(ch.t/d)*100)+'%';
-      el.addEventListener('mouseenter',function(){ showTip(ch.label, parseFloat(el.style.left)); });
-      el.addEventListener('mouseleave',hideTip);
-      el.addEventListener('click',function(e){ e.stopPropagation(); SP.seekTo(ch.t); flashTip(ch.label, parseFloat(el.style.left)); });
-      seek.appendChild(el);
-    });
-  }
-  function showTip(label,leftPct){ chtip.textContent=label; chtip.style.left=leftPct+'%'; chtip.classList.add('show'); }
-  function hideTip(){ chtip.classList.remove('show'); }
-  function flashTip(label,leftPct){ showTip(label,leftPct); clearTimeout(flashTip._t); flashTip._t=setTimeout(hideTip,1400); }
-  function markActiveDot(){
-    var t=v.currentTime||0, idx=-1;
-    C.CHAPTERS.forEach(function(ch,i){ if(t>=ch.t-0.25) idx=i; });
-    seek.querySelectorAll('.dot').forEach(function(el){ el.classList.toggle('active',+el.dataset.i===idx); });
-  }
-  // speed menu
-  function buildSpeeds(){
-    var row=document.getElementById('spdrow'); row.innerHTML='';
-    SPEEDS.forEach(function(s){
-      var b=document.createElement('button'); b.className='spd'+(s===DEFAULT_RATE?' active':''); b.textContent=s+'x';
-      b.onclick=function(){ v.playbackRate=s; row.querySelectorAll('.spd').forEach(function(x){x.classList.remove('active')}); b.classList.add('active'); };
-      row.appendChild(b);
-    });
-  }
-
-  window.SP={
-    toggle:function(){ if(gifMode){ SP.unmute(); return; } if(v.paused)v.play(); else v.pause(); closeSettings(); },
-    toggleMute:function(){ v.muted=!v.muted; updateMute(); if(!v.muted) tapSound.classList.remove('show'); },
-    unmute:function(){ if(gifMode){gifMode=false;v.loop=false;v.currentTime=0;} v.muted=false; if(v.paused)v.play(); tapSound.classList.remove('show'); updateMute(); },
-    seekTo:function(t){ v.currentTime=Math.max(0,t); if(v.paused)v.play(); },
-    seekClick:function(e){ var r=seek.getBoundingClientRect(); var disp=(e.clientX-r.left)/r.width; if(v.duration){ v.currentTime=feelInv(disp)*v.duration; if(v.paused)v.play(); } },
-    toggleSettings:function(e){ e.stopPropagation(); document.getElementById('setmenu').classList.toggle('open'); },
-    fullscreen:function(){ var p=player;(p.requestFullscreen||p.webkitRequestFullscreen||function(){}).call(p); }
-  };
-  function closeSettings(){ var m=document.getElementById('setmenu'); if(m) m.classList.remove('open'); }
-  document.addEventListener('click',closeSettings);
-  var volr=document.getElementById('volr');
-  volr.addEventListener('input',function(){ v.volume=parseFloat(volr.value); v.muted=(v.volume===0); updateMute(); });
-  function updatePP(){var playing=!v.paused;player.classList.toggle('playing',playing);player.classList.toggle('paused',!playing);document.getElementById('ppIcon').innerHTML=playing?'<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';bigplay.classList.toggle('hide',playing||v.currentTime>0);}
-  function updateMute(){document.getElementById('muteIcon').innerHTML=v.muted?'<path d="M3 9v6h4l5 5V4L7 9H3zm13 3 3 3 1.4-1.4L17.8 12l1.6-1.6L18 9l-2 2-2-2-1.4 1.4L14.2 12l-1.6 1.6L14 16z"/>':'<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/>';}
-
-  // auto-hide the line+dots/controls a few seconds into playback (don't tempt skipping)
-  var hideT;
-  function showUI(){ player.classList.add('show-ui'); clearTimeout(hideT); if(!v.paused){ hideT=setTimeout(function(){ player.classList.remove('show-ui'); closeSettings(); }, 2800); } }
-  player.addEventListener('mousemove',showUI);
-  player.addEventListener('mouseleave',function(){ if(!v.paused){ clearTimeout(hideT); player.classList.remove('show-ui'); closeSettings(); } });
-
-  v.addEventListener('loadedmetadata',function(){ v.playbackRate=DEFAULT_RATE; buildDots(); });
-  v.addEventListener('play',function(){ updatePP(); showUI(); });
-  v.addEventListener('pause',function(){updatePP();clearTimeout(hideT);player.classList.add('show-ui');sendProgress(false);});
-  v.addEventListener('ended',function(){updatePP();player.classList.add('show-ui');sendProgress(false);});
-  v.addEventListener('timeupdate',function(){var d=v.duration||0;if(!d)return;var real=v.currentTime/d;lfill.style.width=(feel(real)*100)+'%';if(v.currentTime>=DOTS_AFTER)player.classList.add('show-dots');var pct=real*100;if(pct>maxPct)maxPct=pct;markActiveDot();var now=Date.now();if(now-lastSent>5000){lastSent=now;sendProgress(false);}});
-  bigplay.addEventListener('click',function(){v.muted=false;updateMute();});
-  v.addEventListener('playing',function(){if(v.muted)tapSound.classList.add('show');});
-
-  // CTA reached analytics (form in view)
+  function sendProgress(beacon){post(C.TRACK_URL,{kind:'presentation',visitor_id:visitorId,session_id:sessionId,video_id:'slides',reached_cta:reachedCta,utm:utm()},beacon);}
   if('IntersectionObserver' in window){ new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting&&!reachedCta){reachedCta=true;sendProgress(false);}})},{threshold:.5}).observe(document.getElementById('capture')); }
   document.addEventListener('visibilitychange',function(){if(document.hidden)sendProgress(true);});
   window.addEventListener('pagehide',function(){sendProgress(true);});
-  updatePP();updateMute();buildSpeeds();
 
   // ── capture form ──
   var fphone=document.getElementById('f_phone');
