@@ -3968,9 +3968,47 @@ function _buildDispMap(){ var rows=window._scrapeRows||[]; var map={}; var gg=fu
   ((data&&data.conversations)||[]).forEach(function(c){ var ph=_normPh10(c.phone); if(!ph) return; var st=normDisp(c.disposition||c.manual_disposition||c.pipeline||c.status||''); if(!dispVals[st]) st=''; if(!map[ph]) map[ph]={disposition:st,place_id:'',slug:'',business_name:c.business_name||'',demo_url:c.demo_url||'',website:c.website||c.website_url||'',maps_url:c.maps_url||'',industry:c.industry||''}; else if(!map[ph].disposition && st) map[ph].disposition=st; if(!map[ph].business_name && c.business_name) map[ph].business_name=c.business_name; });
   window._dispByPhone=map; window._dispMapLen=rows.length; window._dispConvLen=((data&&data.conversations)||[]).length; return map; }
 function dispForPhone(phone){ if(!window._dispByPhone || window._dispMapLen!==((window._scrapeRows||[]).length) || window._dispConvLen!==(((data&&data.conversations)||[]).length)) _buildDispMap(); var __dk=_normPh10(phone); var __db=(window._dispByPhone||{})[__dk]||{disposition:'',place_id:'',slug:''}; var __dov=(window._commsDispOverride||{})[__dk]; return __dov?Object.assign({},__db,{disposition:__dov}):__db; }
-function commsDispSelect(phone){ var cur=String(dispForPhone(phone).disposition||''); var opts=SCRAPE_DISPOSITIONS.map(function(d){ return '<option value="'+d[0]+'"'+(cur===d[0]?' selected':'')+'>'+d[1]+'</option>'; }).join(''); var c=dispColors(cur); return '<select onchange="setCommsDisposition('+_jsq(phone)+',this.value)" title="Lead status" style="font-size:.78rem;padding:5px 9px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:'+(cur?c[0]:'#f8fafc')+';color:'+(cur?c[1]:'#475569')+'">'+opts+'</select>'; }
-async function setCommsDisposition(phone, value){ var info=dispForPhone(phone); var key=info.place_id||info.slug||''; var nph=_normPh10(phone); if(key && typeof updateScrapeDisposition==='function'){ try{ await updateScrapeDisposition(key, value, null); }catch(e){} } else { try{ var resp=await fetch(N8N_BASE + '/scalingsos-admin-update', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ phone:phone, disposition:value, reviewer:'admin' }) }); if(!resp.ok) throw new Error('HTTP '+resp.status); }catch(e){ showToast('Failed to save phone status: '+e.message, true); return; } }
-  (window._scrapeRows||[]).forEach(function(r){ var pid='',dk=''; for(var k in r){ var kl=k.toLowerCase(); if(kl==='place_id')pid=r[k]; if(kl==='disposition')dk=k; } if(String(pid)===String(key)){ if(dk)r[dk]=value; else r.disposition=value; } }); ((data&&data.conversations)||[]).forEach(function(c){ if(_normPh10(c.phone)===nph){ c.status=value; c.disposition=value; } }); if(window._dispByPhone && window._dispByPhone[nph]) window._dispByPhone[nph].disposition=value; if(window._commsDispOverride){ window._commsDispOverride[nph]=value; } /* commsrevert_fix_20260626: dispForPhone prioritizes _commsDispOverride; keep it in sync so a saved status doesn't revert on re-render */ showToast('Status: '+(dispLabel(value)||'cleared')); if(typeof renderSmsComms==='function') renderSmsComms(); var sp=document.getElementById('page-scraping'); if(sp&&sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping(); }
+	function commsDispSelect(phone){ var cur=String(dispForPhone(phone).disposition||''); var opts=SCRAPE_DISPOSITIONS.map(function(d){ return '<option value="'+d[0]+'"'+(cur===d[0]?' selected':'')+'>'+d[1]+'</option>'; }).join(''); var c=dispColors(cur); return '<select onchange="setCommsDisposition('+_jsq(phone)+',this.value)" title="Lead status" style="font-size:.78rem;padding:5px 9px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-weight:700;background:'+(cur?c[0]:'#f8fafc')+';color:'+(cur?c[1]:'#475569')+'">'+opts+'</select>'; }
+	async function setCommsDisposition(phone, value){
+	  var info=dispForPhone(phone)||{};
+	  var key=info.place_id||info.slug||'';
+	  var nph=_normPh10(phone);
+	  var payload={
+	    phone: phone,
+	    disposition: value,
+	    manual_status: value,
+	    reviewer: 'admin',
+	    source: 'communications_manual_status_20260629'
+	  };
+	  if(nph) payload.normalized_phone=nph;
+	  if(info.place_id){ payload.place_id=info.place_id; payload.id=info.place_id; }
+	  if(info.slug) payload.slug=info.slug;
+	  try{
+	    var resp=await fetch(N8N_BASE + '/scalingsos-admin-update', {
+	      method:'POST',
+	      headers:{'Content-Type':'application/json'},
+	      body:JSON.stringify(payload)
+	    });
+	    var json=await resp.json().catch(function(){ return {}; });
+	    if(!resp.ok || (json&&json.ok===false)) throw new Error((json&&json.error)||('HTTP '+resp.status));
+	  }catch(e){
+	    showToast('Failed to save phone status: '+e.message, true);
+	    return;
+	  }
+	  (window._scrapeRows||[]).forEach(function(r){ var pid='',dk=''; for(var k in r){ var kl=k.toLowerCase(); if(kl==='place_id')pid=r[k]; if(kl==='disposition')dk=k; } if(String(pid)===String(key)){ if(dk)r[dk]=value; else r.disposition=value; } });
+	  ((data&&data.conversations)||[]).forEach(function(c){ if(_normPh10(c.phone)===nph){ c.status=value; c.disposition=value; c.manual_status=value; } });
+	  if(!window._commsDispOverride) window._commsDispOverride={};
+	  window._commsDispOverride[nph]=value;
+	  window._commsDispOverrideAt=Date.now();
+	  if(window._dispByPhone && window._dispByPhone[nph]) window._dispByPhone[nph].disposition=value;
+	  if(window._commsDispServerCache) window._commsDispServerCache={};
+	  if(window._commsOutcomeCache) window._commsOutcomeCache={};
+	  window._pathResultsAt=0;
+	  showToast('Status: '+(dispLabel(value)||'cleared'));
+	  if(typeof loadPathResults==='function') loadPathResults();
+	  if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms();
+	  var sp=document.getElementById('page-scraping'); if(sp&&sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping();
+	}
 async function updateScrapeDisposition(placeId, disposition, notes) {
   if (!placeId) { showToast('No place_id for this row', true); return; }
   const payload = { id: placeId, place_id: placeId };
