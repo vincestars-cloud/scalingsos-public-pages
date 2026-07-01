@@ -1,6 +1,15 @@
 const SUPABASE_URL = getSecret(['SCALINGSOS_SUPABASE_URL', 'SUPABASE_URL'], 'https://nnrjiywbmmumjhkkajwz.supabase.co').replace(/\/+$/, '');
 const SUPABASE_KEY = getSecret(['SCALINGSOS_SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_KEY'], '');
+const GOOGLE_KEYS = getSecret(['SCALINGSOS_GOOGLE_PLACES_API_KEYS', 'GOOGLE_PLACES_API_KEYS'], '')
+  .split(',')
+  .map(function (s) { return s.trim(); })
+  .filter(Boolean);
 const GOOGLE_KEY = getSecret(['SCALINGSOS_GOOGLE_PLACES_API_KEY', 'GOOGLE_PLACES_API_KEY', 'GCP_PLACES_API_KEY'], '');
+if (GOOGLE_KEY) GOOGLE_KEYS.push(GOOGLE_KEY);
+function googleKeyForTask(index) {
+  if (!GOOGLE_KEYS.length) return '';
+  return GOOGLE_KEYS[Math.abs(Number(index || 0)) % GOOGLE_KEYS.length];
+}
 const CITY_DATA_URL = 'https://demo.scalingsos.com/admin/places-city-data-40k.json';
 const SELF_WEBHOOK_URL = 'https://n8n.americanlifeteam.com/webhook/scalingsos-places-free-id-discovery';
 const FIELD_MASK = 'places.id,nextPageToken';
@@ -13,9 +22,9 @@ const INDUSTRY_TERMS = {
   fencing: ['fence company', 'fence contractor', 'fence installation', 'fence repair', 'wood fence contractor', 'privacy fence installation', 'chain link fence contractor', 'vinyl fence contractor'],
   flooring: ['flooring contractor', 'flooring company', 'floor installation', 'hardwood flooring', 'tile flooring'],
   funeral_home: ['funeral home', 'funeral services', 'cremation service', 'mortuary'],
-  home_care: ['home care agency', 'senior home care', 'in home care', 'home health care', 'caregiver service'],
+  home_care: ['non medical home care agency', 'private duty home care', 'in home caregiver service', 'senior home care agency', 'elderly home care agency', 'companion care service'],
   hvac: ['hvac contractor', 'air conditioning repair', 'heating and cooling', 'hvac company', 'ac repair'],
-  landscaping: ['landscaping company', 'lawn care service', 'lawn maintenance', 'lawn mowing service', 'landscape contractor', 'yard maintenance', 'residential landscaping', 'landscape design'],
+  landscaping: ['landscaping company', 'landscape contractor', 'lawn care service', 'lawn maintenance service', 'residential landscaping', 'yard maintenance service'],
   mobile_mechanic: ['mobile mechanic', 'mobile auto repair', 'mobile car mechanic', 'on site auto repair', 'mobile brake repair', 'mobile diagnostic', 'mechanic that comes to you', 'mobile vehicle repair'],
   mobile_truck_repair: ['mobile truck repair', 'mobile diesel truck repair', 'roadside truck repair', 'semi truck repair'],
   mold_remediation: ['mold remediation', 'mold removal', 'mold inspection', 'mold cleanup', 'black mold removal', 'water damage restoration mold', 'mold testing', 'mold abatement'],
@@ -27,7 +36,7 @@ const INDUSTRY_TERMS = {
   roofing: ['roofing company', 'roofing contractor', 'roofer', 'roof repair', 'roof replacement', 'metal roofing', 'gutter and roofing', 'storm damage roof repair'],
   septic_tank: ['septic tank service', 'septic pumping', 'septic company', 'septic repair', 'septic cleaning', 'septic system service', 'septic inspection', 'septic installer'],
   solar: ['solar installer', 'solar company', 'solar panel installation', 'residential solar'],
-  therapy_counseling: ['mental health counselor', 'therapist', 'counseling services', 'psychotherapy', 'marriage counselor', 'trauma therapist', 'anxiety therapist', 'family counseling'],
+  therapy_counseling: ['mental health counselor', 'licensed therapist', 'psychotherapy practice', 'counseling center', 'marriage and family therapist', 'individual therapy', 'family counseling', 'behavioral health practice'],
   tree_repair: ['tree service', 'tree removal', 'tree trimming', 'arborist', 'stump grinding'],
   tree_service: ['tree service', 'tree removal', 'tree trimming', 'arborist', 'stump grinding']
 };
@@ -237,13 +246,13 @@ function buildPlan(cities, states, industries, opts) {
   }
   return { tasks: tasks, cities: limitedCities, cells: planCells };
 }
-async function searchPage(term, cell, pageToken, pageSize) {
+async function searchPage(term, cell, pageToken, pageSize, keyIndex) {
   const body = { textQuery: term, pageSize: pageSize, includePureServiceAreaBusinesses: true, locationRestriction: { rectangle: rectanglePayload(cell.rect) } };
   if (pageToken) body.pageToken = pageToken;
   return await this.helpers.httpRequest({
     method: 'POST',
     url: 'https://places.googleapis.com/v1/places:searchText',
-    headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': GOOGLE_KEY, 'X-Goog-FieldMask': FIELD_MASK },
+    headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': googleKeyForTask(keyIndex), 'X-Goog-FieldMask': FIELD_MASK },
     body: body,
     json: true,
     timeout: 45000
@@ -257,7 +266,7 @@ async function queryCell(task, opts, depthState) {
   const pageCounts = [];
   for (let page = 0; page < opts.maxPages; page += 1) {
     try {
-      const resp = await searchPage.call(this, task.term, task.cell, next, opts.pageSize);
+      const resp = await searchPage.call(this, task.term, task.cell, next, opts.pageSize, task.__keyIndex || 0);
       depthState.apiCalls += 1;
       const places = Array.isArray(resp && resp.places) ? resp.places : [];
       pageCounts.push(places.length);
@@ -408,8 +417,8 @@ try {
     return [{ json: { ok: true, action: 'dry_run', job_id: jobId, mode: 'discover-ids', discovery_stage: opts.discoveryStage, grid_mode: opts.gridMode, field_mask: FIELD_MASK, states: states, industries: industries, selected_cities: plan.cities.length, selected_cells: (plan.cells || []).length, total_queries: total, estimated_max_api_calls: total * opts.maxPages, batch_start: start, batch_end: end, sample_task: plan.tasks[0] || null } }];
   }
   __stage = 'check_secrets';
-  if (!SUPABASE_KEY || !GOOGLE_KEY) {
-    return [{ json: { ok: false, error: 'Missing n8n environment/variable secrets for Google Places and/or Supabase service role.', missing_google_key: !GOOGLE_KEY, missing_supabase_key: !SUPABASE_KEY } }];
+  if (!SUPABASE_KEY || !GOOGLE_KEYS.length) {
+    return [{ json: { ok: false, error: 'Missing n8n environment/variable secrets for Google Places and/or Supabase service role.', missing_google_key: !GOOGLE_KEYS.length, missing_supabase_key: !SUPABASE_KEY } }];
   }
 
   __stage = 'save_job_started';
@@ -432,7 +441,7 @@ try {
   };
   await sbUpsert.call(this, '/rest/v1/places_discovery_jobs?on_conflict=id', [jobBase], 'resolution=merge-duplicates,return=minimal');
 
-  const selected = plan.tasks.slice(start, end);
+  const selected = plan.tasks.slice(start, end).map(function (task, i) { return Object.assign({}, task, { __keyIndex: start + i }); });
   const depthState = { apiCalls: 0, adaptiveSplits: 0 };
   const allRecords = [];
   const errors = [];
