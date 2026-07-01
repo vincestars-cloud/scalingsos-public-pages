@@ -1601,15 +1601,15 @@ function renderDashboard() {
   var delivered=Number(msgStats.delivered||0);
   var contactedUnique=Number(contactStats.deliveredContacts||0);
   var convItems=convs.map(function(s){ return {s:s}; });
-  var msg1Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg1Message,range):contactedUnique;
-  var msg2Denom=(typeof _countMessageContactsInRange==='function')?_countMessageContactsInRange(convItems,_isMsg2Message,range):contactedUnique;
+  var msg1Denom=(typeof _countDeliveredMessageContactsInRange==='function')?_countDeliveredMessageContactsInRange(convItems,_isMsg1Message,range):(typeof _countMessageContactsInRange==='function' ? _countMessageContactsInRange(convItems,_isMsg1Message,range) : contactedUnique);
+  var msg2Denom=(typeof _countDeliveredMessageContactsInRange==='function')?_countDeliveredMessageContactsInRange(convItems,_isMsg2Message,range):(typeof _countMessageContactsInRange==='function' ? _countMessageContactsInRange(convItems,_isMsg2Message,range) : contactedUnique);
   var dashItems=convs.filter(function(s){ var ph=_normPh10(s&&s.phone); return ph && ph.slice(0,3)!=='555' && (typeof _sessionInRangeOf!=='function' || _sessionInRangeOf(s,range)); });
   /* flicker_fix_20260626: removed the local _conversationOutcomeBucket heuristic (it gave a stale/broad count e.g. 517 that fought the RPC). Outcome cards are set ONLY by applyTelnyxMessageMetrics (outcomes_by_period RPC) below. */
 	  var calledNoReply=(typeof _calledNoReplyPhonesForRange==='function') ? Object.keys(_calledNoReplyPhonesForRange(range)).length : 0;
 	  function set(id,val){ var el=document.getElementById(id); if(el) el.textContent=(typeof val==='number'?val.toLocaleString():val); }
 	  set('dbSmsSent',msgStats.sent||0); set('dbDelivered',delivered); set('dbContactsMessaged',contactedUnique); set('dbReply1',reply1); set('dbReply2',reply2); set('dbCalledNoReply',calledNoReply); /* flicker_fix_20260626: dbOfferSent/dbNotInterested/dbConsidering/dbClients are set ONLY by applyTelnyxMessageMetrics (outcomes_by_period RPC) - single source of truth, no local override. */ if(prospectorConfigCache&&prospectorConfigCache.metrics_snapshot&&prospectorConfigCache.metrics_snapshot.by_status){ set('dbVisionBacklog', Number(prospectorConfigCache.metrics_snapshot.by_status.needs_site_score||0)); }
-	  set('dbReply1Sub', msg1Denom ? ((reply1*100/msg1Denom).toFixed(1)+'% of '+msg1Denom.toLocaleString()+' Msg1 contacts') : '0 Msg1 contacts in period');
-	  set('dbReply2Sub', msg2Denom ? ((reply2*100/msg2Denom).toFixed(2)+'% of '+msg2Denom.toLocaleString()+' Msg2 contacts') : '0 Msg2 contacts in period');
+	  set('dbReply1Sub', msg1Denom ? ((reply1*100/msg1Denom).toFixed(1)+'% of '+msg1Denom.toLocaleString()+' delivered Msg1 contacts') : '0 delivered Msg1 contacts in period');
+	  set('dbReply2Sub', msg2Denom ? ((reply2*100/msg2Denom).toFixed(2)+'% of '+msg2Denom.toLocaleString()+' delivered Msg2 contacts') : '0 delivered Msg2 contacts in period');
   set('dbOfferSentSub', reply2 ? ((offers*100/reply2).toFixed(1)+'% of Msg 2 replies') : '-- of Msg 2');
   set('dbClientsSub', offers ? ((clients*100/offers).toFixed(1)+'% conversion') : '-- conversion');
   /* dbSmsSentSub written by applyTelnyxMessageMetrics (single Telnyx source) */
@@ -3866,9 +3866,9 @@ function applyTelnyxMessageMetrics(range, ids){
       if(r1El && typeof tm.reply1==='number') r1El.textContent=Number(tm.reply1||0).toLocaleString();
     }
     if(ids.reply1Sub){
-      var m1cc=Number(tm.msg1_contacts||0);
+      var m1cc=Number(tm.msg1_delivered_contacts!=null?tm.msg1_delivered_contacts:tm.msg1_contacts)||0;
       var r1Sub=document.getElementById(ids.reply1Sub);
-      if(r1Sub && typeof tm.reply1==='number') r1Sub.textContent=m1cc?((tm.reply1*100/m1cc).toFixed(1)+'% of '+m1cc.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts';
+      if(r1Sub && typeof tm.reply1==='number') r1Sub.textContent=m1cc?((tm.reply1*100/m1cc).toFixed(1)+'% of '+m1cc.toLocaleString()+' delivered Msg1 contacts'):'0 delivered Msg1 contacts';
     }
     if(ids.reply2 && document.getElementById(ids.reply2) && typeof tm.reply2==='number'){
       document.getElementById(ids.reply2).textContent=Number(tm.reply2||0).toLocaleString();
@@ -3897,8 +3897,8 @@ function applyTelnyxMessageMetrics(range, ids){
     }
     if(ids.overview){
       function _ovSet(id,v){ var el=document.getElementById(id); if(el!=null) el.textContent=(typeof v==='number'?v.toLocaleString():v); }
-      if(typeof tm.reply1==='number'){ _ovSet('dbReply1',tm.reply1); var m1c=Number(tm.msg1_contacts||0); var r1s=document.getElementById('dbReply1Sub'); if(r1s) r1s.textContent=m1c?((tm.reply1*100/m1c).toFixed(1)+'% of '+m1c.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts'; }
-      if(typeof tm.reply2==='number'){ _ovSet('dbReply2',tm.reply2); var m2c=Number(tm.msg2_contacts||0); var r2s=document.getElementById('dbReply2Sub'); if(r2s) r2s.textContent=m2c?((tm.reply2*100/m2c).toFixed(2)+'% of '+m2c.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts'; }
+      if(typeof tm.reply1==='number'){ _ovSet('dbReply1',tm.reply1); var m1c=Number(tm.msg1_delivered_contacts!=null?tm.msg1_delivered_contacts:tm.msg1_contacts)||0; var r1s=document.getElementById('dbReply1Sub'); if(r1s) r1s.textContent=m1c?((tm.reply1*100/m1c).toFixed(1)+'% of '+m1c.toLocaleString()+' delivered Msg1 contacts'):'0 delivered Msg1 contacts'; }
+      if(typeof tm.reply2==='number'){ _ovSet('dbReply2',tm.reply2); var m2c=Number(tm.msg2_delivered_contacts!=null?tm.msg2_delivered_contacts:tm.msg2_contacts)||0; var r2s=document.getElementById('dbReply2Sub'); if(r2s) r2s.textContent=m2c?((tm.reply2*100/m2c).toFixed(2)+'% of '+m2c.toLocaleString()+' delivered Msg2 contacts'):'0 delivered Msg2 contacts'; }
       /* outcomes_cumulative_20260626: outcome cards = pipeline STATE, always all-time (single source = outcomes_by_period RPC). Period selector only affects activity cards. Prevents period/timezone gaps + the 517<->56 flicker. */
       /* SSOT_20260626: outcome cards from the reliable outcomes_by_period RPC (telnyx-message-metrics was flaky -> 0). Considering + Interested split. */
       fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period=all').then(function(r){return r.json();}).then(function(co){ var o=(co&&co.outcomes)||{}; _ovSet('dbConsidering',Number(o.considering||0)); _ovSet('dbInterested',Number(o.interested_sms||0)); _ovSet('dbOfferSent',Number(o.offers||0)); _ovSet('dbNotInterested',Number(o.not_interested||0)); _ovSet('dbClients',Number(o.clients||0)); }).catch(function(){});
@@ -5572,6 +5572,16 @@ function _msgObjMeta(m){
 }
 function _msgObjText(m){ return String((m&&(m.content||m.text||m.body||m.message))||''); }
 function _msgObjIsOutbound(m){ var d=String((m&&(m.direction||m.role||m.type))||'').toLowerCase(); return d.indexOf('out')>=0||d.indexOf('assistant')>=0||d.indexOf('admin')>=0; }
+function _msgObjDeliveredOk(m){
+  if(!m) return false;
+  var status=String(m.status||m.delivery_status||m.send_status||m.telnyx_status||'').toLowerCase();
+  var event=String(m.event_type||m.type||'').toLowerCase();
+  var marker=(status+' '+event).trim();
+  if(/not[_\s-]?delivered|undeliver|failed|failure|rejected|error|expired|blocked|bounced/.test(marker)) return false;
+  if(/delivered|delivery[_\s-]?success|sent/.test(marker)) return true;
+  if(m.delivered_at||m.deliveredAt||m.delivery_timestamp) return true;
+  return !status;
+}
 function _isMsg1Message(m){
   if(!m || !_msgObjIsOutbound(m) || _isCalledNoReplyMsg(m)) return false;
   var meta=_msgObjMeta(m);
@@ -5613,6 +5623,20 @@ function _countMessageContactsInRange(items,isMessageFn,range){
     var h=(s.history||[]);
     for(var i=0;i<h.length;i++){
       if(isMessageFn(h[i]) && (range==='all' || _msgDateInRange(h[i],range))){
+        seen[ph]=1; break;
+      }
+    }
+  });
+  return Object.keys(seen).length;
+}
+function _countDeliveredMessageContactsInRange(items,isMessageFn,range){
+  var seen={}; range=String(range||'all');
+  (items||[]).forEach(function(x){
+    var s=x.s||x, ph=_normPhone(s&&s.phone);
+    if(!ph) return;
+    var h=(s.history||[]);
+    for(var i=0;i<h.length;i++){
+      if(isMessageFn(h[i]) && _msgObjDeliveredOk(h[i]) && (range==='all' || _msgDateInRange(h[i],range))){
         seen[ph]=1; break;
       }
     }
@@ -5976,10 +6000,10 @@ function renderSmsComms() {
   var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&_contactStats&&!telnyxCached(_cmRange))_ccm.textContent=Number(_contactStats.deliveredContacts||0).toLocaleString();
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
   var _ccms=document.getElementById('cmContactsMessagedSub'); if(_ccms&&_contactStats&&!telnyxCached(_cmRange))_ccms.textContent=Number(_contactStats.deliveredContacts||0).toLocaleString()+' unique delivered contacts';
-  var _msg1Denom=typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg1Message,_cmRange):_denom;
-  var _msg2Denom=typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg2Message,_cmRange):_denom;
-  if(_m1r && !telnyxCached(_cmRange)) _m1r.textContent=_msg1Denom?(Math.round(100*repliedCount/_msg1Denom)+'% of '+_msg1Denom.toLocaleString()+' Msg1 contacts'):'0 Msg1 contacts in period';
-  var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub && !telnyxCached(_cmRange)) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' Msg2 contacts'):'0 Msg2 contacts in period';
+  var _msg1Denom=typeof _countDeliveredMessageContactsInRange==='function'?_countDeliveredMessageContactsInRange(items,_isMsg1Message,_cmRange):(typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg1Message,_cmRange):_denom);
+  var _msg2Denom=typeof _countDeliveredMessageContactsInRange==='function'?_countDeliveredMessageContactsInRange(items,_isMsg2Message,_cmRange):(typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg2Message,_cmRange):_denom);
+  if(_m1r && !telnyxCached(_cmRange)) _m1r.textContent=_msg1Denom?((100*repliedCount/_msg1Denom).toFixed(1)+'% of '+_msg1Denom.toLocaleString()+' delivered Msg1 contacts'):'0 delivered Msg1 contacts in period';
+  var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub && !telnyxCached(_cmRange)) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' delivered Msg2 contacts'):'0 delivered Msg2 contacts in period';
   var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(x.s):''; if(b==='not_interested')_cdc.ni++; else if(b==='interested')_cdc.co++; else if(b==='offer')_cdc.offer++; else if(b==='client')_cdc.client++; });
   // period-bounded outcomes (disposition_set_at): ALL periods loaded once into a cache, render reads cache synchronously => no async race
   window._commsOutcomeCache=window._commsOutcomeCache||{};
@@ -6991,13 +7015,15 @@ function renderAnalytics() {
   var calls=data.calls||[];
   var directCalls=calls.filter(function(c){var s=String(field(c,['source'],['source'])||'').toLowerCase(); return s.indexOf('direct_line')>=0||s.indexOf('forward')>=0||s.indexOf('telnyx_inbound')>=0;}).length;
   var voiceCalls=calls.filter(function(c){var s=String(field(c,['source'],['source'])||'').toLowerCase(); return s.indexOf('vapi')>=0||/assistant|voice_assistant/.test(s);}).length;
+  var anConvItems=convs.map(function(s){ return {s:s}; });
+  var anMsg1Denom=(typeof _countDeliveredMessageContactsInRange==='function')?_countDeliveredMessageContactsInRange(anConvItems,_isMsg1Message,'all'):Number(contactStats.deliveredContacts||0);
   function analyticsCallName(c){ var ph=field(c,['caller_phone','lead_phone'],['caller','phone'])||phoneFromText(field(c,['summary','transcript'],['summary','transcript'])||''); var m=(typeof phoneBusinessMatch==='function'?phoneBusinessMatch(ph):null)||{}; var raw=field(c, ['business_name','business_id','lead_name'], ['business','name'])||''; if(String(raw).charAt(0)==='{'){ try{ var obj=JSON.parse(raw); raw=obj.business_name||obj.business||obj.name||raw; }catch(e){} } return m.business_name||bizForPhone(ph)||raw||formatPhone(ph)||'Unknown'; }
   var disp={ni:0,considering:0,client:0,offer:0};
   rows.forEach(function(r){ var d=String((r.disposition||r.Disposition||'')).toLowerCase(); var st=String((r.status||r.Status||'')).toLowerCase(); if(d==='not_interested'||d==='not_interested_called'||st==='not_interested')disp.ni++; if(d==='considering'||d==='interested_sms'||d==='interested_called')disp.considering++; if(d==='client'||st==='client')disp.client++; if(d==='offer_sent'||st==='offer_sent')disp.offer++; });
   document.getElementById('analyticsStats').innerHTML =
     '<div class="stat-card blue"><div class="label">Contacts Messaged</div><div class="value">'+Number(contactStats.deliveredContacts||0).toLocaleString()+'</div><div class="sub">unique delivered contacts</div></div>'
     + '<div class="stat-card green"><div class="label">Delivered Msgs</div><div class="value" id="anDelivered">'+Number(msgStats.delivered||0).toLocaleString()+'</div><div class="sub" id="anDeliveredSub">'+Number(contactStats.deliveredContacts||0).toLocaleString()+' delivered contacts</div></div>'
-    + '<div class="stat-card green"><div class="label">Replied After Msg 1</div><div class="value">'+Number(reply1||0).toLocaleString()+'</div><div class="sub">'+(msgStats.delivered?((reply1*100/msgStats.delivered).toFixed(1)+'% reply rate'):'--')+'</div></div>'
+    + '<div class="stat-card green"><div class="label">Replied After Msg 1</div><div class="value">'+Number(reply1||0).toLocaleString()+'</div><div class="sub">'+(anMsg1Denom?((reply1*100/anMsg1Denom).toFixed(1)+'% of '+anMsg1Denom.toLocaleString()+' delivered Msg1 contacts'):'--')+'</div></div>'
     + '<div class="stat-card purple"><div class="label">Replied After Msg 2</div><div class="value" id="anReply2">'+Number(reply2||0).toLocaleString()+'</div><div class="sub" id="anReply2Sub">'+(msgStats.delivered?((reply2*100/msgStats.delivered).toFixed(2)+'% of delivered'):'--')+'</div></div>'
     + '<div class="stat-card"><div class="label">Considering</div><div class="value" id="anConsidering" style="color:#ca8a04">'+Number(disp.considering||0).toLocaleString()+'</div><div class="sub">interested after offer</div></div>'
     + '<div class="stat-card"><div class="label">Interested</div><div class="value" id="anInterested" style="color:#ca8a04">--</div><div class="sub">interest, no offer yet</div></div>'
