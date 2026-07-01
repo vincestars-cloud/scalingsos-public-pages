@@ -3804,7 +3804,7 @@ function callRecordingHtml(url){
 }
 function loadMsgLog(){ try{ return fetchSheetByName('MsgLog',{singleTokenHeaders:true, tq:'select A,B,C,D,E,F,G,H order by A desc limit 8000'}).then(function(rows){ window._msgLogRows=rows||[]; bumpPerfRev(); if(typeof renderSmsComms==='function') renderSmsComms(); var _sp=document.getElementById('page-scraping'); if(_sp&&_sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping(); var _dp=document.getElementById('page-dashboard'); if(_dp&&_dp.classList.contains('active')&&typeof renderDashboard==='function') renderDashboard(); return window._msgLogRows; }).catch(function(){ window._msgLogRows=[]; bumpPerfRev(); }); }catch(e){ window._msgLogRows=[]; bumpPerfRev(); } }
 window._telnyxMetricCache = window._telnyxMetricCache || {};
-window._telnyxMetricRev = 'msg1_delivered_contacts_20260701b';
+window._telnyxMetricRev = 'msg1_delivered_contacts_20260701c';
 function loadTelnyxMessageMetrics(range){
   var key=String(range||'today').toLowerCase();
   var cached=window._telnyxMetricCache[key];
@@ -6000,8 +6000,12 @@ function renderSmsComms() {
   var _denom=Number((_contactStats&&(_contactStats.deliveredContacts||_contactStats.contacts))||0);
   var _msg1Denom=typeof _countDeliveredMessageContactsInRange==='function'?_countDeliveredMessageContactsInRange(items,_isMsg1Message,_cmRange):(typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg1Message,_cmRange):_denom);
   var _msg2Denom=typeof _countDeliveredMessageContactsInRange==='function'?_countDeliveredMessageContactsInRange(items,_isMsg2Message,_cmRange):(typeof _countMessageContactsInRange==='function'?_countMessageContactsInRange(items,_isMsg2Message,_cmRange):_denom);
-  var _ccm=document.getElementById('cmContactsMessaged'); if(_ccm&&!telnyxCached(_cmRange))_ccm.textContent=Number(_msg1Denom||0).toLocaleString();
-  var _ccms=document.getElementById('cmContactsMessagedSub'); if(_ccms&&!telnyxCached(_cmRange))_ccms.textContent=Number(_msg1Denom||0).toLocaleString()+' unique delivered Msg1 contacts';
+  /* contacts_msg1_ssot_20260701c: this card means unique contacts with a delivered Msg1.
+     Do not local-fallback to broader conversation rows because follow-up-only contacts can inflate it. */
+  var _ccm=document.getElementById('cmContactsMessaged');
+  var _ccms=document.getElementById('cmContactsMessagedSub');
+  if(_ccm&&!telnyxCached(_cmRange)) _ccm.textContent='--';
+  if(_ccms&&!telnyxCached(_cmRange)) _ccms.textContent='loading delivered Msg1 contacts...';
   if(_m1r && !telnyxCached(_cmRange)) _m1r.textContent=_msg1Denom?((100*repliedCount/_msg1Denom).toFixed(1)+'% of '+_msg1Denom.toLocaleString()+' delivered Msg1 contacts'):'0 delivered Msg1 contacts in period';
   var _m2sub=document.querySelector('#cmReplied2')?.parentElement?.querySelector('.sub'); if(_m2sub && !telnyxCached(_cmRange)) _m2sub.textContent=_msg2Denom?((replied2*100/_msg2Denom).toFixed(1)+'% of '+_msg2Denom.toLocaleString()+' delivered Msg2 contacts'):'0 delivered Msg2 contacts in period';
   var _cdc={ni:0,co:0,offer:0,client:0}; items.forEach(function(x){ var b=(typeof _conversationOutcomeBucket==='function')?_conversationOutcomeBucket(x.s):''; if(b==='not_interested')_cdc.ni++; else if(b==='interested')_cdc.co++; else if(b==='offer')_cdc.offer++; else if(b==='client')_cdc.client++; });
