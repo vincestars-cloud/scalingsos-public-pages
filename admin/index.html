@@ -3804,12 +3804,13 @@ function callRecordingHtml(url){
 }
 function loadMsgLog(){ try{ return fetchSheetByName('MsgLog',{singleTokenHeaders:true, tq:'select A,B,C,D,E,F,G,H order by A desc limit 8000'}).then(function(rows){ window._msgLogRows=rows||[]; bumpPerfRev(); if(typeof renderSmsComms==='function') renderSmsComms(); var _sp=document.getElementById('page-scraping'); if(_sp&&_sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping(); var _dp=document.getElementById('page-dashboard'); if(_dp&&_dp.classList.contains('active')&&typeof renderDashboard==='function') renderDashboard(); return window._msgLogRows; }).catch(function(){ window._msgLogRows=[]; bumpPerfRev(); }); }catch(e){ window._msgLogRows=[]; bumpPerfRev(); } }
 window._telnyxMetricCache = window._telnyxMetricCache || {};
+window._telnyxMetricRev = 'msg1_delivered_contacts_20260701b';
 function loadTelnyxMessageMetrics(range){
   var key=String(range||'today').toLowerCase();
   var cached=window._telnyxMetricCache[key];
   if(cached && Date.now()-cached.at<30000) return Promise.resolve(cached.data);
-  var url='https://n8n.americanlifeteam.com/webhook/scalingsos-telnyx-message-metrics?period='+encodeURIComponent(key);
-  return fetch(url).then(function(r){ return r.json(); }).then(function(d){
+  var url='https://n8n.americanlifeteam.com/webhook/scalingsos-telnyx-message-metrics?period='+encodeURIComponent(key)+'&rev='+encodeURIComponent(window._telnyxMetricRev)+'&ts='+Date.now();
+  return fetch(url,{cache:'no-store'}).then(function(r){ return r.json(); }).then(function(d){
     if(d && d.ok) window._telnyxMetricCache[key]={at:Date.now(),data:d};
     return d;
   }).catch(function(){ return null; });
