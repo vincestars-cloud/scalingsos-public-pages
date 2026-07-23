@@ -117,8 +117,10 @@ section{padding:100px 0 80px}
 [data-rv="up"]{transform:translateY(48px)}
 [data-rv].in{opacity:1;transform:none}
 [data-px]{will-change:transform}
-@media(max-width:900px){
-  /* a 140px slide is a third of a phone screen - fade/lift only */
+@media(max-width:1024px){
+  /* On tablet/phone a full-width block sliding 140px sideways overflows the
+     viewport (clipped, but messy). Below 1024, every horizontal reveal becomes a
+     vertical lift so nothing ever pushes past the edge. */
   [data-rv="x"],[data-rv="xr"]{transform:translateY(20px)}
 }
 @media(prefers-reduced-motion:reduce){
@@ -334,7 +336,9 @@ body.on-service #svcpage{display:block}
   .nav-links a{padding:0 15px;font-size:17px}
   .brand{padding:0 20px;font-size:26px}
 }
-@media(max-width:900px){
+@media(max-width:1024px){
+  /* Switch to burger at tablet width - 5 links jam against the edge below ~1000px
+     ("FAQ" gets cut), and the page is already single-column here. */
   .nav-in{min-height:60px}
   .burger{display:block;width:56px}
   .nav-links{display:none}
@@ -430,7 +434,7 @@ body.on-service #svcpage{display:block}
 }
 </style>
 </head>
-<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 6115</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 4372</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
 
 <!-- NAV -->
 <nav class="nav">
@@ -908,8 +912,8 @@ body.on-service #svcpage{display:block}
   // scroll reveal
   var RV=[['.d-h2','x'],['.hero .sub','x'],['.hero-cta','x'],['.bk','up'],['.acc-i','x'],
           ['.band-stat div','up'],['.proc div','up'],['.rev','up'],['.promise div','up'],
-          ['.areas span','up'],['.visit .l','x'],['.visit .r','xr'],['.fgrid4 > div','up'],
-          ['.sv-lede','x'],['.sv-main h3','x'],['.sv-list li','up'],['.sv-side .box','xr'],['.sv-other a','up']];
+          ['.areas span','up'],['.visit .l','up'],['.visit .r','up'],['.fgrid4 > div','up'],
+          ['.sv-lede','x'],['.sv-main h3','x'],['.sv-list li','up'],['.sv-side .box','up'],['.sv-other a','up']];
   var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
       es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
     },{threshold:0.01,rootMargin:'0px'}) : null;
