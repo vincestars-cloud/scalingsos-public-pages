@@ -281,6 +281,46 @@ footer li a:hover{color:#fff}
 .nl button{background:var(--accent);border:0;padding:0 22px;cursor:pointer;font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;text-transform:uppercase}
 .fbot{border-top:1px solid var(--line);padding:24px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mute)}
 
+/* ---------- SERVICE PAGES (routed views) ---------- */
+#svcpage{display:none}
+body.on-service #home{display:none}
+body.on-service #svcpage{display:block}
+.sv-hero{position:relative;overflow:hidden;padding:120px 0 90px;border-bottom:1px solid var(--line)}
+.sv-hero-bg{position:absolute;inset:0;background:center/cover no-repeat;filter:brightness(1.04)}
+.sv-hero-scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.72) 45%,rgba(0,0,0,.35) 100%)}
+.sv-hero .wrap{position:relative;z-index:2}
+.crumb{display:inline-flex;align-items:center;gap:8px;font-family:"Roboto Condensed",sans-serif;font-style:italic;
+       font-weight:700;text-transform:uppercase;font-size:18px;line-height:20px;letter-spacing:normal;color:var(--accent);margin-bottom:18px}
+.crumb:hover{color:#fff}
+.sv-lede{font-family:"Roboto Condensed",sans-serif;font-weight:400;font-size:24px;line-height:32px;color:#e2e2e2;max-width:660px;margin:18px 0 28px}
+.sv-body{display:grid;grid-template-columns:1.5fr 1fr;gap:0;border:1px solid var(--line)}
+.sv-main{padding:52px 46px;border-right:1px solid var(--line)}
+.sv-side{padding:42px 34px;background:var(--surface)}
+.sv-main h3{font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;text-transform:uppercase;
+            font-size:36px;line-height:34px;letter-spacing:normal;margin:36px 0 14px}
+.sv-main h3:first-child{margin-top:0}
+.sv-main p{color:#cfcfcf;font-size:16px;line-height:24px;margin-bottom:14px}
+.sv-list{list-style:none;margin:6px 0 4px}
+.sv-list li{position:relative;padding-left:20px;color:#cfcfcf;margin-bottom:10px;font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:400;font-size:18px;line-height:26px;letter-spacing:-.5px}
+.sv-list li:before{content:"";position:absolute;left:0;top:12px;width:9px;height:2px;background:var(--accent)}
+.sv-side h4{font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;text-transform:uppercase;
+            font-size:24px;line-height:24px;letter-spacing:normal;margin-bottom:14px}
+.sv-side .box{border:1px solid var(--line);padding:22px;margin-bottom:18px}
+.sv-side .box p{font-size:14px;line-height:20px;letter-spacing:-.5px;color:var(--mute)}
+.sv-other{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:60px}
+.sv-other a{background:#000;padding:26px 24px;transition:background .15s}
+.sv-other a:hover{background:#0E0E0E}
+.sv-other b{display:block;font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;
+            text-transform:uppercase;font-size:24px;line-height:24px;letter-spacing:normal;margin-bottom:6px}
+.sv-other span{font-size:14px;color:var(--mute);line-height:20px;letter-spacing:-.5px}
+@media(max-width:1024px){.sv-body{grid-template-columns:1fr}.sv-main{border-right:0;border-bottom:1px solid var(--line)}.sv-other{grid-template-columns:1fr}}
+@media(max-width:760px){.sv-hero{padding:70px 0 56px}.sv-main{padding:30px 22px}.sv-side{padding:28px 22px}.sv-main h3{font-size:28px;line-height:28px}.sv-lede{font-size:19px;line-height:27px}}
+/* "read the full guide" link injected into each accordion item */
+.svc-link{display:inline-flex;align-items:center;gap:9px;margin-top:16px;color:var(--accent);
+          font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;
+          text-transform:uppercase;font-size:18px;line-height:20px;letter-spacing:normal}
+.svc-link:hover{color:#fff}
+
 /* ---------- STICKY MOBILE BAR ---------- */
 .sbar{position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;background:#000;border-top:1px solid var(--line)}
 .sbar a{flex:1;text-align:center;padding:17px 8px;font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;text-transform:uppercase;font-size:16px}
@@ -352,7 +392,7 @@ footer li a:hover{color:#fff}
 .pay .txt{background:#000;border:1px solid var(--line);color:#c8c8c8;font-family:"Roboto Condensed",sans-serif;font-style:italic;font-weight:700;text-transform:uppercase;font-size:17px;line-height:20px;padding:9px 14px}
 </style>
 </head>
-<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 8267</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
+<body><style>.launchbar,.devbar,#preview-bar,.demo-bar{display:none!important}#sos-launch{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;background:#26114F;color:#fff;padding:9px 14px;font:700 13px/1.4 system-ui,-apple-system,sans-serif;text-align:center;position:relative;z-index:2147483646}#sos-launch .sost{background:#FCD34D;color:#26114F;border-radius:6px;padding:3px 8px;font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase}#sos-launch a{color:#fff;text-decoration:underline;font-weight:900}#sos-launch .sosf{color:#FCD34D;font-weight:900}</style><div id="sos-launch"><span class="sost">Demo</span><span>Call Your 24/7 Receptionist at <a href="tel:14709180516">(470) 918-0516</a></span><span class="sosf">Demo Code: 5633</span></div><script>(function(){function init(){var bar=document.getElementById("sos-launch");if(!bar)return;var ph=["Launch this site","launch this on your site","Business owner? Want this demo","I can launch the site","launch the site for you"];document.querySelectorAll("div,header,section,aside,p").forEach(function(el){if(el===bar)return;var tx=el.textContent||"";if(tx.length<220&&ph.some(function(p){return tx.indexOf(p)>-1}))el.style.display="none";});var fx=[];document.querySelectorAll("header,nav,div").forEach(function(el){if(el===bar||el.id==="sos-cta")return;var s=getComputedStyle(el);if(s.position==="fixed"&&(parseInt(s.top)||0)<5&&el.getBoundingClientRect().top<70&&el.offsetHeight<170)fx.push(el);});function adj(){var b=bar.getBoundingClientRect().bottom;if(b<0)b=0;for(var i=0;i<fx.length;i++)fx[i].style.top=b+"px";var H=document.querySelector("header");if(H&&getComputedStyle(H).position==="absolute"){H.style.top=(window.innerWidth<=920)?(bar.offsetHeight+10)+"px":"";}}adj();window.addEventListener("scroll",adj,{passive:true});window.addEventListener("resize",adj);}if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);})();</script>
 
 <!-- NAV -->
 <nav class="nav">
@@ -374,6 +414,9 @@ footer li a:hover{color:#fff}
     <button class="burger" id="bg" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
+
+<!-- #home wraps everything but the nav, so routed service views can replace it while the header persists -->
+<div id="home">
 
 <!-- HERO -->
 <header class="hero">
@@ -733,6 +776,10 @@ footer li a:hover{color:#fff}
     <div class="fbot"><span>© 2026 ZZ Test Collision Center. All rights reserved.</span><span>Privacy · Terms · Accessibility</span></div>
   </div>
 </footer>
+</div><!-- /#home -->
+
+<!-- routed service views render here; nav + sticky bar stay outside so they persist -->
+<div id="svcpage"></div>
 
 <div class="sbar"><a href="tel:14709180516">Call Us Now</a><a href="#estimate">Get A Free Estimate</a></div>
 
@@ -870,26 +917,28 @@ footer li a:hover{color:#fff}
     ['.est','up'], ['.acc-i','x'],
     ['.ba','up'], ['.carriers div','up'], ['.brk .d-h2','scale'],
     ['.proc div','up'], ['.rev','up'], ['.certs div','up'],
-    ['.areas span','up'], ['.visit .l','up'], ['.visit .r','up'], ['.fgrid4 > div','up']
+    ['.areas span','up'], ['.visit .l','up'], ['.visit .r','up'], ['.fgrid4 > div','up'],
+    // service-page selectors, so routed views animate the same way
+    ['.sv-lede','x'],['.sv-main h3','x'],['.sv-list li','up'],['.sv-side .box','up'],['.sv-other a','up']
   ];
-  RV.forEach(function(pair){
-    document.querySelectorAll(pair[0]).forEach(function(el,i){
-      el.setAttribute('data-rv',pair[1]);
-      el.style.transitionDelay=Math.min(i*70,420)+'ms';   // stagger, capped
-    });
-  });
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+    },{threshold:0.01,rootMargin:'0px'}) : null;
+  // callable again after a routed page renders, so service pages animate too
+  window.wireReveals=function(root){
+    root=root||document;
+    RV.forEach(function(pair){
+      root.querySelectorAll(pair[0]).forEach(function(el,i){
+        if(el.hasAttribute('data-rv'))return;
+        el.setAttribute('data-rv',pair[1]);
+        el.style.transitionDelay=Math.min(i*70,420)+'ms';   // stagger, capped
+        if(io) io.observe(el); else el.classList.add('in');
       });
-    },{threshold:0.01,rootMargin:'0px 0px 0px 0px'});
-    document.querySelectorAll('[data-rv]').forEach(function(el){io.observe(el)});
-  }else{
-    document.querySelectorAll('[data-rv]').forEach(function(el){el.classList.add('in')});
-  }
-  // failsafe: nothing may stay invisible. If an element is still hidden after 2.5s,
-  // or is already inside the viewport on load, force it visible.
+    });
+  };
+  window.wireReveals(document);
+  // failsafe: rescue only elements actually in the viewport (a blanket "reveal all"
+  // timer fires for content far below the fold and kills the scroll animation).
   function forceVisible(){
     document.querySelectorAll('[data-rv]:not(.in)').forEach(function(el){
       var r=el.getBoundingClientRect();
@@ -899,7 +948,6 @@ footer li a:hover{color:#fff}
   addEventListener('scroll',forceVisible,{passive:true});
   addEventListener('resize',forceVisible);
   setTimeout(forceVisible,600);
-  setTimeout(function(){document.querySelectorAll('[data-rv]').forEach(function(el){el.classList.add('in')});},2500);
 
   /* ============ PARALLAX ============
      Staggered rates mirroring the reference's layered depth (80/100/220 feel). */
@@ -936,6 +984,110 @@ footer li a:hover{color:#fff}
     ba.addEventListener('touchstart',function(e){set(e.touches[0].clientX)},{passive:true});
     ba.addEventListener('touchmove',function(e){set(e.touches[0].clientX)},{passive:true});
   });
+
+  /* ================= SERVICE PAGES =================
+     Routed views (#/service/<slug>) — real URLs, back button, deep-linkable, and the
+     nav + sticky bar persist. Claims kept to what is common across collision shops. */
+  var SERVICES=[
+    {slug:'collision-repair',title:'Collision Repair',img:'https://demo.scalingsos.com/assets/body-shop/sec-tech.jpg',
+     lede:"After an impact, what you can see is rarely the whole story. We measure the structure, find the hidden damage, and put the vehicle back to the manufacturer's specifications.",
+     does:['Computerized frame and unibody measuring','Structural straightening and section replacement','Suspension and alignment checks after impact','Airbag and restraint system inspection','ADAS sensor recalibration where equipped','Post-repair safety inspection and road test'],
+     signs:['The car was hit hard enough to deploy an airbag','It pulls or the steering sits off-center after a knock','Panel gaps that no longer line up','A door, hood or trunk that will not close square','Any impact at speed, even if the outside looks minor'],
+     expect:"We write the estimate off a full teardown, not a guess from the parking lot, so hidden damage shows up before it becomes a surprise. We bill your insurer directly and back the workmanship for as long as you own the vehicle."},
+    {slug:'paint-refinish',title:'Paint & Refinish',img:'https://demo.scalingsos.com/assets/body-shop/sec-booth.jpg',
+     lede:"A repair is only as good as the paint that hides it. We match your factory color by code, spray in a controlled booth, and blend into the surrounding panels so the fix disappears.",
+     does:['Computerized color matching to your paint code','Controlled-booth refinishing, dust-free','Blending into adjacent panels for a seamless match','Clear-coat, wet-sand and buff','Trim, badge and molding refit','Full detail before you see the car'],
+     signs:['Fresh damage that needs a panel repainted','Faded, peeling or oxidized clear coat','Mismatched paint from an earlier repair','Deep scratches or key marks through the color','Rust starting where the paint has been broken'],
+     expect:"We match to the paint code and blend rather than edge-to-edge spray, which is what keeps a repair from standing out under daylight. Your workmanship warranty is in writing before you drive away."},
+    {slug:'dent-repair',title:'Paintless Dent Repair',img:'https://demo.scalingsos.com/assets/body-shop/ba1-after.jpg',
+     lede:"When the paint is intact, we can often work the metal back from behind and leave your original factory finish completely untouched — faster and for less than a repaint.",
+     does:['Paintless dent repair for door dings and creases','Hail and minor storm damage','Round dents where the paint is not broken','Body-line and edge dents worked from behind','A repaint quote only if PDR is not the right call'],
+     signs:['A door ding from the car parked next to you','Small round dents with the paint still smooth','A shopping-cart or hail dent that never cracked the paint','A crease that catches the light but has no scratch','You want the original paint kept, not resprayed'],
+     expect:"If the paint is unbroken, PDR keeps your factory finish and usually costs less than a repaint — we will tell you honestly when a dent is too sharp or the paint is cracked and a refinish is the better fix."},
+    {slug:'hail-damage',title:'Hail Damage',img:'https://demo.scalingsos.com/assets/body-shop/sec-bay.jpg',
+     lede:"A hail claim can cover dozens of small dents at once. We document every one for your adjuster and, where the paint held, repair them with PDR so your original finish stays on the car.",
+     does:['Full hail-damage assessment and dent mapping','Paintless dent repair across roof, hood and panels','Documentation and photos for your insurance claim','Direct billing and supplement handling with your carrier','Refinishing only where the paint actually cracked'],
+     signs:['Dimpling across the roof, hood or trunk after a storm','Dozens of small dents rather than one big one','An insurer asking for a hail estimate','Cracked paint or exposed metal on high points','A total-loss threat you want a second opinion on'],
+     expect:"We map and document the damage the way adjusters expect, which keeps the claim moving, and lean on PDR wherever the paint survived so you keep your factory finish. We work directly with every major carrier."},
+    {slug:'glass',title:'Glass Replacement',img:'https://demo.scalingsos.com/assets/body-shop/hero.jpg',
+     lede:"A chip becomes a crack, and a crack becomes a windshield. On many modern cars the glass also carries the camera that runs your safety systems, so it has to go back in exactly right.",
+     does:['Windshield chip repair and full replacement','Door, quarter and back-glass replacement','ADAS camera recalibration after a windshield swap','Proper urethane bonding and safe drive-away timing','Molding and trim replacement as needed'],
+     signs:['A chip or star that is spreading across the glass','A crack in the driver’s line of sight','Glass broken in a break-in or collision','Wind noise or a water leak around the windshield','A lane-keep or emergency-braking warning after glass work'],
+     expect:"On a car with a windshield camera, the glass and the recalibration go together — skipping the recalibration can leave your driver aids reading the road wrong. We handle both and bill your insurer directly."}
+  ];
+  var SVCMAP={}; SERVICES.forEach(function(x){SVCMAP[x.slug]=x});
+  function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function svli(a){return a.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')}
+
+  function renderService(sv){
+    var others=SERVICES.filter(function(x){return x.slug!==sv.slug}).slice(0,3);
+    document.getElementById('svcpage').innerHTML =
+      '<header class="sv-hero">'+
+        '<div class="sv-hero-bg" style="background-image:url('+sv.img+')"></div>'+
+        '<div class="sv-hero-scrim"></div>'+
+        '<div class="wrap">'+
+          '<a class="crumb" href="#/">&larr; All services</a>'+
+          '<h1 class="d d-h2">'+esc(sv.title)+'</h1>'+
+          '<p class="sv-lede">'+esc(sv.lede)+'</p>'+
+          '<a href="#estimate" class="btn" data-home-scroll="estimate">Get a Free Estimate</a>'+
+        '</div>'+
+      '</header>'+
+      '<section><div class="wrap"><div class="sv-body">'+
+        '<div class="sv-main">'+
+          '<h3>What this covers</h3><ul class="sv-list">'+svli(sv.does)+'</ul>'+
+          '<h3>When you need it</h3><ul class="sv-list">'+svli(sv.signs)+'</ul>'+
+          '<h3>What to expect from us</h3><p>'+esc(sv.expect)+'</p>'+
+        '</div>'+
+        '<div class="sv-side">'+
+          '<div class="box"><h4>We bill your insurer</h4><p>You pay your deductible; we handle the estimate, the supplement and the adjuster. It is your legal right to choose your own shop.</p></div>'+
+          '<div class="box"><h4>Free written estimate</h4><p>Send photos or drive in. The estimate is written, itemized, and costs you nothing.</p></div>'+
+          '<div class="box"><h4>Lifetime warranty</h4><p>Our workmanship is warranted for as long as you own the vehicle, in writing.</p></div>'+
+          '<a href="#estimate" class="btn" style="width:100%;text-align:center" data-home-scroll="estimate">Start My Estimate</a>'+
+        '</div>'+
+      '</div>'+
+      '<div class="sv-other">'+others.map(function(o){
+          return '<a href="#/service/'+o.slug+'"><b>'+esc(o.title)+'</b><span>'+esc(o.lede.slice(0,92))+'...</span></a>'}).join('')+
+      '</div></div></section>';
+    if(window.wireReveals) window.wireReveals(document.getElementById('svcpage'));
+  }
+
+  var BASE_TITLE=document.title, BRAND="ZZ Test Collision Center";
+  function route(){
+    var m=(location.hash||'').match(/^#\/service\/([a-z0-9-]+)$/);
+    if(m && SVCMAP[m[1]]){
+      renderService(SVCMAP[m[1]]);
+      document.body.classList.add('on-service');
+      document.title=SVCMAP[m[1]].title+' — '+BRAND;
+      window.scrollTo(0,0);
+    }else{
+      document.body.classList.remove('on-service');
+      document.title=BASE_TITLE;
+      if(location.hash==='#/') history.replaceState(null,'','#');
+    }
+  }
+  addEventListener('hashchange',route);
+
+  // A CTA on a service page leaves the routed view, returns home, then scrolls to the target.
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-home-scroll]'); if(!b)return;
+    e.preventDefault();
+    var target=b.getAttribute('data-home-scroll');
+    location.hash='#';
+    setTimeout(function(){ var el=document.getElementById(target); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },60);
+  });
+
+  // Deep-link each accordion entry in #services to its full page.
+  var ACC_TO_SLUG=['collision-repair','paint-refinish','dent-repair','glass'];
+  document.querySelectorAll('#services .acc-i').forEach(function(item,i){
+    var slug=ACC_TO_SLUG[i]; if(!slug)return;
+    var inner=item.querySelector('.acc-p-in'); if(!inner)return;
+    var a=document.createElement('a');
+    a.className='svc-link'; a.href='#/service/'+slug;
+    a.style.gridColumn='1 / -1';
+    a.innerHTML='Read the full guide &rarr;';
+    inner.appendChild(a);
+  });
+  route();
 })();
 </script>
 </body>
