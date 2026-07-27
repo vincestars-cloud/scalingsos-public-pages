@@ -4736,6 +4736,11 @@ function _smsTgtIndustries(){
   const known = INDUSTRIES.map(function(n){ return { name:n, key:_smsTgtKey(n) }; });
   const seen = {}; known.forEach(function(k){ seen[k.key]=1; });
   Object.keys(snap).forEach(function(k){ if(!seen[k]){ known.push({ name:(snap[k].name||k), key:k }); seen[k]=1; } });
+  // stored_filter_keys_always_rendered_20260727: any industry with a SAVED rule must render a bubble even if it
+  // is not in INDUSTRIES or the counts snapshot — otherwise saveSmsTargeting never sends a value for it, so a
+  // stale rule (e.g. 'skip') can never be cleared from the UI. Union stored filter keys so every rule is visible.
+  var __sf=(prospectorConfigCache && prospectorConfigCache.sms_industry_filter && typeof prospectorConfigCache.sms_industry_filter==='object') ? prospectorConfigCache.sms_industry_filter : {};
+  Object.keys(__sf).forEach(function(k){ if(!seen[k]){ known.push({ name:(snap[k]&&snap[k].name)||k.replace(/_/g,' ').replace(/\b\w/g,function(m){return m.toUpperCase();}), key:k }); seen[k]=1; } });
   known.sort(function(a,b){ return ((snap[b.key]&&snap[b.key].total)||0)-((snap[a.key]&&snap[a.key].total)||0) || a.name.localeCompare(b.name); });
   return known;
 }
@@ -4755,9 +4760,18 @@ function renderSmsTargeting(){
   // max_review_count_20260624: reflect the saved cap in the input (don't clobber while the user is typing)
   var __mrcEl = document.getElementById('smsMaxReviewCount');
   if(__mrcEl && document.activeElement!==__mrcEl){ var __mrcV=Number(cfg.max_review_count||0); __mrcEl.value = __mrcV>0 ? String(__mrcV) : ''; }
+  // preserve_unsaved_bubbles_20260727: this grid is rebuilt via innerHTML by background/nav re-renders
+  // (loadProspectorState + counts refresh run on a 30s-2min cycle while on the prospector page). Without this,
+  // an unsaved in-progress radio pick is silently WIPED back to the saved config before the user clicks Save —
+  // the exact "my SMS Industry Targeting save didn't persist" symptom. Capture on-screen selections first and
+  // keep any that DIFFER from the saved config (a genuine unsaved edit); untouched industries still track the
+  // server. After a save, on-screen == saved, so this is a no-op and the freshly-saved values render normally.
+  var __pendingTgt={};
+  host.querySelectorAll('input[type="radio"][name^="smstgt_"]:checked').forEach(function(r){ __pendingTgt[r.name.replace(/^smstgt_/,'')]=r.value; });
   host.innerHTML = _smsTgtIndustries().map(function(it){
     const c = snap[it.key] || { total:0, no_website:0, broken:0, existing:0, r_total:0, r_no_website:0, r_broken:0, r_existing:0 };
-    const cur = String(filt[it.key] || 'all');
+    const __saved = String(filt[it.key] || 'all');
+    const cur = (Object.prototype.hasOwnProperty.call(__pendingTgt,it.key) && __pendingTgt[it.key]!==__saved) ? __pendingTgt[it.key] : __saved;
     const radios = SMS_TARGET_OPTS.map(function(o){
       const checked = cur===o[0] ? ' checked' : '';
       return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.78rem;font-weight:600;color:#334155"><input type="radio" name="smstgt_'+it.key+'" value="'+o[0]+'"'+checked+'> '+o[1]+'</label>';
