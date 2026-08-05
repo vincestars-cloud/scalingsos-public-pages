@@ -1936,49 +1936,7 @@ function viewJSON(i, field) {
   try {
     const parsed = JSON.parse(val);
     const win = window.open('', '_blank');
-    win.document.write('<html><head><title>' + field + '</title><style>body{font-family:monospace;padding:20px;font-size:13px;white-space:pre-wrap;background:#1e1e1e;color:#d4d4d4}</style></head><body>' + esc(JSON.stringify(parsed, null, 2)) + '<script>
-/* industry_results_table_20260805 */
-window._indResCache = window._indResCache || {};
-function renderIndustryResults(d){
-  var tb = document.getElementById('industryResultsBody'); if(!tb) return;
-  if(!d || !d.ok || !Array.isArray(d.rows)){ tb.innerHTML = '<tr><td colspan="7" style="padding:9px 8px;color:#dc2626">Could not load</td></tr>'; return; }
-  var money = function(n){ return (n===null||n===undefined) ? '—' : '$'+Number(n).toFixed(2); };
-  var num = function(n){ return Number(n||0).toLocaleString(); };
-  var pretty = function(s){ return String(s||'').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); };
-  var html = d.rows.map(function(r){
-    return '<tr style="border-bottom:1px solid #f1f5f9">'
-      + '<td style="padding:5px 8px;font-weight:600">'+pretty(r.industry)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right">'+num(r.contacts_messaged)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right">'+num(r.demos_sent)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right;color:#dc2626">'+num(r.declined_offer)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right;color:#ca8a04;font-weight:600">'+num(r.interest_signals)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right">'+money(r.cost_per_signal)+'</td>'
-      + '<td style="padding:5px 8px;text-align:right">'+money(r.total_cost)+'</td></tr>';
-  }).join('');
-  var t = d.totals || {};
-  html += '<tr style="border-top:2px solid var(--border);font-weight:700">'
-    + '<td style="padding:6px 8px">Total</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+num(t.contacts_messaged)+'</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+num(t.demos_sent)+'</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+num(t.declined_offer)+'</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+num(t.interest_signals)+'</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+money(t.cost_per_signal)+'</td>'
-    + '<td style="padding:6px 8px;text-align:right">'+money(t.total_cost)+'</td></tr>';
-  tb.innerHTML = html;
-}
-function loadIndustryResults(){
-  var per = String(window._commsDateRange || 'all');
-  var c = window._indResCache[per];
-  if(c && (Date.now()-c.at) < 300000){ renderIndustryResults(c.d); return; }
-  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-industry-results?period='+encodeURIComponent(per))
-    .then(function(r){ return r.json(); })
-    .then(function(d){ window._indResCache[per] = {at:Date.now(), d:d}; renderIndustryResults(d); })
-    .catch(function(){ renderIndustryResults(null); });
-}
-document.addEventListener('DOMContentLoaded', function(){ setTimeout(loadIndustryResults, 2500); });
-(function(){ var _osr = window.setCommsRange; if(typeof _osr === 'function'){ window.setCommsRange = function(r){ try{ _osr.apply(this, arguments); }finally{ setTimeout(loadIndustryResults, 60); } }; } })();
-</script>
-</body></html>');
+    win.document.write('<html><head><title>' + field + '</title><style>body{font-family:monospace;padding:20px;font-size:13px;white-space:pre-wrap;background:#1e1e1e;color:#d4d4d4}</style></head><body>' + esc(JSON.stringify(parsed, null, 2)) + '</body></html>');
   } catch {
     alert('Could not parse JSON. Raw value:\n\n' + val.substring(0, 500));
   }
@@ -7556,5 +7514,47 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
+<script>
+/* industry_results_table_20260805 */
+window._indResCache = window._indResCache || {};
+function renderIndustryResults(d){
+  var tb = document.getElementById('industryResultsBody'); if(!tb) return;
+  if(!d || !d.ok || !Array.isArray(d.rows)){ tb.innerHTML = '<tr><td colspan="7" style="padding:9px 8px;color:#dc2626">Could not load</td></tr>'; return; }
+  var money = function(n){ return (n===null||n===undefined) ? '—' : '$'+Number(n).toFixed(2); };
+  var num = function(n){ return Number(n||0).toLocaleString(); };
+  var pretty = function(s){ return String(s||'').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); };
+  var html = d.rows.map(function(r){
+    return '<tr style="border-bottom:1px solid #f1f5f9">'
+      + '<td style="padding:5px 8px;font-weight:600">'+pretty(r.industry)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+num(r.contacts_messaged)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+num(r.demos_sent)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right;color:#dc2626">'+num(r.declined_offer)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right;color:#ca8a04;font-weight:600">'+num(r.interest_signals)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+money(r.cost_per_signal)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+money(r.total_cost)+'</td></tr>';
+  }).join('');
+  var t = d.totals || {};
+  html += '<tr style="border-top:2px solid var(--border);font-weight:700">'
+    + '<td style="padding:6px 8px">Total</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.contacts_messaged)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.demos_sent)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.declined_offer)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.interest_signals)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+money(t.cost_per_signal)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+money(t.total_cost)+'</td></tr>';
+  tb.innerHTML = html;
+}
+function loadIndustryResults(){
+  var per = String(window._commsDateRange || 'all');
+  var c = window._indResCache[per];
+  if(c && (Date.now()-c.at) < 300000){ renderIndustryResults(c.d); return; }
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-industry-results?period='+encodeURIComponent(per))
+    .then(function(r){ return r.json(); })
+    .then(function(d){ window._indResCache[per] = {at:Date.now(), d:d}; renderIndustryResults(d); })
+    .catch(function(){ renderIndustryResults(null); });
+}
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(loadIndustryResults, 2500); });
+(function(){ var _osr = window.setCommsRange; if(typeof _osr === 'function'){ window.setCommsRange = function(r){ try{ _osr.apply(this, arguments); }finally{ setTimeout(loadIndustryResults, 60); } }; } })();
+</script>
 </body>
 </html>
