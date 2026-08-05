@@ -6102,7 +6102,8 @@ function renderSmsComms() {
     if(raw==='dnc') return 'do_not_contact';
     return raw;
   }
-  function _commsPriority(o){ var s=o.s, d=_resolvedDisp(s); if(d==='client') return 0; if(d==='offer_sent') return 1; if(d==='interested_called') return 2; if(d==='interested_sms'||d==='considering'||d==='interested') return 3; if(d==='not_interested_called') return 4; if(d==='not_interested'||d==='do_not_contact'||d==='opted_out') return 5; if(_hasFollowupReply(s)) return 6; if(_commsIsReplied(s)) return 7; return 9; }
+  /* comms_group_all_statuses_20260805: single authoritative funnel sort so EVERY status groups contiguously (cool + declined_offer were falling through to the generic bucket and scattering). Order: Client > Considering > Interested > Cool > Declined Offer > Offer Sent > Replied Msg2 > Called No Reply > Replied Msg1 > (Sent) > Not Interested. Time-desc within each group is the tiebreaker below. */
+  function _commsPriority(o){ var s=o.s, d=_resolvedDisp(s); if(d==='client') return 0; if(d==='considering') return 1; if(d==='interested_sms'||d==='interested_called'||d==='interested') return 2; if(d==='cool') return 3; if(d==='declined_offer') return 4; if(d==='offer_sent') return 5; if(d==='not_interested'||d==='not_interested_called'||d==='do_not_contact'||d==='opted_out') return 10; if(typeof _hasFollowupReply==='function'&&_hasFollowupReply(s)) return 6; if(typeof _commsCalledNoReply==='function'&&_commsCalledNoReply(s)) return 7; if(typeof _commsIsReplied==='function'&&_commsIsReplied(s)) return 8; return 9; }
   items.sort(function(a,b){ var pa=_commsPriority(a), pb=_commsPriority(b); if(pa!==pb) return pa-pb; return (new Date(b.s.last_active||0))-(new Date(a.s.last_active||0)); });
   var per=100, page=window._commsPage||0, total=items.length, pages=Math.max(1,Math.ceil(total/per));
   if(page>=pages){page=pages-1;window._commsPage=page;}
