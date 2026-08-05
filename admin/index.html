@@ -588,7 +588,24 @@ if(localStorage.getItem('sos_admin')===_C){hideAuthGate();}
           <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('considering')" title="Filter Considering"><div class="label">Considering</div><div class="value" id="cmConsidering" style="color:#ca8a04">--</div><div class="sub">interested after offer</div></div>
           <div class="stat-card" style="cursor:pointer" onclick="toggleCommsDisp('client')" title="Filter Clients"><div class="label">Clients</div><div class="value" id="cmClients" style="color:#16a34a">--</div><div class="sub" id="cmClientsSub"></div></div>
         </div>
-        <div id="pathResultsTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
+        <div id="industryResults" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
+<div style="font-weight:700;font-size:13px">Results by Industry</div>
+<div style="font-size:11px;color:#64748b" id="industryResultsNote">cost = $0.0129/delivered + $0.0015/LRN contact</div>
+</div>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px" id="industryResultsTable">
+<thead><tr style="text-align:left;color:#64748b;border-bottom:1px solid var(--border)">
+<th style="padding:5px 8px">Industry</th>
+<th style="padding:5px 8px;text-align:right">Contacts Messaged</th>
+<th style="padding:5px 8px;text-align:right">Demos Sent (MMS)</th>
+<th style="padding:5px 8px;text-align:right">Declined Offer</th>
+<th style="padding:5px 8px;text-align:right">Interest Signals</th>
+<th style="padding:5px 8px;text-align:right">Cost / Signal</th>
+<th style="padding:5px 8px;text-align:right">Total Cost</th>
+</tr></thead>
+<tbody id="industryResultsBody"><tr><td colspan="7" style="padding:9px 8px;color:#94a3b8">Loading…</td></tr></tbody>
+</table></div></div>
+<div id="pathResultsTally" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin:0 0 12px">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px">
             <div style="font-size:.88rem;font-weight:800;color:#0f172a">Path Results <span style="font-weight:600;color:var(--text-muted);font-size:.72rem">(unique contacts by path)</span></div>
             <div id="pathResultsSub" style="font-size:.73rem;color:var(--text-muted);font-weight:600"></div>
@@ -1919,7 +1936,49 @@ function viewJSON(i, field) {
   try {
     const parsed = JSON.parse(val);
     const win = window.open('', '_blank');
-    win.document.write('<html><head><title>' + field + '</title><style>body{font-family:monospace;padding:20px;font-size:13px;white-space:pre-wrap;background:#1e1e1e;color:#d4d4d4}</style></head><body>' + esc(JSON.stringify(parsed, null, 2)) + '</body></html>');
+    win.document.write('<html><head><title>' + field + '</title><style>body{font-family:monospace;padding:20px;font-size:13px;white-space:pre-wrap;background:#1e1e1e;color:#d4d4d4}</style></head><body>' + esc(JSON.stringify(parsed, null, 2)) + '<script>
+/* industry_results_table_20260805 */
+window._indResCache = window._indResCache || {};
+function renderIndustryResults(d){
+  var tb = document.getElementById('industryResultsBody'); if(!tb) return;
+  if(!d || !d.ok || !Array.isArray(d.rows)){ tb.innerHTML = '<tr><td colspan="7" style="padding:9px 8px;color:#dc2626">Could not load</td></tr>'; return; }
+  var money = function(n){ return (n===null||n===undefined) ? '—' : '$'+Number(n).toFixed(2); };
+  var num = function(n){ return Number(n||0).toLocaleString(); };
+  var pretty = function(s){ return String(s||'').replace(/_/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }); };
+  var html = d.rows.map(function(r){
+    return '<tr style="border-bottom:1px solid #f1f5f9">'
+      + '<td style="padding:5px 8px;font-weight:600">'+pretty(r.industry)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+num(r.contacts_messaged)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+num(r.demos_sent)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right;color:#dc2626">'+num(r.declined_offer)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right;color:#ca8a04;font-weight:600">'+num(r.interest_signals)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+money(r.cost_per_signal)+'</td>'
+      + '<td style="padding:5px 8px;text-align:right">'+money(r.total_cost)+'</td></tr>';
+  }).join('');
+  var t = d.totals || {};
+  html += '<tr style="border-top:2px solid var(--border);font-weight:700">'
+    + '<td style="padding:6px 8px">Total</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.contacts_messaged)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.demos_sent)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.declined_offer)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+num(t.interest_signals)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+money(t.cost_per_signal)+'</td>'
+    + '<td style="padding:6px 8px;text-align:right">'+money(t.total_cost)+'</td></tr>';
+  tb.innerHTML = html;
+}
+function loadIndustryResults(){
+  var per = String(window._commsDateRange || 'all');
+  var c = window._indResCache[per];
+  if(c && (Date.now()-c.at) < 300000){ renderIndustryResults(c.d); return; }
+  fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-industry-results?period='+encodeURIComponent(per))
+    .then(function(r){ return r.json(); })
+    .then(function(d){ window._indResCache[per] = {at:Date.now(), d:d}; renderIndustryResults(d); })
+    .catch(function(){ renderIndustryResults(null); });
+}
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(loadIndustryResults, 2500); });
+(function(){ var _osr = window.setCommsRange; if(typeof _osr === 'function'){ window.setCommsRange = function(r){ try{ _osr.apply(this, arguments); }finally{ setTimeout(loadIndustryResults, 60); } }; } })();
+</script>
+</body></html>');
   } catch {
     alert('Could not parse JSON. Raw value:\n\n' + val.substring(0, 500));
   }
