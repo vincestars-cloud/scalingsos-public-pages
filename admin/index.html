@@ -3966,7 +3966,7 @@ function _jsq(s){ return "'"+String(s==null?'':s).replace(/\\/g,'\\\\').replace(
 function dispLabel(v){ for(var i=0;i<SCRAPE_DISPOSITIONS.length;i++){ if(SCRAPE_DISPOSITIONS[i][0]===String(v||'')) return SCRAPE_DISPOSITIONS[i][1]; } return String(v||''); }
 function dispColors(v){ return ({not_interested:['#fee2e2','#991b1b'], not_interested_called:['#fee2e2','#991b1b'], interested_sms:['#fef9c3','#854d0e'], interested_called:['#dbeafe','#1e40af'], interested:['#dbeafe','#1e40af'], considering:['#fef3c7','#92400e'], offer_sent:['#ffedd5','#9a3412'], client:['#dcfce7','#166534']})[String(v||'').toLowerCase().replace(/[\s-]+/g,'_')]||['#f1f5f9','#475569']; }
 function dispPill(v){ v=String(v||''); if(!v) return ''; var c=dispColors(v); return ' <span class="badge" style="background:'+c[0]+';color:'+c[1]+';font-weight:700;font-size:.66rem">'+esc(dispLabel(v))+'</span>'; }
-function _dispRank(v){ v=String(v||'').toLowerCase(); if(v==='client')return 0; if(v==='offer_sent')return 1; if(v==='interested_called')return 2; if(v==='interested_sms'||v==='considering'||v==='interested')return 3; if(v==='not_interested_called')return 4; if(v==='not_interested'||v==='do_not_contact'||v==='opted_out')return 5; return 9; }
+function _dispRank(v){ v=String(v||'').toLowerCase(); if(v==='client')return 0; if(v==='considering')return 1; if(v==='interested'||v==='interested_sms'||v==='interested_called')return 2; if(v==='offer_sent')return 3; if(v==='declined_offer')return 4; if(v==='not_interested_called')return 5; if(v==='not_interested'||v==='do_not_contact'||v==='opted_out')return 6; return 9; }
 function _buildDispMap(){ var rows=window._scrapeRows||[]; var map={}; var gg=function(r,k){for(var kk in r){if(kk.toLowerCase()===k)return r[kk];}return '';}; var normDisp=function(v){ return String(v||'').toLowerCase().replace(/[\s-]+/g,'_'); }; var dispVals={}; SCRAPE_DISPOSITIONS.forEach(function(d){ if(d[0]) dispVals[d[0]]=1; }); for(var i=0;i<rows.length;i++){ var r=rows[i]; var ph=_normPh10(gg(r,'phone')||gg(r,'formatted_phone')); if(!ph) continue; var disp=normDisp(gg(r,'disposition')); var next={disposition:disp,place_id:gg(r,'place_id'),slug:gg(r,'slug'),business_name:gg(r,'business_name'),demo_url:gg(r,'demo_url'),website:gg(r,'website_url')||gg(r,'website')||gg(r,'root_domain'),maps_url:gg(r,'maps_url')||gg(r,'google_maps_url')||gg(r,'google_maps')||gg(r,'map_url'),industry:gg(r,'industry'),rating:gg(r,'rating'),review_count:gg(r,'review_count')}; var old=map[ph]; if(!old || _dispRank(next.disposition)<_dispRank(old.disposition) || (_dispRank(next.disposition)===_dispRank(old.disposition) && (next.demo_url||next.business_name) && !(old.demo_url&&old.business_name))) map[ph]=next; }
   ((data&&data.conversations)||[]).forEach(function(c){ var ph=_normPh10(c.phone); if(!ph) return; var st=normDisp(c.disposition||c.manual_disposition||c.pipeline||c.status||''); if(!dispVals[st]) st=''; if(!map[ph]) map[ph]={disposition:st,place_id:'',slug:'',business_name:c.business_name||'',demo_url:c.demo_url||'',website:c.website||c.website_url||'',maps_url:c.maps_url||'',industry:c.industry||''}; else if(!map[ph].disposition && st) map[ph].disposition=st; if(!map[ph].business_name && c.business_name) map[ph].business_name=c.business_name; });
   window._dispByPhone=map; window._dispMapLen=rows.length; window._dispConvLen=((data&&data.conversations)||[]).length; return map; }
@@ -5227,12 +5227,14 @@ function commStatusText(thread) {
 function commFunnelRank(thread) {
   const s = commStatusText(thread);
   if (/\bclient\b|won|converted/.test(s)) return 0;
-  if (/offer/.test(s)) return 1;
-  if (/not[^a-z0-9]*interested[^a-z0-9]*call|called[^a-z0-9]*not|not_interested_called/.test(s)) return 4;
-  if (/not[^a-z0-9]*interested|do_not_contact|dnc|opt.?out|blocked|spam|stop/.test(s)) return 5;
+  if (/declined[^a-z0-9]*offer|declined_offer/.test(s)) return 4;
+  if (/not[^a-z0-9]*interested[^a-z0-9]*call|called[^a-z0-9]*not|not_interested_called/.test(s)) return 5;
+  if (/not[^a-z0-9]*interested|do_not_contact|dnc|opt.?out|blocked|spam|stop/.test(s)) return 6;
+  if (/considering/.test(s)) return 1;
   if (/interested[^a-z0-9]*call|called[^a-z0-9]*interested|interested_called/.test(s)) return 2;
-  if (/interested[^a-z0-9]*sms|interested_sms|considering|\binterested\b/.test(s)) return 3;
-  return 6;
+  if (/interested[^a-z0-9]*sms|interested_sms|\binterested\b/.test(s)) return 2;
+  if (/offer/.test(s)) return 3;
+  return 7;
 }
 
 function sortCommunicationsByFunnel(threads) {
