@@ -6001,6 +6001,12 @@ function renderSmsComms() {
   var _allItems = items.slice(); /* filter_scope_20260627: disposition + called cards are cumulative (all-time); their filters read _allItems so the records match the card count regardless of the period selector */
   var _isAllTime=String(window._commsDateRange||'today')==='all';
   if(!_isAllTime){ items=items.filter(function(x){return ((x.s.history||[]).some(function(m){ return _msgDateInRange(m,window._commsDateRange); }) || _convInRange(x.s));}); }
+  /* comms_ssot_period_20260805: the period-scoped conversation set is the SINGLE source of truth for the outcome cards, the clicked-card list, and the period path table — so a card always matches its own list. */
+  var _periodItems = items.slice();
+  window._commsPeriodItems = _periodItems;
+  var _dispOf = function(sv){ var d = (dispForPhone(sv.phone)||{}).disposition; if(!d) d=(sv&&(sv.disposition||sv.manual_status))||''; return String(d||'').toLowerCase().replace(/[\s-]+/g,'_'); };
+  window._commsDispOf = _dispOf;
+  var CARD_BUCKETS = { cmClients:['client'], cmConsidering:['considering'], cmInterested:['interested_sms','interested_called','interested'], cmCool:['cool'], cmOfferSent:['offer_sent'], cmDeclined:['declined_offer'], cmNotInt:['not_interested','not_interested_called'] };
   /* perf_dedupe_sort_20260805: removed a redundant first sort here (old `_rk`) that was fully overridden by the authoritative `_commsPriority` sort right before pagination. Each _rk call also scanned every conversation's history (followup/replied/called), so this was a wasted O(n log n) pass + n history scans on every paint. Grouping/order is now single-sourced in _commsPriority below. */
   if(typeof loadPathResults==='function' && (!window._pathResultsAt || Date.now()-window._pathResultsAt>60000)){ window._pathResultsAt=Date.now(); try{ loadPathResults(); }catch(e){} }
   var inboundReplyCount = items.filter(function(x){return _commsHasInboundInPeriod(x.s);}).length;
@@ -6047,9 +6053,14 @@ function renderSmsComms() {
   window._commsOutcomeCache=window._commsOutcomeCache||{};
   var _setCmOut=function(o){ var _S=function(id,v){var e=document.getElementById(id); if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',o.considering); _S('cmInterested',o.interested_sms); _S('cmOfferSent',o.offers); _S('cmNotInt',o.not_interested); _S('cmDeclined',o.declined_offer); _S('cmCool',o.cool); _S('cmClients',o.clients); /* comms_order_and_cpl_20260805: CPL for the selected period, from the same spend the SMS Delivered card shows */ var _cpl=function(id,n){ var e=document.getElementById(id); if(!e||!e.parentElement) return; var sub=e.parentElement.querySelector('.sub'); if(!sub) return; if(sub.getAttribute('data-base')===null) sub.setAttribute('data-base', sub.textContent||''); var base=sub.getAttribute('data-base')||''; var c=Number(window._commsPeriodCost||0); var txt=(Number(n)>0&&c>0)?('CPL: $'+(c/Number(n)).toFixed(2)):'CPL: —'; sub.textContent=base?(base+' · '+txt):txt; }; _cpl('cmInterested',o.interested_sms); _cpl('cmConsidering',o.considering); _cpl('cmCool',o.cool); window._setCmOutLast=function(){ try{ _cpl('cmInterested',o.interested_sms); _cpl('cmConsidering',o.considering); _cpl('cmCool',o.cool); }catch(e){} }; };
   var _cmPre=String(window._commsDateRange||'all'); if(window._commsOutcomeCache[_cmPre]) _setCmOut(window._commsOutcomeCache[_cmPre]); else if(window._commsOutcomeCache['all']&&_cmPre==='all') _setCmOut(window._commsOutcomeCache['all']); else { /* no_zero_placeholder_20260805: the outcome endpoint takes ~20s cold; painting the local conversation-derived counts showed a misleading 0 on every card. Show a loading dash instead and let the real numbers land. */ ['cmConsidering','cmInterested','cmOfferSent','cmNotInt','cmDeclined','cmCool','cmClients'].forEach(function(id){ var e=document.getElementById(id); if(e && (!e.textContent || e.textContent==='--' || e.textContent==='0')) e.textContent='…'; }); }
+  if(!_isAllTime){ /* comms_ssot_period_20260805: period cards come from the same conversation set as the list (dedup by phone), not the slow server RPC — guarantees card==list and needs no webhook. */
+    var _sc={cmClients:0,cmConsidering:0,cmInterested:0,cmCool:0,cmOfferSent:0,cmDeclined:0,cmNotInt:0}, _seenSC={};
+    _periodItems.forEach(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(!ph||_seenSC[ph])return; _seenSC[ph]=1; var d=_dispOf(x.s); for(var _bk in CARD_BUCKETS){ if(CARD_BUCKETS[_bk].indexOf(d)>=0){ _sc[_bk]++; break; } } });
+    _setCmOut({ clients:_sc.cmClients, considering:_sc.cmConsidering, interested_sms:_sc.cmInterested, cool:_sc.cmCool, offers:_sc.cmOfferSent, declined_offer:_sc.cmDeclined, not_interested:_sc.cmNotInt });
+  }
   var _cmActive=String(window._commsDateRange||'all'); /* outcome_cards_respect_period_20260805: follow the date-range selector (was pinned to all-time) */
   if(!window._commsOutcomeAtBy) window._commsOutcomeAtBy={};
-  if((!window._commsOutcomeAtBy[_cmActive] || (Date.now()-window._commsOutcomeAtBy[_cmActive])>300000) && !window._commsOutcomeLoading){
+  if(_isAllTime && (!window._commsOutcomeAtBy[_cmActive] || (Date.now()-window._commsOutcomeAtBy[_cmActive])>300000) && !window._commsOutcomeLoading){
     window._commsOutcomeLoading=true; window._commsOutcomeAtBy[_cmActive]=Date.now();
     fetchT('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+_cmActive, {}, 20000).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes){ window._commsOutcomeCache[_cmActive]=_d.outcomes; var _cur=String(window._commsDateRange||'today'); if(window._commsOutcomeCache[_cur]) _setCmOut(window._commsOutcomeCache[_cur]); } window._commsOutcomeLoading=false; })
       .catch(function(){ window._commsOutcomeLoading=false; window._commsOutcomeAtBy[_cmActive]=0; });
@@ -6062,14 +6073,15 @@ function renderSmsComms() {
   else if (window._commsFilter==='called') { var _seenCalled={}; items=items.filter(function(x){ var ph=_normPhone(x.s.phone); var keep=(!!calledPhones[ph] || _commsCalledNoReply(x.s)) && !_seenCalled[ph]; if(keep)_seenCalled[ph]=1; return keep; }); }
 	  if (window._commsDispFilter) {
 	    var _sf=String(window._commsDispFilter||'').toLowerCase();
-	    var _server=(window._commsDispServerCache||{})[_sf];
-    if(_server && Array.isArray(_server.conversations)){
-      items=commsMergeServerConversations(_server.conversations);
-    } else {
-      ensureCommsDispositionConversations(_sf);
-      var _dg=DISP_GROUPS[_sf]||[]; var _seenD={};
-      items=_allItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(_seenD[ph])return false; var ok=_dg.indexOf(String(dispForPhone(x.s.phone).disposition||'').toLowerCase())>=0; if(ok)_seenD[ph]=1; return ok; });
-    }
+	    var _dg=DISP_GROUPS[_sf]||[]; var _seenD={};
+	    if(!_isAllTime){
+	      /* comms_ssot_period_20260805: period views filter the SAME period set the card counted (dedup by phone) -> the list length equals the card count exactly */
+	      items=_periodItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(!ph||_seenD[ph])return false; var ok=_dg.indexOf(_dispOf(x.s))>=0; if(ok)_seenD[ph]=1; return ok; });
+	    } else {
+	      var _server=(window._commsDispServerCache||{})[_sf];
+	      if(_server && Array.isArray(_server.conversations)){ items=commsMergeServerConversations(_server.conversations); }
+	      else { ensureCommsDispositionConversations(_sf); items=_allItems.filter(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(_seenD[ph])return false; var ok=_dg.indexOf(_dispOf(x.s))>=0; if(ok)_seenD[ph]=1; return ok; }); }
+	    }
 	    items.sort(function(a,b){ return new Date(b.s.last_active||b.s.last_active_at||0)-new Date(a.s.last_active||a.s.last_active_at||0); });
 	  }
 	  var pathFilter=window._commsPathFilter||null;
