@@ -3609,12 +3609,14 @@ function isRealBusiness(b) {
 }
 
 
+// fetch_timeout_20260805: abort hung webhook reads so a stuck call can't wedge a card on "..." forever and its in-flight guard clears for a retry (the shared n8n box hangs under send load).
+function fetchT(url, opts, ms){ opts = opts || {}; ms = ms || 15000; if (typeof AbortController === 'undefined') return fetch(url, opts); var ctl = new AbortController(); opts.signal = ctl.signal; var to = setTimeout(function(){ try{ ctl.abort(); }catch(e){} }, ms); return fetch(url, opts).then(function(r){ clearTimeout(to); return r; }, function(e){ clearTimeout(to); throw e; }); }
 async function fetchInbox(opts) {
   try {
     opts = opts || {};
     const fresh = opts.fresh || opts.no_cache || opts.refresh;
     const cacheBust = fresh ? ('&refresh=1&_ts=' + Date.now()) : '';
-    const resp = await fetch(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000' + cacheBust);
+    const resp = await fetchT(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000' + cacheBust, {}, 20000);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
     return json.conversations || [];
@@ -3977,11 +3979,13 @@ const SCRAPE_DISPOSITIONS = [
   ['client', 'Client'],
   ['not_interested_called', 'Not Interested - Called'],
   ['considering', 'Considering'],
-  ['offer_sent', 'Offer Sent']
+  ['offer_sent', 'Offer Sent'],
+  ['declined_offer', 'Declined Offer'],
+  ['cool', 'Cool']
 ];
 function _jsq(s){ return "'"+String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'"; }
 function dispLabel(v){ for(var i=0;i<SCRAPE_DISPOSITIONS.length;i++){ if(SCRAPE_DISPOSITIONS[i][0]===String(v||'')) return SCRAPE_DISPOSITIONS[i][1]; } return String(v||''); }
-function dispColors(v){ return ({not_interested:['#fee2e2','#991b1b'], not_interested_called:['#fee2e2','#991b1b'], interested_sms:['#fef9c3','#854d0e'], interested_called:['#dbeafe','#1e40af'], interested:['#dbeafe','#1e40af'], considering:['#fef3c7','#92400e'], offer_sent:['#ffedd5','#9a3412'], client:['#dcfce7','#166534']})[String(v||'').toLowerCase().replace(/[\s-]+/g,'_')]||['#f1f5f9','#475569']; }
+function dispColors(v){ return ({not_interested:['#fee2e2','#991b1b'], not_interested_called:['#fee2e2','#991b1b'], interested_sms:['#fef9c3','#854d0e'], interested_called:['#dbeafe','#1e40af'], interested:['#dbeafe','#1e40af'], considering:['#fef3c7','#92400e'], offer_sent:['#ffedd5','#9a3412'], declined_offer:['#fee2e2','#991b1b'], cool:['#cffafe','#155e75'], client:['#dcfce7','#166534']})[String(v||'').toLowerCase().replace(/[\s-]+/g,'_')]||['#f1f5f9','#475569']; }
 function dispPill(v){ v=String(v||''); if(!v) return ''; var c=dispColors(v); return ' <span class="badge" style="background:'+c[0]+';color:'+c[1]+';font-weight:700;font-size:.66rem">'+esc(dispLabel(v))+'</span>'; }
 function _dispRank(v){ v=String(v||'').toLowerCase(); if(v==='client')return 0; if(v==='considering')return 1; if(v==='interested'||v==='interested_sms'||v==='interested_called')return 2; if(v==='cool')return 3; if(v==='offer_sent')return 4; if(v==='declined_offer')return 5; if(v==='not_interested_called')return 5; if(v==='not_interested'||v==='do_not_contact'||v==='opted_out')return 6; return 9; }
 function _buildDispMap(){ var rows=window._scrapeRows||[]; var map={}; var gg=function(r,k){for(var kk in r){if(kk.toLowerCase()===k)return r[kk];}return '';}; var normDisp=function(v){ return String(v||'').toLowerCase().replace(/[\s-]+/g,'_'); }; var dispVals={}; SCRAPE_DISPOSITIONS.forEach(function(d){ if(d[0]) dispVals[d[0]]=1; }); for(var i=0;i<rows.length;i++){ var r=rows[i]; var ph=_normPh10(gg(r,'phone')||gg(r,'formatted_phone')); if(!ph) continue; var disp=normDisp(gg(r,'disposition')); var next={disposition:disp,place_id:gg(r,'place_id'),slug:gg(r,'slug'),business_name:gg(r,'business_name'),demo_url:gg(r,'demo_url'),website:gg(r,'website_url')||gg(r,'website')||gg(r,'root_domain'),maps_url:gg(r,'maps_url')||gg(r,'google_maps_url')||gg(r,'google_maps')||gg(r,'map_url'),industry:gg(r,'industry'),rating:gg(r,'rating'),review_count:gg(r,'review_count')}; var old=map[ph]; if(!old || _dispRank(next.disposition)<_dispRank(old.disposition) || (_dispRank(next.disposition)===_dispRank(old.disposition) && (next.demo_url||next.business_name) && !(old.demo_url&&old.business_name))) map[ph]=next; }
@@ -4034,8 +4038,7 @@ function dispForPhone(phone){ if(!window._dispByPhone || window._dispMapLen!==((
 	  showToast('Status: '+(dispLabel(value)||'cleared'));
 	  if(typeof loadPathResults==='function') loadPathResults();
 	  if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms();
-	  window._inboxAt=0;
-	  fetchInbox({fresh:true}).then(function(c){ data.conversations=c||[]; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }).catch(function(){});
+	  /* comms_no_pertag_refetch_20260805: optimistic local update above already repaints; the 120s inbox poll reconciles. Do NOT refetch the full ~1.17MB inbox on every disposition set — it hammered the shared sending box and made triage crawl. */
 	  var sp=document.getElementById('page-scraping'); if(sp&&sp.classList.contains('active')&&typeof renderScraping==='function') renderScraping();
 	}
 async function updateScrapeDisposition(placeId, disposition, notes) {
@@ -5534,7 +5537,7 @@ function ensureCommsPathConversations(category,path){
   if(cache && Date.now()-cache.at<300000) return;
   if(window._commsPathServerLoading===key) return;
   window._commsPathServerLoading=key;
-  fetch(N8N_BASE+'/scalingsos-admin-inbox?seq_category='+encodeURIComponent(category)+'&seq_path='+encodeURIComponent(path)+'&limit=1200&message_limit=12000')
+  fetchT(N8N_BASE+'/scalingsos-admin-inbox?seq_category='+encodeURIComponent(category)+'&seq_path='+encodeURIComponent(path)+'&limit=1200&message_limit=12000', {}, 20000)
     .then(function(r){return r.json();})
     .then(function(j){
       if(j && Array.isArray(j.conversations)){
@@ -5556,7 +5559,7 @@ function ensureCommsDispositionConversations(grp){
   if(cache && Date.now()-cache.at<300000) return;
   if(window._commsDispServerLoading===grp) return;
   window._commsDispServerLoading=grp;
-  fetch(N8N_BASE+'/scalingsos-admin-inbox?disposition='+encodeURIComponent(grp)+'&limit=1200&message_limit=12000')
+  fetchT(N8N_BASE+'/scalingsos-admin-inbox?disposition='+encodeURIComponent(grp)+'&limit=1200&message_limit=12000', {}, 20000)
     .then(function(r){return r.json();})
     .then(function(j){
       if(j && Array.isArray(j.conversations)){
@@ -5571,7 +5574,7 @@ function ensureCommsDispositionConversations(grp){
     .catch(function(){ window._commsDispServerLoading=''; });
 }
 function toggleCommsDisp(grp){ window._commsPathFilter=null; window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ensureCommsDispositionConversations(window._commsDispFilter); ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof loadPathResults==='function') loadPathResults(); if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
-function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmDeclined',_co.declined_offer);_S('cmCool',_co.cool);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
   var range=String(window._commsDateRange||'today');
   return _hasReplyAfterMessageInRange(s,range,_isMsg1Message);
@@ -5987,7 +5990,7 @@ function smsListMediaThumbs(s){
 function renderSmsComms() {
   const list = document.getElementById('smsList');
   if(!window._commsDispOverrideAt && !window._commsDispOverrideLoading){ window._commsDispOverrideLoading=true; window._commsDispOverrideAt=Date.now();
-    fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-dispositions').then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.dispositions){ window._commsDispOverride=_d.dispositions; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); } window._commsDispOverrideLoading=false; }).catch(function(){ window._commsDispOverrideLoading=false; }); }
+    fetchT('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-dispositions', {}, 15000).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.dispositions){ window._commsDispOverride=_d.dispositions; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); } window._commsDispOverrideLoading=false; }).catch(function(){ window._commsDispOverrideLoading=false; window._commsDispOverrideAt=0; }); }
   /* perf_20260627: do not auto-fetch full Prospects from Communications. The inbox +
      disposition snapshots are enough for this tab; full rows hydrate from dashboard/scraping. */
   var cachedSessions = getSmsSessionsCached();
@@ -6048,8 +6051,8 @@ function renderSmsComms() {
   if(!window._commsOutcomeAtBy) window._commsOutcomeAtBy={};
   if((!window._commsOutcomeAtBy[_cmActive] || (Date.now()-window._commsOutcomeAtBy[_cmActive])>300000) && !window._commsOutcomeLoading){
     window._commsOutcomeLoading=true; window._commsOutcomeAtBy[_cmActive]=Date.now();
-    fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+_cmActive).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes){ window._commsOutcomeCache[_cmActive]=_d.outcomes; var _cur=String(window._commsDateRange||'today'); if(window._commsOutcomeCache[_cur]) _setCmOut(window._commsOutcomeCache[_cur]); } window._commsOutcomeLoading=false; })
-      .catch(function(){ window._commsOutcomeLoading=false; });
+    fetchT('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-outcomes?period='+_cmActive, {}, 20000).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.outcomes){ window._commsOutcomeCache[_cmActive]=_d.outcomes; var _cur=String(window._commsDateRange||'today'); if(window._commsOutcomeCache[_cur]) _setCmOut(window._commsOutcomeCache[_cur]); } window._commsOutcomeLoading=false; })
+      .catch(function(){ window._commsOutcomeLoading=false; window._commsOutcomeAtBy[_cmActive]=0; });
   }
   var _cr2=document.getElementById('commsCntReplied2'); if(_cr2) _cr2.textContent=replied2;
   calledNoReply=(function(){ var seen={}; items.forEach(function(x){ var ph=_normPhone(x.s.phone); if(ph && (calledPhones[ph] || _commsCalledNoReply(x.s))) seen[ph]=1; }); return Object.keys(seen).length; })();
