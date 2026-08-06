@@ -5574,7 +5574,7 @@ function ensureCommsDispositionConversations(grp){
     .catch(function(){ window._commsDispServerLoading=''; });
 }
 function toggleCommsDisp(grp){ window._commsPathFilter=null; window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ensureCommsDispositionConversations(window._commsDispFilter); ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof loadPathResults==='function') loadPathResults(); if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
-function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmDeclined',_co.declined_offer);_S('cmCool',_co.cool);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; window._pathResultsAt=0; try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmDeclined',_co.declined_offer);_S('cmCool',_co.cool);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
   var range=String(window._commsDateRange||'today');
   return _hasReplyAfterMessageInRange(s,range,_isMsg1Message);
@@ -5839,18 +5839,46 @@ function renderMsg2VariantTallies(sessions){
     }).catch(function(){});
   }
 }
+/* comms_ssot_period_20260805: period path-table rows derived from the SAME period conversation set as the cards/list (window._commsPeriodItems), so its Interested/Offers/Clients/Not-Interested columns match the cards exactly. All-time still uses the server endpoint. */
+function _computePathResults(cat){
+  var items=(window._commsPeriodItems||[]);
+  var dispOf=window._commsDispOf||function(sv){return String((sv&&(sv.disposition||sv.manual_status))||'').toLowerCase().replace(/[\s-]+/g,'_');};
+  var byPath={}, seen={};
+  items.forEach(function(x){
+    var sv=x.s; if(String(sv.seq_category||'')!==cat) return;
+    var path=String(sv.seq_path||''); if(!path) return;
+    var ph=String(sv.phone||'').replace(/\D/g,'').slice(-10); if(!ph) return;
+    var dk=path+'|'+ph; if(seen[dk]) return; seen[dk]=1;
+    var h=(sv.history||[]);
+    var outs=h.filter(function(m){var d=String((m&&(m.direction||m.role||m.type))||'').toLowerCase();return /out|assistant|admin|agent/.test(d);}).sort(function(a,b){return new Date(a.timestamp||a.time||0)-new Date(b.timestamp||b.time||0);});
+    if(!outs.length) return;
+    var ins=h.filter(_isInboundMsg);
+    var p=byPath[path]||(byPath[path]={path:path,delivered:0,replied:0,msg2_replied:0,interested:0,offers:0,clients:0,not_interested:0});
+    p.delivered++;
+    if(ins.length>0) p.replied++;
+    if(outs.length>=2){ var t2=new Date(outs[1].timestamp||outs[1].time||0).getTime(); if(ins.some(function(m){return new Date(m.timestamp||m.time||0).getTime()>=t2;})) p.msg2_replied++; }
+    var d=dispOf(sv);
+    if(['interested','interested_sms','interested_called'].indexOf(d)>=0) p.interested++;
+    else if(d==='offer_sent') p.offers++;
+    else if(d==='client') p.clients++;
+    else if(['not_interested','not_interested_called'].indexOf(d)>=0) p.not_interested++;
+  });
+  var paths=Object.keys(byPath).map(function(k){return byPath[k];}).sort(function(a,b){return b.delivered-a.delivered;});
+  return {ok:true, category:cat, paths:paths};
+}
 function loadPathResults(){
   var bodyEl=document.getElementById('pathResultsBody'); if(!bodyEl) return;
   var subEl=document.getElementById('pathResultsSub');
   var activeFilter=window._commsPathFilter||null;
-  if(subEl) subEl.textContent=activeFilter&&activeFilter.path?('Filtering conversations by '+activeFilter.path+'; click the row again to clear.'):'Click a path row to filter the conversation list. Rates after Replied use the replied-after-Msg-1 cohort.';
+  var _pAll=String(window._commsDateRange||'today')==='all';
+  if(subEl) subEl.textContent=activeFilter&&activeFilter.path?('Filtering conversations by '+activeFilter.path+'; click the row again to clear.'):((_pAll?'All-time. ':'Period view (from loaded conversations). ')+'Click a path row to filter the conversation list. Rates after Replied use the replied-after-Msg-1 cohort.');
   var seqNames={no_website:{},existing_website:{}};
   try{
     var seq=(window.prospectorConfigCache&&prospectorConfigCache.sequences)||{};
     ['no_website','existing_website'].forEach(function(cat){ ((seq[cat]&&seq[cat].paths)||[]).forEach(function(p){ if(p&&p.id) seqNames[cat][p.id]=p.name||p.id; }); });
   }catch(e){}
   Promise.all(['no_website','existing_website'].map(function(cat){
-    return fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-path-results?category='+encodeURIComponent(cat)).then(function(r){return r.json();}).catch(function(){return {ok:false,category:cat,paths:[]};});
+    return _pAll ? fetch('https://n8n.americanlifeteam.com/webhook/scalingsos-path-results?category='+encodeURIComponent(cat)).then(function(r){return r.json();}).catch(function(){return {ok:false,category:cat,paths:[]};}) : Promise.resolve(_computePathResults(cat));
   })).then(function(results){
 	    var pct=function(n,dn){ dn=Number(dn||0); return dn>0?((100*Number(n||0)/dn).toFixed(1).replace(/\.0$/,'')+'%'):'0%'; };
 	    var pctField=function(v,n,dn){ return (v!==undefined&&v!==null&&v!=='')?(Number(v||0).toFixed(1).replace(/\.0$/,'')+'%'):pct(n,dn); };
