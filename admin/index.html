@@ -3619,9 +3619,14 @@ async function fetchInbox(opts) {
     const resp = await fetchT(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000' + cacheBust, {}, 20000);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
-    return json.conversations || [];
+    var _c = json.conversations || [];
+    window._inboxState='loaded'; window._inboxLastGood=_c;
+    return _c;
   } catch (e) {
-    console.warn('Admin inbox unavailable, falling back to SMS sheet:', e);
+    console.warn('Admin inbox unavailable, falling back:', e);
+    /* backend_unavailable_20260806: mark failed + keep last-good so period cards/list/tables show stale-but-correct numbers under a banner, never a misleading 0. */
+    window._inboxState='failed';
+    if(window._inboxLastGood && window._inboxLastGood.length) return window._inboxLastGood;
     return buildConversationsFromSheet(data.sms || []);
   }
 }
@@ -6017,6 +6022,9 @@ function smsListMediaThumbs(s){
 }
 function renderSmsComms() {
   const list = document.getElementById('smsList');
+  /* backend_unavailable_20260806: distinguish a failed/slow inbox fetch from a genuine zero. */
+  var _bkDown = (window._inboxState==='failed');
+  (function(){ var b=document.getElementById('commsBackendBanner'); if(_bkDown){ if(!b){ b=document.createElement('div'); b.id='commsBackendBanner'; b.style.cssText='margin:0 0 10px;padding:8px 12px;border-radius:8px;background:#fef3c7;border:1px solid #fcd34d;color:#92400e;font-weight:700;font-size:.82rem'; var h=document.getElementById('commsDateBar'); if(h&&h.parentNode) h.parentNode.insertBefore(b,h.nextSibling); else if(list&&list.parentNode) list.parentNode.insertBefore(b,list); } if(b) b.textContent='Backend slow or unavailable \u2014 showing last known values'+((window._inboxLastGood&&window._inboxLastGood.length)?' (may be stale)':'')+'. Retrying\u2026'; } else if(b){ b.remove(); } })();
   if(!window._commsDispOverrideAt && !window._commsDispOverrideLoading){ window._commsDispOverrideLoading=true; window._commsDispOverrideAt=Date.now();
     fetchT('https://n8n.americanlifeteam.com/webhook/scalingsos-comms-dispositions', {}, 15000).then(function(r){return r.json()}).then(function(_d){ if(_d&&_d.ok&&_d.dispositions){ window._commsDispOverride=_d.dispositions; if(window._dispByPhone) window._dispMapLen=-1; if(typeof requestCommsRender==='function') requestCommsRender(); } window._commsDispOverrideLoading=false; }).catch(function(){ window._commsDispOverrideLoading=false; window._commsDispOverrideAt=0; }); }
   /* perf_20260627: do not auto-fetch full Prospects from Communications. The inbox +
@@ -6084,7 +6092,8 @@ function renderSmsComms() {
   if(!_isAllTime){ /* comms_ssot_period_20260805: period cards come from the same conversation set as the list (dedup by phone), not the slow server RPC — guarantees card==list and needs no webhook. */
     var _sc={cmClients:0,cmConsidering:0,cmInterested:0,cmCool:0,cmOfferSent:0,cmDeclined:0,cmNotInt:0}, _seenSC={};
     _periodItems.forEach(function(x){ var ph=String(x.s.phone||'').replace(/\D/g,'').slice(-10); if(!ph||_seenSC[ph])return; _seenSC[ph]=1; var d=_dispOf(x.s); for(var _bk in CARD_BUCKETS){ if(CARD_BUCKETS[_bk].indexOf(d)>=0){ _sc[_bk]++; break; } } });
-    _setCmOut({ clients:_sc.cmClients, considering:_sc.cmConsidering, interested_sms:_sc.cmInterested, cool:_sc.cmCool, offers:_sc.cmOfferSent, declined_offer:_sc.cmDeclined, not_interested:_sc.cmNotInt });
+    if(_bkDown && !_periodItems.length){ ['cmConsidering','cmInterested','cmOfferSent','cmNotInt','cmDeclined','cmCool','cmClients'].forEach(function(id){var e=document.getElementById(id); if(e)e.textContent='\u2014';}); }
+    else _setCmOut({ clients:_sc.cmClients, considering:_sc.cmConsidering, interested_sms:_sc.cmInterested, cool:_sc.cmCool, offers:_sc.cmOfferSent, declined_offer:_sc.cmDeclined, not_interested:_sc.cmNotInt });
   }
   var _cmActive=String(window._commsDateRange||'all'); /* outcome_cards_respect_period_20260805: follow the date-range selector (was pinned to all-time) */
   if(!window._commsOutcomeAtBy) window._commsOutcomeAtBy={};
@@ -6151,7 +6160,7 @@ function renderSmsComms() {
   var slice=items.slice(page*per,page*per+per);
   var info=document.getElementById('commsPageInfo');
   if(info) info.innerHTML = total ? ((page*per+1)+'-'+Math.min(total,(page+1)*per)+' of '+total+(pages>1?' &nbsp; <button onclick="commsGoPage('+(page-1)+')" '+(page<=0?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&lsaquo;</button> <button onclick="commsGoPage('+(page+1)+')" '+(page>=pages-1?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&rsaquo;</button>':'')) : '';
-	  if (!slice.length) { list.innerHTML = '<div class="empty-state">'+((q||window._commsPathFilter||window._commsFilter==='replied'||window._commsFilter==='replied2')?'No matching conversations':'No SMS conversations yet')+'</div>'; return; }
+	  if (!slice.length) { list.innerHTML = '<div class="empty-state">'+((q||window._commsPathFilter||window._commsFilter==='replied'||window._commsFilter==='replied2')?'No matching conversations':(_bkDown?'Backend unavailable \u2014 retrying\u2026':'No SMS conversations yet'))+'</div>'; return; }
   list.innerHTML = slice.map(function(o){ var s=o.s, i=o.i;
     const status = s.status || 'active';
     const _isStop = status === 'not_interested' || status === 'not_interested_called' || status === 'do_not_contact' || status === 'opted_out';
