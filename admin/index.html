@@ -613,7 +613,7 @@ if(localStorage.getItem('sos_admin')===_C){hideAuthGate();}
           <div id="pathResultsBody" style="overflow-x:auto"></div>
         </div>
         <div id="commsControls" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
-          <input id="commsSearch" placeholder="Search business or phone..." oninput="window._commsSearch=this.value;window._commsPage=0;requestCommsRender()" style="flex:1;min-width:200px;max-width:340px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:.85rem">
+          <input id="commsSearch" placeholder="Search name, phone, city, industry, last message..." oninput="window._commsSearch=this.value;window._commsPage=0;requestCommsRender()" style="flex:1;min-width:200px;max-width:340px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-size:.85rem">
           <button id="commsFltAll" onclick="setCommsFilter('all')" style="padding:6px 13px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:700;background:#0f172a;color:#fff">All (<span id="commsCntAll">0</span>)</button>
           <button id="commsFltReplied" onclick="setCommsFilter('replied')" style="padding:6px 13px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:700;background:#fff;color:#334155">Replied (<span id="commsCntReplied">0</span>)</button>
           <button id="commsFltReplied2" onclick="setCommsFilter('replied2')" style="padding:6px 13px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:700;background:#fff;color:#334155">Replied msg 2 (<span id="commsCntReplied2">0</span>)</button>
@@ -6152,9 +6152,35 @@ function renderSmsComms() {
 	  }
 	  var searchEl=document.getElementById('commsSearch');
   if(searchEl && !searchEl.value && window._commsSearch && document.activeElement!==searchEl) window._commsSearch='';
-  var q=String(window._commsSearch||'').toLowerCase().trim();
-  if(searchEl && searchEl.value!==q) searchEl.value=q;
-	  if (q) { var qd=q.replace(/\D/g,''); items=items.filter(function(x){ var text=(String(x.s.business_name||bizForPhone(x.s.phone)||'')+' '+String(x.s.phone||'')).toLowerCase(); if(text.indexOf(q)>=0) return true; if(qd.length>=3){ return String(x.s.phone||'').replace(/\D/g,'').indexOf(qd)>=0; } return false; }); }
+  /* comms_search_20260808: this used to be `var q=...toLowerCase().trim(); if(searchEl.value!==q)
+     searchEl.value=q;` -- it wrote the normalized query BACK into the box on every render. The
+     render is debounced 90ms, so whenever that landed while the last character was a space, trim()
+     ate it: typing "zack's lawn care" produced "zack'slawncare" and 0 results, and 9,701 of 9,924
+     business names contain a space. Because it was a race with the debounce it failed only
+     sometimes, which is why search felt unreliable rather than plainly broken. It also
+     force-lowercased what you typed and reset the caret to the end, so mid-string edits were
+     impossible. Now the box is only synced when it is NOT focused -- never while typing. */
+  var qRaw=String(window._commsSearch||'');
+  if(searchEl && document.activeElement!==searchEl && searchEl.value!==qRaw) searchEl.value=qRaw;
+  var q=qRaw.toLowerCase().trim();
+	  if (q) {
+	    var qd=q.replace(/\D/g,'');
+	    /* a phone-shaped query matches on DIGITS ONLY, so "(732) 895-3538", "732-895-3538",
+	       "+1 732 895 3538" and "7328953538" all find the same conversation. */
+	    var _phoneish=qd.length>=7 && q.replace(/[\s()+.\-\d]/g,'')==='';
+	    /* strip ALL punctuation from both sides and require every token, so "zack lawn" finds
+	       "Zack's Lawn Care" -- the old contiguous indexOf() missed it because of the apostrophe. */
+	    var _toks=q.split(/\s+/).map(function(t){return t.replace(/[^a-z0-9]+/g,'');}).filter(Boolean);
+	    items=items.filter(function(x){
+	      var ph=String(x.s.phone||'').replace(/\D/g,'');
+	      if(qd.length>=3 && ph.indexOf(qd)>=0) return true;
+	      if(_phoneish) return false;
+	      if(!_toks.length) return false;
+	      var hay=(String(x.s.business_name||bizForPhone(x.s.phone)||'')+' '+String(x.s.raw_business_name||'')+' '+String(x.s.phone||'')+' '+String(x.s.city||'')+' '+String(x.s.state||'')+' '+String(x.s.industry||'')+' '+String(x.s.last_message||'')).toLowerCase().replace(/[^a-z0-9]+/g,'');
+	      for(var _i=0;_i<_toks.length;_i++){ if(hay.indexOf(_toks[_i])<0) return false; }
+	      return true;
+	    });
+	  }
 	  var _caFinal=document.getElementById('commsCntAll'); if(_caFinal) _caFinal.textContent=items.length;
   function _resolvedDisp(s){
     var raw=String(
