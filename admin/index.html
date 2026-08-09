@@ -3611,15 +3611,33 @@ function isRealBusiness(b) {
 
 // fetch_timeout_20260805: abort hung webhook reads so a stuck call can't wedge a card on "..." forever and its in-flight guard clears for a retry (the shared n8n box hangs under send load).
 function fetchT(url, opts, ms){ opts = opts || {}; ms = ms || 15000; if (typeof AbortController === 'undefined') return fetch(url, opts); var ctl = new AbortController(); opts.signal = ctl.signal; var to = setTimeout(function(){ try{ ctl.abort(); }catch(e){} }, ms); return fetch(url, opts).then(function(r){ clearTimeout(to); return r; }, function(e){ clearTimeout(to); throw e; }); }
+/* full_inbox_20260808: this used to request `?limit=600&message_limit=12000` with a 20s timeout.
+   Three separate caps meant Communications could only ever show 600 of 9,924 conversations
+   ("All (598)" after the local test-phone filter), while the cards -- which come from Telnyx
+   metrics and the comms-outcomes RPC, not from here -- correctly reported thousands.
+   Sending NO limit now returns every conversation (server drains with stable keyset paging);
+   the response is gzipped, ~1.4MB for all 9,924. A cold server build takes ~13-25s, so the old
+   20s abort was itself dumping the page onto the much smaller sheet fallback -- hence 90s.
+   `building:true` means another tab is mid-rebuild: wait and retry rather than fall back to a
+   smaller dataset that looks perfectly correct. */
 async function fetchInbox(opts) {
+  opts = opts || {};
+  var _attempt = Number(opts._attempt || 0);
   try {
-    opts = opts || {};
     const fresh = opts.fresh || opts.no_cache || opts.refresh;
-    const cacheBust = fresh ? ('&refresh=1&_ts=' + Date.now()) : '';
-    const resp = await fetchT(N8N_BASE + '/scalingsos-admin-inbox?limit=600&message_limit=12000' + cacheBust, {}, 20000);
+    const cacheBust = fresh ? ('?refresh=1&_ts=' + Date.now()) : '';
+    const resp = await fetchT(N8N_BASE + '/scalingsos-admin-inbox' + cacheBust, {}, 90000);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
+    if (json && json.error) throw new Error(String(json.error));
+    if (json && json.building && _attempt < 3) {
+      await new Promise(function(r){ setTimeout(r, 5000); });
+      return fetchInbox(Object.assign({}, opts, { _attempt: _attempt + 1 }));
+    }
     var _c = json.conversations || [];
+    if (!_c.length) throw new Error('empty inbox payload');
+    window._inboxTotal = Number(json.total || _c.length);
+    window._inboxTruncated = !!json.truncated;
     window._inboxState='loaded'; window._inboxLastGood=_c;
     return _c;
   } catch (e) {
@@ -6159,7 +6177,11 @@ function renderSmsComms() {
   if(page>=pages){page=pages-1;window._commsPage=page;}
   var slice=items.slice(page*per,page*per+per);
   var info=document.getElementById('commsPageInfo');
-  if(info) info.innerHTML = total ? ((page*per+1)+'-'+Math.min(total,(page+1)*per)+' of '+total+(pages>1?' &nbsp; <button onclick="commsGoPage('+(page-1)+')" '+(page<=0?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&lsaquo;</button> <button onclick="commsGoPage('+(page+1)+')" '+(page>=pages-1?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&rsaquo;</button>':'')) : '';
+  /* full_inbox_20260808: never truncate silently. The server returns `truncated` when it capped
+     the conversation set; say so instead of showing a total that quietly means "of what we loaded". */
+  var _trunc = (window._inboxTruncated && !window._commsSearch && !window._commsDispFilter && !window._commsPathFilter)
+    ? ' <span style="color:var(--red)" title="The server capped the conversation set - not every conversation is loaded">(server truncated'+(window._inboxTotal?' at '+Number(window._inboxTotal).toLocaleString():'')+')</span>' : '';
+  if(info) info.innerHTML = total ? (_trunc+(page*per+1)+'-'+Math.min(total,(page+1)*per)+' of '+total+(pages>1?' &nbsp; <button onclick="commsGoPage('+(page-1)+')" '+(page<=0?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&lsaquo;</button> <button onclick="commsGoPage('+(page+1)+')" '+(page>=pages-1?'disabled':'')+' style="padding:2px 9px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer">&rsaquo;</button>':'')) : '';
 	  if (!slice.length) { list.innerHTML = '<div class="empty-state">'+((q||window._commsPathFilter||window._commsFilter==='replied'||window._commsFilter==='replied2')?'No matching conversations':(_bkDown?'Backend unavailable \u2014 retrying\u2026':'No SMS conversations yet'))+'</div>'; return; }
   list.innerHTML = slice.map(function(o){ var s=o.s, i=o.i;
     const status = s.status || 'active';
