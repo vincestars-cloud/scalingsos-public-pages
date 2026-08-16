@@ -6018,7 +6018,7 @@ function isUnavailableMmsSource(u){
 }
 function mmsImgHtml(u,style){
   var safe=esc(u);
-  return '<a href="'+safe+'" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin:6px 7px 0 0"><img src="'+safe+'" alt="MMS attachment" loading="lazy" onerror="if(!this.dataset.retried){this.dataset.retried=1;var s=this.src;this.src=s+(s.indexOf('?')<0?'?':'&amp;')+'_r=1';}else{this.style.display='none';this.nextSibling.style.display='inline-block';}" decoding=&quot;async&quot; style="'+style+'"><span style="display:none;color:#2563eb;font-weight:700;font-size:.78rem">Open MMS attachment</span></a>';
+  return '<a href="'+safe+'" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin:6px 7px 0 0"><img src="'+safe+'" alt="MMS attachment" loading="lazy" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src=this.src+(this.src.indexOf(&quot;?&quot;)<0?&quot;?&quot;:&quot;&amp;&quot;)+&quot;_r=1&quot;;}else{this.style.display=&quot;none&quot;;this.nextSibling.style.display=&quot;inline-block&quot;;}" decoding="async"  style="'+style+'"><span style="display:none;color:#2563eb;font-weight:700;font-size:.78rem">Open MMS attachment</span></a>';
 }
 function mediaThumbHtml(url){
   if(!url) return '';
