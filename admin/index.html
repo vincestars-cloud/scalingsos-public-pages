@@ -1002,6 +1002,21 @@ if(localStorage.getItem('sos_admin')===_C){hideAuthGate();}
     <button class="chat-close" onclick="closeChat()">&times;</button>
   </div>
   <div id="chatPending" style="display:none;background:#f0fdf4;border:1px solid #22c55e;color:#14532d;padding:10px 12px;font-size:.82rem;border-radius:8px;margin:0 12px 10px"></div>
+  <!-- appointment_sequence_20260818: book a call on this contact. Sets appt_at / meet link and flips
+       contact_status to appointment_booked, which starts the Appointments sequence. Opted-out
+       contacts are refused by the booking webhook. -->
+  <div id="apptBookBar" style="margin:0 12px 10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:#f8fafc">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <b style="font-size:.8rem">Appointment</b>
+      <span id="apptBookState" style="font-size:.74rem;color:var(--text-muted)"></span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <input type="datetime-local" id="apptWhen" style="padding:6px;border:1px solid var(--border);border-radius:6px;font-size:.8rem">
+      <input type="text" id="apptMeet" placeholder="Google Meet link" style="flex:1 1 190px;min-width:150px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:.8rem">
+      <button class="btn btn-primary btn-sm" onclick="apptBookForChat()">Book</button>
+      <button class="btn btn-outline btn-sm" onclick="apptCancelForChat()">Cancel</button>
+    </div>
+  </div>
   <div class="chat-body" id="chatBody"></div>
   <div class="chat-footer">
     <textarea id="chatInput" placeholder="Type a message..." rows="3" oninput="if(window.autoGrowChat)autoGrowChat(this)"></textarea>
@@ -3279,6 +3294,44 @@ async function apptSave(){
     if(!r.ok) throw new Error('HTTP '+r.status);
     showToast('Appointment sequence saved');
   }catch(e){ showToast('Save failed: '+e.message, true); }
+}
+/* appointment_sequence_20260818: book / cancel from the conversation panel. */
+async function apptBookForChat(){
+  var ph = window.currentChatPhone;
+  if(!ph){ showToast('Open a conversation first', true); return; }
+  var whenEl = document.getElementById('apptWhen'), meetEl = document.getElementById('apptMeet');
+  var when = whenEl ? whenEl.value : '';
+  if(!when){ showToast('Pick a date and time', true); return; }
+  /* datetime-local has no timezone; it is wall-clock in the operator's browser. Convert through a
+     local Date so the stored value is a real instant, otherwise a 3pm booking fires at 3pm UTC. */
+  var iso;
+  try { iso = new Date(when).toISOString(); } catch(e){ showToast('Could not read that date', true); return; }
+  var st = document.getElementById('apptBookState'); if(st) st.textContent = 'booking…';
+  try{
+    var r = await fetch(N8N_BASE + '/scalingsos-appointment-book', {method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({phone: ph, appt_at: iso, meet_link: (meetEl?meetEl.value:'')||'' })});
+    var j = await r.json().catch(function(){ return {}; });
+    if(j && j.ok === true){
+      if(st) st.textContent = 'booked · next: ' + (j.next_step||'-');
+      showToast('Appointment booked');
+      setTimeout(loadAllData, 900);
+    } else {
+      if(st) st.textContent = '';
+      showToast(String((j&&j.error)||'Booking failed'), true);
+    }
+  }catch(e){ if(st) st.textContent=''; showToast('Booking failed: '+e.message, true); }
+}
+async function apptCancelForChat(){
+  var ph = window.currentChatPhone;
+  if(!ph){ showToast('Open a conversation first', true); return; }
+  try{
+    var r = await fetch(N8N_BASE + '/scalingsos-appointment-book', {method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({phone: ph, action:'cancel'})});
+    var j = await r.json().catch(function(){ return {}; });
+    var st = document.getElementById('apptBookState');
+    if(j && j.ok === true){ if(st) st.textContent='cancelled'; showToast('Appointment cancelled'); }
+    else showToast(String((j&&j.error)||'Cancel failed'), true);
+  }catch(e){ showToast('Cancel failed: '+e.message, true); }
 }
 function seqSwitchCategory(cat){
   /* appointment_sequence_20260818 */
