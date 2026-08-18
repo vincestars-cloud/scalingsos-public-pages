@@ -1354,7 +1354,7 @@ async function loadAllData() {
   if((page==='builds' || page==='prospector') && !businesses.length && window._bizPromise){
     try{ data.businesses = await window._bizPromise || []; }catch(e){}
   }
-  if((page==='comms'||page==='activity'||page==='analytics') && (!window._inboxAt || (Date.now()-window._inboxAt)>120000)){ window._inboxAt=Date.now(); fetchInbox().then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
+  if((page==='comms'||page==='activity'||page==='analytics') && (!window._inboxAt || (Date.now()-window._inboxAt)>120000)){ window._inboxAt=Date.now(); /* admin_inbox_range_fetch_20260818: comms fetches only the range it displays; activity/analytics keep the full set */ (page==='comms' ? fetchInboxForRange(window._commsDateRange||'today') : fetchInbox()).then(function(c){ data.conversations=c||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._inboxAt=0; }); }
   if((page==='comms'||page==='analytics'||page==='scraping') && (!window._smsSheetAt || (Date.now()-window._smsSheetAt)>120000)){
     window._smsSheetAt=Date.now();
     fetchSheet(GIDS.sms).then(function(rows){ data.sms=rows||[]; bumpPerfRev(); try{renderCurrentPage();}catch(e){} }).catch(function(){ window._smsSheetAt=0; });
@@ -3620,12 +3620,40 @@ function fetchT(url, opts, ms){ opts = opts || {}; ms = ms || 15000; if (typeof 
    20s abort was itself dumping the page onto the much smaller sheet fallback -- hence 90s.
    `building:true` means another tab is mid-rebuild: wait and retry rather than fall back to a
    smaller dataset that looks perfectly correct. */
+/* admin_inbox_range_fetch_20260818: the admin defaulted to the "today" range but ALWAYS downloaded
+   every conversation - 10,329 rows / 15.4 MB - to render 100. The backend now filters server-side
+   (?period=today|7d|30d, ?replied_only=1 for all-time, which is a conversation view so contacts with
+   no inbound have no thread to read). Measured: today 219 rows / 313 KB, 7d 424 / 560 KB,
+   all-time-replied 2,657 / 6.3 MB, vs 10,329 / 15.4 MB. Results are cached per range so switching
+   ranges costs one fetch each, and ONLY the comms page opts in - activity/analytics still get the
+   full set so their all-time aggregates are untouched. */
+window._inboxByRange = window._inboxByRange || {};
+function _inboxQueryForRange(r){
+  r = String(r || 'today').toLowerCase();
+  if (r === 'all') return 'replied_only=1';
+  if (r === '7d' || r === 'week') return 'period=7d';
+  if (r === '30d' || r === 'month') return 'period=30d';
+  if (r === 'today') return 'period=today';
+  return '';
+}
+async function fetchInboxForRange(range){
+  var key = String(range || 'today');
+  if (window._inboxByRange[key] && window._inboxByRange[key].length) return window._inboxByRange[key];
+  var c = await fetchInbox({ range: key });
+  if (c && c.length) window._inboxByRange[key] = c;
+  return c;
+}
 async function fetchInbox(opts) {
   opts = opts || {};
   var _attempt = Number(opts._attempt || 0);
   try {
     const fresh = opts.fresh || opts.no_cache || opts.refresh;
-    const cacheBust = fresh ? ('?refresh=1&_ts=' + Date.now()) : '';
+    /* admin_inbox_range_fetch_20260818 */
+    var _rq = opts.range ? _inboxQueryForRange(opts.range) : '';
+    var _parts = [];
+    if (_rq) _parts.push(_rq);
+    if (fresh) { _parts.push('refresh=1'); _parts.push('_ts=' + Date.now()); }
+    const cacheBust = _parts.length ? ('?' + _parts.join('&')) : '';
     const resp = await fetchT(N8N_BASE + '/scalingsos-admin-inbox' + cacheBust, {}, 90000);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const json = await resp.json();
@@ -5597,7 +5625,7 @@ function ensureCommsDispositionConversations(grp){
     .catch(function(){ window._commsDispServerLoading=''; });
 }
 function toggleCommsDisp(grp){ window._commsPathFilter=null; window._commsDispFilter=(window._commsDispFilter===grp?'':grp); if(window._commsDispFilter){ window._commsFilter='all'; ensureCommsDispositionConversations(window._commsDispFilter); ['commsFltAll','commsFltReplied','commsFltReplied2'].forEach(function(id){ var b=document.getElementById(id); if(b){ var on=(id==='commsFltAll'); b.style.background=on?'#0f172a':'#fff'; b.style.color=on?'#fff':'#334155'; } }); } window._commsPage=0; if(typeof loadPathResults==='function') loadPathResults(); if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
-function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; window._pathResultsAt=0; try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmDeclined',_co.declined_offer);_S('cmCool',_co.cool);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
+function setCommsRange(r){ window._commsDateRange=r; window._commsPage=0; window._pathResultsAt=0; /* admin_inbox_range_fetch_20260818: each range is a separate server-side query, cached after first use */ try{ if(typeof fetchInboxForRange==='function'){ fetchInboxForRange(r).then(function(c){ if(c&&c.length){ data.conversations=c; if(typeof bumpPerfRev==='function') bumpPerfRev(); if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); } }).catch(function(){}); } }catch(_fe){} try{ var _co=(window._commsOutcomeCache||{})[String(r||'all')]; if(_co){ var _S=function(id,v){var e=document.getElementById(id);if(e)e.textContent=Number(v||0).toLocaleString();}; _S('cmConsidering',_co.considering);_S('cmInterested',_co.interested_sms);_S('cmOfferSent',_co.offers);_S('cmNotInt',_co.not_interested);_S('cmDeclined',_co.declined_offer);_S('cmCool',_co.cool);_S('cmClients',_co.clients);}}catch(_e){} var bs=document.querySelectorAll('[data-crange]'); for(var i=0;i<bs.length;i++){ var on=bs[i].getAttribute('data-crange')===r; bs[i].style.background=on?'#0f172a':'#fff'; bs[i].style.color=on?'#fff':'#334155'; } if(typeof requestCommsRender==='function') requestCommsRender(); else if(typeof renderSmsComms==='function') renderSmsComms(); }
 function _commsIsRepliedInPeriod(s){
   var range=String(window._commsDateRange||'today');
   return _hasReplyAfterMessageInRange(s,range,_isMsg1Message);
