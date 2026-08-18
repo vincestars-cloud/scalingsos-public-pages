@@ -876,11 +876,16 @@ if(localStorage.getItem('sos_admin')===_C){hideAuthGate();}
       <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="seqCatTabs">
         <button class="btn btn-primary btn-sm" id="seqTabNoWebsite" onclick="seqSwitchCategory('no_website')">No Website</button>
         <button class="btn btn-outline btn-sm" id="seqTabExistingWebsite" onclick="seqSwitchCategory('existing_website')">Existing Website</button>
+        <button class="btn btn-outline btn-sm" id="seqTabAppointments" onclick="apptSwitchTab()">Appointments</button>
       </div>
 
       <div id="seqEditorRoot">
         <!-- populated by renderSequences() -->
       </div>
+      <!-- appointment_sequence_20260818: booked-appointment sequence, saved to the `appointment_sequence`
+           config key and run by "ScalingSOS - Appointment Sequence Runner". Separate state from seqState
+           so it cannot disturb the no_website / existing_website builder. -->
+      <div id="apptEditorRoot" style="display:none"></div>
     </div>
 
     <!-- ANALYTICS -->
@@ -3184,7 +3189,103 @@ function renderSequences(){
   seqRenderCategory();
 }
 
+/* ===== appointment_sequence_20260818: booked-appointment sequence editor =====
+   Saves to the top-level `appointment_sequence` config key. Read by:
+     ScalingSOS - Appointment Book            (webhook scalingsos-appointment-book)
+     ScalingSOS - Appointment Sequence Runner (every minute)
+   Timing anchors: "booked" = minutes AFTER the status became Appointment Booked;
+                   "appointment" = minutes relative to the appointment (negative = before).
+   Sends go out through scalingsos-admin-send-sms, so they inherit the opt-out, self-send and
+   duplicate guards. Booking a contact who has opted out is refused outright. */
+var apptState = null;
+function apptDefault(){
+  return { enabled:true, steps:[
+    {key:'pre_call_1',label:'Pre-Call Message 1',enabled:true,anchor:'booked',offset_minutes:2,template:''},
+    {key:'pre_call_2',label:'Pre-Call Message 2',enabled:true,anchor:'booked',offset_minutes:45,template:''},
+    {key:'reminder',label:'Meeting Reminder',enabled:true,anchor:'appointment',offset_minutes:-5,template:''}
+  ]};
+}
+function apptEsc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+async function apptLoad(){
+  try{
+    var r = await fetch(N8N_BASE + '/scalingsos-prospector-config', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get'})});
+    var cfg = await r.json();
+    if(cfg && cfg.appointment_sequence && Array.isArray(cfg.appointment_sequence.steps) && cfg.appointment_sequence.steps.length){
+      apptState = JSON.parse(JSON.stringify(cfg.appointment_sequence));
+    }
+  }catch(e){}
+  if(!apptState) apptState = apptDefault();
+  return apptState;
+}
+function apptSwitchTab(){
+  var t1=document.getElementById('seqTabNoWebsite'), t2=document.getElementById('seqTabExistingWebsite'), t3=document.getElementById('seqTabAppointments');
+  if(t1) t1.className='btn btn-sm btn-outline';
+  if(t2) t2.className='btn btn-sm btn-outline';
+  if(t3) t3.className='btn btn-sm btn-primary';
+  var sr=document.getElementById('seqEditorRoot'); if(sr) sr.style.display='none';
+  var tp=document.getElementById('seqSupportedTokensPanel'); if(tp) tp.style.display='none';
+  var ar=document.getElementById('apptEditorRoot'); if(ar) ar.style.display='';
+  if(!apptState){ if(ar) ar.innerHTML='<div class="control-panel"><p style="color:var(--text-muted);font-size:.85rem">Loading…</p></div>';
+    apptLoad().then(apptRender); return; }
+  apptRender();
+}
+function apptRender(){
+  var root=document.getElementById('apptEditorRoot'); if(!root||!apptState) return;
+  var h=[];
+  h.push('<div class="control-panel" style="margin-bottom:16px;background:#eff6ff;border-color:#bfdbfe">');
+  h.push('<p style="font-size:.8rem;color:#1e40af;line-height:1.5;margin:0"><b>Booked appointments.</b> When a contact is marked <code>Appointment Booked</code> with a date/time (and a meet link), these messages fire on the schedule below. Tokens: <b>{meet_link}</b>, <b>{business_name}</b>, <b>{appt_time}</b>. A contact who has opted out cannot be booked.</p>');
+  h.push('</div>');
+  h.push('<div class="control-panel" style="margin-bottom:14px"><label style="display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:700">');
+  h.push('<input type="checkbox" '+(apptState.enabled!==false?'checked':'')+' onchange="apptState.enabled=this.checked">Sequence enabled</label></div>');
+  (apptState.steps||[]).forEach(function(st,i){
+    h.push('<div class="control-panel" style="margin-bottom:14px">');
+    h.push('<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">');
+    h.push('<b style="font-size:.92rem">'+apptEsc(st.label||st.key)+'</b>');
+    h.push('<label style="font-size:.78rem;display:flex;align-items:center;gap:6px"><input type="checkbox" '+(st.enabled!==false?'checked':'')+' onchange="apptState.steps['+i+'].enabled=this.checked">enabled</label>');
+    h.push('</div>');
+    h.push('<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">');
+    h.push('<span style="font-size:.78rem;color:var(--text-secondary)">Send</span>');
+    h.push('<input type="number" value="'+Math.abs(Number(st.offset_minutes||0))+'" style="width:78px;padding:6px;border:1px solid var(--border);border-radius:6px" onchange="apptSetOffset('+i+',this.value)">');
+    h.push('<span style="font-size:.78rem;color:var(--text-secondary)">minutes</span>');
+    var mode = (String(st.anchor)==='appointment') ? (Number(st.offset_minutes||0)<0?'before_appt':'after_appt') : 'after_booked';
+    h.push('<select style="padding:6px;border:1px solid var(--border);border-radius:6px;font-size:.8rem" onchange="apptSetMode('+i+',this.value)">');
+    h.push('<option value="after_booked"'+(mode==='after_booked'?' selected':'')+'>after status = Appointment Booked</option>');
+    h.push('<option value="before_appt"'+(mode==='before_appt'?' selected':'')+'>before the appointment time</option>');
+    h.push('<option value="after_appt"'+(mode==='after_appt'?' selected':'')+'>after the appointment time</option>');
+    h.push('</select></div>');
+    h.push('<textarea rows="5" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:.84rem;font-family:inherit" placeholder="Message text…" onchange="apptState.steps['+i+'].template=this.value">'+apptEsc(st.template||'')+'</textarea>');
+    h.push('</div>');
+  });
+  h.push('<div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="apptSave()">Save Appointment Sequence</button>');
+  h.push('<button class="btn btn-outline" onclick="apptState=null;apptSwitchTab()">Reload</button></div>');
+  root.innerHTML=h.join('');
+}
+function apptSetOffset(i,v){
+  var st=apptState.steps[i]; var n=Math.abs(Number(v)||0);
+  st.offset_minutes = (String(st.anchor)==='appointment' && Number(st.offset_minutes||0)<0) ? -n : n;
+}
+function apptSetMode(i,mode){
+  var st=apptState.steps[i]; var n=Math.abs(Number(st.offset_minutes||0));
+  if(mode==='after_booked'){ st.anchor='booked'; st.offset_minutes=n; }
+  else if(mode==='before_appt'){ st.anchor='appointment'; st.offset_minutes=-n; }
+  else { st.anchor='appointment'; st.offset_minutes=n; }
+  apptRender();
+}
+async function apptSave(){
+  try{
+    var r = await fetch(N8N_BASE + '/scalingsos-prospector-config', {method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'set', appointment_sequence: apptState})});
+    var j = await r.json().catch(function(){ return {}; });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    showToast('Appointment sequence saved');
+  }catch(e){ showToast('Save failed: '+e.message, true); }
+}
 function seqSwitchCategory(cat){
+  /* appointment_sequence_20260818 */
+  var _ar = document.getElementById('apptEditorRoot'); if(_ar) _ar.style.display = 'none';
+  var _sr = document.getElementById('seqEditorRoot'); if(_sr) _sr.style.display = '';
+  var _at = document.getElementById('seqTabAppointments'); if(_at) _at.className = 'btn btn-sm btn-outline';
+  var _tp = document.getElementById('seqSupportedTokensPanel'); if(_tp) _tp.style.display = '';
   seqActiveCategory = (cat === 'existing_website') ? 'existing_website' : 'no_website';
   var t1 = document.getElementById('seqTabNoWebsite'), t2 = document.getElementById('seqTabExistingWebsite');
   if(t1) t1.className = 'btn btn-sm ' + (seqActiveCategory==='no_website' ? 'btn-primary' : 'btn-outline');
