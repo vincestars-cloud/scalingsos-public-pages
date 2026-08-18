@@ -3648,8 +3648,13 @@ async function fetchInbox(opts) {
   var _attempt = Number(opts._attempt || 0);
   try {
     const fresh = opts.fresh || opts.no_cache || opts.refresh;
-    /* admin_inbox_range_fetch_20260818 */
-    var _rq = opts.range ? _inboxQueryForRange(opts.range) : '';
+    /* admin_inbox_range_fetch_20260818: scope centrally. Several call sites load the inbox
+       (loadAllData, the comms render fallback, the manual refresh). Rather than patch each, derive
+       the range here whenever COMMS is the active page - activity/analytics still get the full set. */
+    var _activeNav = document.querySelector('.nav-item.active');
+    var _activePage = _activeNav ? (_activeNav.getAttribute('data-page') || '') : '';
+    var _effRange = opts.range || (_activePage === 'comms' ? (window._commsDateRange || 'today') : '');
+    var _rq = _effRange ? _inboxQueryForRange(_effRange) : '';
     var _parts = [];
     if (_rq) _parts.push(_rq);
     if (fresh) { _parts.push('refresh=1'); _parts.push('_ts=' + Date.now()); }
