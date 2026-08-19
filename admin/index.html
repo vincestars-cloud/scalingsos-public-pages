@@ -3783,11 +3783,17 @@ function fetchT(url, opts, ms){ opts = opts || {}; ms = ms || 15000; if (typeof 
    full set so their all-time aggregates are untouched. */
 window._inboxByRange = window._inboxByRange || {};
 function _inboxQueryForRange(r){
+  /* inbox_since_from_client_tz_20260819: send an explicit ?since computed HERE, in the operator's
+     own timezone. The server runs UTC, so letting it resolve "today" meant that after 8pm Eastern
+     the Today view jumped to the next UTC day and returned almost nothing. The period= term is kept
+     alongside purely as a label for logs and for callers that cannot compute a timestamp. */
   r = String(r || 'today').toLowerCase();
+  function _sinceISO(d){ try { return '&since=' + encodeURIComponent(d.toISOString()); } catch(e){ return ''; } }
+  var now = new Date();
   if (r === 'all') return 'replied_only=1';
-  if (r === '7d' || r === 'week') return 'period=7d';
-  if (r === '30d' || r === 'month') return 'period=30d';
-  if (r === 'today') return 'period=today';
+  if (r === '7d' || r === 'week')   return 'period=7d'  + _sinceISO(new Date(now.getTime() - 7*86400000));
+  if (r === '30d' || r === 'month') return 'period=30d' + _sinceISO(new Date(now.getTime() - 30*86400000));
+  if (r === 'today'){ var d = new Date(); d.setHours(0,0,0,0); return 'period=today' + _sinceISO(d); }
   return '';
 }
 async function fetchInboxForRange(range){
